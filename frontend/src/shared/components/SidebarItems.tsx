@@ -1,7 +1,6 @@
 import { Box, Flex, Icon, Text } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
-import { Link as RouterLink } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
+import { Link as RouterLink, useLocation } from "@tanstack/react-router"
 import { FiBriefcase, FiHome, FiSettings, FiUsers } from "react-icons/fi"
 import type { IconType } from "react-icons/lib"
 
@@ -27,39 +26,8 @@ interface Item {
 const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
-  const [currentPath, setCurrentPath] = useState(window.location.pathname)
-
-  // Update current path when location changes
-  useEffect(() => {
-    const updatePath = () => {
-      setCurrentPath(window.location.pathname)
-    }
-
-    // Listen for route changes
-    window.addEventListener("popstate", updatePath)
-
-    // Custom event for route changes in TanStack Router
-    const handleRouteChange = () => {
-      setTimeout(updatePath, 0) // Small delay to ensure path is updated
-    }
-
-    document.addEventListener("routeChange", handleRouteChange)
-
-    // Create a MutationObserver to watch for DOM changes that might indicate route changes
-    const observer = new MutationObserver(() => {
-      if (window.location.pathname !== currentPath) {
-        setCurrentPath(window.location.pathname)
-      }
-    })
-
-    observer.observe(document.body, { childList: true, subtree: true })
-
-    return () => {
-      window.removeEventListener("popstate", updatePath)
-      document.removeEventListener("routeChange", handleRouteChange)
-      observer.disconnect()
-    }
-  }, [currentPath])
+  const location = useLocation()
+  const currentPath = location.pathname
 
   const finalItems: Item[] = currentUser?.is_superuser
     ? [...items, { icon: FiUsers, title: "Admin", path: "/admin" }]

@@ -58,6 +58,7 @@ class ChatMessageResponse(ChatMessageBase):
 
 class ChatConversationResponse(ChatConversationBase):
     id: uuid.UUID
+    user_id: uuid.UUID
     analysis_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -73,22 +74,6 @@ class ChatConversationUpdate(SQLModel):
 class ChatMessageUpdate(SQLModel):
     content: Optional[str] = None
     use_documents: Optional[bool] = None
-
-
-# Response schemas
-class DocumentReferenceResponse(DocumentReferenceBase):
-    id: uuid.UUID
-    message_id: uuid.UUID
-    created_at: datetime
-
-
-
-class ChatConversationResponse(ChatConversationBase):
-    id: uuid.UUID
-    analysis_id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
-    messages: List[ChatMessageResponse] = Field(default=[])
 
 
 # List schemas

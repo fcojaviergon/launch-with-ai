@@ -40,9 +40,12 @@ def create_conversation(
     # analysis = session.get(Analysis, conversation.analysis_id)
     # if not analysis:
     #     raise HTTPException(status_code=404, detail="Analysis not found")
+    # if analysis.user_id != current_user.id and not current_user.is_superuser:
+    #     raise HTTPException(status_code=403, detail="Not authorized to access this analysis")
 
     return chat_service.create_conversation(
         session,
+        user_id=current_user.id,
         analysis_id=conversation.analysis_id,
         title=conversation.title,
         use_documents=conversation.use_documents
@@ -76,6 +79,11 @@ def get_conversation(
     conversation = chat_service.get_conversation(session, conversation_id, include_messages=True)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to access this conversation")
+
     return conversation
 
 
@@ -92,6 +100,10 @@ async def create_message(
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
 
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to access this conversation")
+
     return await chat_service.process_message(
         session,
         conversation_id=conversation_id,
@@ -107,8 +119,15 @@ def delete_conversation(
     conversation_id: UUID
 ) -> Any:
     """Delete a conversation and all its messages."""
-   
-    deleted = chat_service.delete_conversation(conversation_id)
+    conversation = chat_service.get_conversation(session, conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this conversation")
+
+    deleted = chat_service.delete_conversation(session, conversation_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return {"success": True}
