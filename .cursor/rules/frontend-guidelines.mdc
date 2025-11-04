@@ -1,0 +1,137 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Frontend Guidelines
+
+## Project Structure
+```
+frontend/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── routes/        # TanStack Router route components
+│   ├── client/        # Generated API client
+│   ├── hooks/         # Custom React hooks
+│   ├── theme/         # Chakra UI theme customization
+│   ├── utils.ts         # Utility functions
+│   ├── main.tsx       # App entry point
+│   └── routeTree.gen.ts # Generated route tree
+```
+
+## Core Technologies
+- React 18 with TypeScript
+- Chakra UI for components
+- TanStack Router for routing
+- TanStack Query for data fetching
+- React Hook Form for forms
+- OpenAPI TypeScript client
+
+## Component Guidelines
+
+### Location and Structure
+```tsx
+// src/components/feature/ComponentName.tsx
+import { FC } from 'react'
+import { Box } from '@chakra-ui/react'
+
+interface ComponentNameProps {
+  // Props interface
+}
+
+export const ComponentName: FC<ComponentNameProps> = (props) => {
+  return <Box>{/* Component JSX */}</Box>
+}
+```
+
+### Route Components
+```tsx
+// src/routes/feature/route.tsx
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/feature/')({
+  component: FeatureComponent
+})
+```
+
+## Data Fetching Pattern
+```tsx
+// Using TanStack Query with generated client
+import { useQuery } from '@tanstack/react-query'
+import { ApiService } from '../client'
+
+export const useData = () => {
+  return useQuery({
+    queryKey: ['data'],
+    queryFn: () => ApiService.getData()
+  })
+}
+```
+
+## Form Pattern
+```tsx
+import { useForm } from 'react-hook-form'
+import { FormControl, Input } from '@chakra-ui/react'
+
+interface FormData {
+  field: string
+}
+
+export const FormComponent = () => {
+  const { register, handleSubmit } = useForm<FormData>()
+  
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormControl>
+        <Input {...register('field')} />
+      </FormControl>
+    </form>
+  )
+}
+```
+
+## Custom Hooks Pattern
+```tsx
+// src/hooks/useFeature.ts
+export const useFeature = () => {
+  // Hook logic
+  return {
+    // Hook return values
+  }
+}
+```
+
+## Theme Customization
+```tsx
+// src/theme/index.ts
+import { extendTheme } from '@chakra-ui/react'
+
+export const theme = extendTheme({
+  // Theme customization
+})
+```
+
+## Error Handling
+```tsx
+import { ErrorBoundary } from 'react-error-boundary'
+
+<ErrorBoundary fallback={<ErrorComponent />}>
+  <Component />
+</ErrorBoundary>
+```
+
+## API Client Usage
+- Use generated types from OpenAPI
+- Handle authentication in main.tsx
+- Use TanStack Query for data management
+
+## Testing
+- Use Playwright for E2E tests
+- Place tests in `/tests` directory
+- Follow component-testing patterns
+
+## Code Style
+- Use Biome for formatting and linting
+- Follow TypeScript strict mode
+- Use named exports
+- Maintain consistent file naming

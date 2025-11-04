@@ -1,0 +1,82 @@
+from sqlmodel import Session, create_engine, select
+from collections.abc import Generator
+from sqlalchemy.exc import ProgrammingError, OperationalError, IntegrityError
+from sqlalchemy import text
+
+from app.core.config import settings
+
+# Import all models to ensure proper SQLModel initialization
+from app.modules.users.models import User
+from app.modules.items.models import Item
+from app.modules.chat.models import ChatConversation
+
+from app.modules.users.schemas import UserCreate
+from app.modules.users.service import user_service
+
+engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
+
+
+# make sure all SQLModel models are imported (app.models) before initializing DB
+# otherwise, SQLModel might fail to initialize relationships properly
+# for more details: https://github.com/fastapi/full-stack-fastapi-template/issues/28
+
+EXTENSIONS_AND_EMBEDDINGS_SQL = """
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+
+CREATE TABLE IF NOT EXISTS document_embeddings (
+    id UUID,
+    metadata JSONB,
+    contents TEXT,
+    embedding vector(1536),
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    PRIMARY KEY (id, created_at)
+);
+
+SELECT create_hypertable('document_embeddings', 'created_at',
+                         if_not_exists => TRUE,
+                         create_default_indexes => FALSE);
+
+CREATE INDEX IF NOT EXISTS document_embeddings_embedding_idx
+ON document_embeddings USING ivfflat (embedding vector_l2_ops)
+WITH (lists = 100);
+"""
+
+def init_db(session: Session) -> None:
+    # Tables should be created with Alembic migrations
+    # But if you don't want to use migrations, create
+    # the tables un-commenting the next lines
+    #from sqlmodel import SQLModel
+
+    # This works because the models are already imported and registered from app.models
+    #SQLModel.metadata.create_all(engine)
+
+    try:
+        for statement in EXTENSIONS_AND_EMBEDDINGS_SQL.strip().split(";"):
+            stmt = statement.strip()
+            if stmt:
+                session.exec(text(stmt))
+        session.commit()
+    except (ProgrammingError, OperationalError, IntegrityError) as e:
+        print(f"[init_db] Error ejecutando SQL: {e}")
+        session.rollback()
+
+
+    user = session.exec(
+        select(User).where(User.email == settings.FIRST_SUPERUSER)
+    ).first()
+    if not user:
+        user_in = UserCreate(
+            email=settings.FIRST_SUPERUSER,
+            password=settings.FIRST_SUPERUSER_PASSWORD,
+            is_superuser=True,
+        )
+        user = user_service.create_user(session=session, user_create=user_in)
+
+
+def get_session() -> Generator[Session, None, None]:
+    """
+    Get a database session for use in Celery tasks and scripts.
+    """
+    with Session(engine) as session:
+        yield session
