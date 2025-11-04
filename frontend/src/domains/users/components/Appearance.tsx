@@ -20,9 +20,8 @@ export const Appearance = () => {
   }
 
   // Handle radio change
-  const handleThemeChange = (e: any) => {
-    const value = e.target?.value || e
-    setColorMode(value)
+  const handleThemeChange = (e: { value: string }) => {
+    setColorMode(e.value as "light" | "dark" | "system")
   }
 
   return (

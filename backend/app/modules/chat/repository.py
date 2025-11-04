@@ -21,9 +21,9 @@ from app.modules.chat.schemas import (
 class ChatConversationRepository:
     """Repository for the ChatConversation entity."""
 
-    def create(self, session: Session, *, obj_in: ChatConversationCreate) -> ChatConversation:
+    def create(self, session: Session, *, obj_in: ChatConversationCreate, user_id: uuid.UUID) -> ChatConversation:
         """Create a new chat conversation."""
-        db_obj = ChatConversation(**obj_in.model_dump())
+        db_obj = ChatConversation(**obj_in.model_dump(), user_id=user_id)
         session.add(db_obj)
         session.commit()
         session.refresh(db_obj)

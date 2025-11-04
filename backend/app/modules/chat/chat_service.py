@@ -29,6 +29,7 @@ class ChatService:
     def create_conversation(
         self,
         session: Session,
+        user_id: uuid.UUID,
         analysis_id: uuid.UUID,
         title: str,
         use_documents: bool = True
@@ -39,7 +40,11 @@ class ChatService:
             title=title,
             use_documents=use_documents
         )
-        return chat_conversation_repository.create(session, obj_in=conversation_obj)
+        return chat_conversation_repository.create(
+            session,
+            obj_in=conversation_obj,
+            user_id=user_id
+        )
 
     def get_conversation(
         self,
