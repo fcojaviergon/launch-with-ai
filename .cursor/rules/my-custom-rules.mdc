@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Your rule content
+
+- I control the execution of the servers; you don't need to start them, just tell me and I'll refresh them.
+
+
+# Configuration files
+- Use the .env file located in the project root (rocket-genai-saas/.env)
