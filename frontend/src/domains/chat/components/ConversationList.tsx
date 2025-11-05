@@ -1,0 +1,107 @@
+import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
+import { useConversations } from "../api/chat.api"
+import type { Conversation } from "../types/chat.types"
+import { FaPlus, FaComments } from "react-icons/fa"
+
+interface ConversationListProps {
+  analysisId: string
+  selectedConversationId?: string
+  onSelectConversation: (conversation: Conversation) => void
+  onCreateConversation: () => void
+}
+
+export const ConversationList = ({
+  analysisId,
+  selectedConversationId,
+  onSelectConversation,
+  onCreateConversation,
+}: ConversationListProps) => {
+  const { data: conversations, isLoading, error } = useConversations(analysisId)
+
+  if (isLoading) {
+    return (
+      <VStack p={4} gap={4}>
+        <Spinner size="lg" />
+        <Text color="gray.500">Loading conversations...</Text>
+      </VStack>
+    )
+  }
+
+  if (error) {
+    return (
+      <VStack p={4} gap={4}>
+        <Text color="red.500">Error loading conversations</Text>
+        <Text fontSize="sm" color="gray.500">
+          {error.message}
+        </Text>
+      </VStack>
+    )
+  }
+
+  return (
+    <VStack align="stretch" gap={2} height="100%">
+      <Button
+        leftIcon={<FaPlus />}
+        onClick={onCreateConversation}
+        colorScheme="blue"
+        size="sm"
+        width="100%"
+      >
+        New Conversation
+      </Button>
+
+      {conversations && conversations.length > 0 ? (
+        <VStack align="stretch" gap={2} flex={1} overflowY="auto">
+          {conversations.map((conversation) => (
+            <Box
+              key={conversation.id}
+              p={3}
+              borderWidth="1px"
+              borderRadius="md"
+              cursor="pointer"
+              bg={
+                selectedConversationId === conversation.id
+                  ? "blue.50"
+                  : "white"
+              }
+              borderColor={
+                selectedConversationId === conversation.id
+                  ? "blue.500"
+                  : "gray.200"
+              }
+              _hover={{
+                bg:
+                  selectedConversationId === conversation.id
+                    ? "blue.100"
+                    : "gray.50",
+              }}
+              onClick={() => onSelectConversation(conversation)}
+            >
+              <HStack gap={2}>
+                <FaComments />
+                <VStack align="start" gap={0} flex={1}>
+                  <Text fontWeight="semibold" fontSize="sm">
+                    {conversation.title}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    {new Date(conversation.created_at).toLocaleDateString()}
+                  </Text>
+                </VStack>
+              </HStack>
+            </Box>
+          ))}
+        </VStack>
+      ) : (
+        <VStack p={8} gap={2}>
+          <FaComments size={48} color="gray" />
+          <Text color="gray.500" textAlign="center">
+            No conversations yet
+          </Text>
+          <Text fontSize="sm" color="gray.400" textAlign="center">
+            Click "New Conversation" to start
+          </Text>
+        </VStack>
+      )}
+    </VStack>
+  )
+}
