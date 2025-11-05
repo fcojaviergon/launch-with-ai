@@ -87,15 +87,18 @@ ADMIN_PASSWORD=$(generate_password)
 POSTGRES_PASSWORD=$(generate_password)
 
 # Common variables
+ENV_TYPE_UPPER=$(echo "$ENV_TYPE" | tr '[:lower:]' '[:upper:]')
+ENV_TYPE_CAP=$(echo "${ENV_TYPE:0:1}" | tr '[:lower:]' '[:upper:]')${ENV_TYPE:1}
+
 cat > "$OUTPUT_FILE" << EOF
-# ${ENV_TYPE^^} ENVIRONMENT
+# $ENV_TYPE_UPPER ENVIRONMENT
 # Generated: $(date)
 # WARNING: Keep this file secure and never commit to git!
 
 ENVIRONMENT=$ENV_TYPE
-PROJECT_NAME=Rocket GenAI ${ENV_TYPE^}
+PROJECT_NAME="Rocket GenAI $ENV_TYPE_CAP"
 STACK_NAME=$(echo "$DOMAIN" | tr '.' '-')-$ENV_TYPE
-TAG=main
+TAG=latest
 
 # Security
 SECRET_KEY=$SECRET_KEY
@@ -157,7 +160,7 @@ else
     read -p "OpenAI API key: " OPENAI_KEY
 
     cat >> "$OUTPUT_FILE" << EOF
-# ${ENV_TYPE^} Deployment
+# $ENV_TYPE_CAP Deployment
 DOMAIN=$DOMAIN
 FRONTEND_HOST=https://dashboard.$DOMAIN
 BACKEND_CORS_ORIGINS=https://$DOMAIN,https://dashboard.$DOMAIN,https://api.$DOMAIN
@@ -180,7 +183,7 @@ echo -e "${GREEN}✅ Created $OUTPUT_FILE (permissions: 600)${NC}\n"
 
 # Print summary
 echo "================================================================"
-echo -e "${GREEN}🔐 GENERATED SECRETS FOR ${ENV_TYPE^^} ENVIRONMENT${NC}"
+echo -e "${GREEN}🔐 GENERATED SECRETS FOR $ENV_TYPE_UPPER ENVIRONMENT${NC}"
 echo "================================================================"
 echo ""
 echo -e "🔑 SECRET_KEY: ${SECRET_KEY:0:20}..."
