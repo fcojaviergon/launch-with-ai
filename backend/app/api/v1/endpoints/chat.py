@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.v1.dependencies import SessionDep, CurrentUser
+from app.common.schemas.message import Message
 # from app.modules.analysis.models import Analysis  # TODO: Restore when analysis module is added
 from app.modules.chat.repository import (
     chat_conversation_repository,
@@ -19,7 +20,6 @@ from app.modules.chat.schemas import (
     DocumentReferenceResponse,
     ChatMessageResponse,
     ChatConversationResponse,
-    ChatConversationList
 )
 from app.modules.chat.chat_service import chat_service
 
@@ -111,7 +111,7 @@ async def create_message(
     )
 
 
-@router.delete("/conversations/{conversation_id}")
+@router.delete("/conversations/{conversation_id}", response_model=Message)
 def delete_conversation(
     *,
     session: SessionDep,
@@ -130,4 +130,4 @@ def delete_conversation(
     deleted = chat_service.delete_conversation(session, conversation_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    return {"success": True}
+    return Message(message="Conversation deleted successfully")
