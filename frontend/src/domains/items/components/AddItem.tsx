@@ -17,6 +17,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import type { ItemCreate } from "@domains/items"
+import { itemCreateSchema, type ItemCreateFormData } from "@domains/items"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
@@ -33,7 +35,8 @@ export const AddItem = () => {
     handleSubmit,
     reset,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<ItemCreate>({
+  } = useForm<ItemCreateFormData>({
+    resolver: zodResolver(itemCreateSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -42,7 +45,7 @@ export const AddItem = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<ItemCreate> = (data) => {
+  const onSubmit: SubmitHandler<ItemCreateFormData> = (data) => {
     createItem.mutate(data, {
       onSuccess: () => {
         showSuccessToast("Item created successfully.")
@@ -81,9 +84,7 @@ export const AddItem = () => {
               >
                 <Input
                   id="title"
-                  {...register("title", {
-                    required: "Title is required.",
-                  })}
+                  {...register("title")}
                   placeholder="Title"
                   type="text"
                 />
