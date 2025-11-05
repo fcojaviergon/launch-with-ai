@@ -79,7 +79,7 @@ def update_item(
     return item_service.update_item(session, db_item=item, item_in=item_in)
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=Message)
 def delete_item(
     session: SessionDep, current_user: CurrentUser, id: uuid.UUID
 ) -> Message:
