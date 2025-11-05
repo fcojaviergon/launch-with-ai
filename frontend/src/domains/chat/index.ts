@@ -13,6 +13,9 @@
 // API & Hooks
 export * from "./api"
 
+// Components
+export * from "./components"
+
 // Services (OpenAPI client)
 export * from "./services"
 

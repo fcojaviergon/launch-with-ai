@@ -1,0 +1,145 @@
+import { Box, HStack, Text, VStack, Badge } from "@chakra-ui/react"
+import type { MessageChat } from "../types/chat.types"
+import { useEffect, useRef } from "react"
+import { FaUser, FaRobot, FaFileAlt } from "react-icons/fa"
+
+interface MessageListProps {
+  messages: MessageChat[]
+  isLoading?: boolean
+}
+
+export const MessageList = ({ messages, isLoading }: MessageListProps) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  if (messages.length === 0 && !isLoading) {
+    return (
+      <VStack p={8} gap={2} justify="center" height="100%">
+        <Text color="gray.500" textAlign="center">
+          No messages yet
+        </Text>
+        <Text fontSize="sm" color="gray.400" textAlign="center">
+          Start the conversation by sending a message
+        </Text>
+      </VStack>
+    )
+  }
+
+  return (
+    <VStack
+      align="stretch"
+      gap={4}
+      p={4}
+      flex={1}
+      overflowY="auto"
+      height="100%"
+    >
+      {messages.map((message) => (
+        <HStack
+          key={message.id}
+          align="start"
+          gap={3}
+          justify={message.role === "user" ? "flex-end" : "flex-start"}
+        >
+          {message.role === "assistant" && (
+            <Box
+              p={2}
+              bg="blue.500"
+              color="white"
+              borderRadius="full"
+              flexShrink={0}
+            >
+              <FaRobot />
+            </Box>
+          )}
+
+          <VStack
+            align={message.role === "user" ? "end" : "start"}
+            gap={2}
+            maxWidth="70%"
+          >
+            <Box
+              bg={message.role === "user" ? "blue.500" : "gray.100"}
+              color={message.role === "user" ? "white" : "black"}
+              px={4}
+              py={3}
+              borderRadius="lg"
+              borderTopRightRadius={message.role === "user" ? "none" : "lg"}
+              borderTopLeftRadius={message.role === "assistant" ? "none" : "lg"}
+            >
+              <Text whiteSpace="pre-wrap">{message.content}</Text>
+            </Box>
+
+            {/* Document references */}
+            {message.document_references &&
+              message.document_references.length > 0 && (
+                <HStack gap={2} flexWrap="wrap">
+                  {message.document_references.map((ref) => (
+                    <Badge
+                      key={ref.id}
+                      colorScheme="gray"
+                      fontSize="xs"
+                      px={2}
+                      py={1}
+                      borderRadius="md"
+                    >
+                      <HStack gap={1}>
+                        <FaFileAlt />
+                        <Text>
+                          {ref.filename} (p. {ref.page_number})
+                        </Text>
+                      </HStack>
+                    </Badge>
+                  ))}
+                </HStack>
+              )}
+
+            <Text fontSize="xs" color="gray.500">
+              {new Date(message.created_at).toLocaleTimeString()}
+            </Text>
+          </VStack>
+
+          {message.role === "user" && (
+            <Box
+              p={2}
+              bg="blue.500"
+              color="white"
+              borderRadius="full"
+              flexShrink={0}
+            >
+              <FaUser />
+            </Box>
+          )}
+        </HStack>
+      ))}
+
+      {isLoading && (
+        <HStack align="start" gap={3}>
+          <Box
+            p={2}
+            bg="blue.500"
+            color="white"
+            borderRadius="full"
+            flexShrink={0}
+          >
+            <FaRobot />
+          </Box>
+          <Box bg="gray.100" px={4} py={3} borderRadius="lg">
+            <HStack gap={2}>
+              <Text>Thinking</Text>
+              <Box as="span" animation="pulse 1.5s ease-in-out infinite">
+                ...
+              </Box>
+            </HStack>
+          </Box>
+        </HStack>
+      )}
+
+      <div ref={messagesEndRef} />
+    </VStack>
+  )
+}
