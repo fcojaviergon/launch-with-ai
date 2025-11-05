@@ -18,6 +18,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import type { ItemPublic } from "@domains/items"
+import { itemUpdateSchema, type ItemUpdateFormData } from "@domains/items"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
@@ -26,11 +28,6 @@ import { useUpdateItem } from "../api/items.api"
 
 interface EditItemProps {
   item: ItemPublic
-}
-
-interface ItemUpdateForm {
-  title: string
-  description?: string
 }
 
 export const EditItem = ({ item }: EditItemProps) => {
@@ -43,7 +40,8 @@ export const EditItem = ({ item }: EditItemProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ItemUpdateForm>({
+  } = useForm<ItemUpdateFormData>({
+    resolver: zodResolver(itemUpdateSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -52,7 +50,7 @@ export const EditItem = ({ item }: EditItemProps) => {
     },
   })
 
-  const onSubmit: SubmitHandler<ItemUpdateForm> = async (data) => {
+  const onSubmit: SubmitHandler<ItemUpdateFormData> = async (data) => {
     updateItem.mutate(
       { itemId: item.id, data },
       {
@@ -94,9 +92,7 @@ export const EditItem = ({ item }: EditItemProps) => {
               >
                 <Input
                   id="title"
-                  {...register("title", {
-                    required: "Title is required",
-                  })}
+                  {...register("title")}
                   placeholder="Title"
                   type="text"
                 />
