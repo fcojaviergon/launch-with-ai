@@ -16,6 +16,9 @@ export * from "./components"
 export * from "./api"
 export * from "./hooks"
 
+// Schemas (Zod validation)
+export * from "./schemas"
+
 // Services (OpenAPI client)
 export * from "./services"
 
