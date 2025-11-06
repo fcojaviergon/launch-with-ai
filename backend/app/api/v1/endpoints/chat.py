@@ -14,12 +14,12 @@ from app.modules.chat.repository import (
 )
 from app.modules.chat.schemas import (
     ChatConversationCreate,
-    ChatConversationList,
+    ChatConversationsPublic,
     ChatMessageCreate,
     DocumentReferenceCreate,
-    DocumentReferenceResponse,
-    ChatMessageResponse,
-    ChatConversationResponse,
+    DocumentReferencePublic,
+    ChatMessagePublic,
+    ChatConversationPublic,
 )
 from app.modules.chat.chat_service import chat_service
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.post("/conversations", response_model=ChatConversationResponse, status_code=201)
+@router.post("/conversations", response_model=ChatConversationPublic, status_code=201)
 def create_conversation(
     *,
     session: SessionDep,
@@ -52,7 +52,7 @@ def create_conversation(
     )
 
 
-@router.get("/conversations/{analysis_id}", response_model=List[ChatConversationResponse])
+@router.get("/conversations/{analysis_id}", response_model=List[ChatConversationPublic])
 def get_conversations(
     *,
     session: SessionDep,
@@ -68,7 +68,7 @@ def get_conversations(
     return chat_service.get_conversations(session, analysis_id)
 
 
-@router.get("/conversations/{conversation_id}/detail", response_model=ChatConversationResponse)
+@router.get("/conversations/{conversation_id}/detail", response_model=ChatConversationPublic)
 def get_conversation(
     *,
     session: SessionDep,
@@ -87,7 +87,7 @@ def get_conversation(
     return conversation
 
 
-@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse, status_code=201)
+@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessagePublic, status_code=201)
 async def create_message(
     *,
     session: SessionDep,
