@@ -18,9 +18,13 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import type { UserPublic, UserUpdate } from "@domains/users"
+import type { UserPublic } from "@domains/users"
+import {
+  adminUserUpdateSchema,
+  type AdminUserUpdateFormData,
+} from "@domains/admin"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
-import { emailPattern } from "@shared/utils"
 import { useState } from "react"
 import { Controller, type SubmitHandler, useForm } from "react-hook-form"
 import { FaExchangeAlt } from "react-icons/fa"
@@ -28,10 +32,6 @@ import { useAdminUpdateUser } from "../api/admin.api"
 
 interface EditUserProps {
   user: UserPublic
-}
-
-interface UserUpdateForm extends UserUpdate {
-  confirm_password?: string
 }
 
 export const EditUser = ({ user }: EditUserProps) => {
@@ -44,15 +44,15 @@ export const EditUser = ({ user }: EditUserProps) => {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors, isSubmitting },
-  } = useForm<UserUpdateForm>({
+  } = useForm<AdminUserUpdateFormData>({
+    resolver: zodResolver(adminUserUpdateSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: user,
   })
 
-  const onSubmit: SubmitHandler<UserUpdateForm> = async (data) => {
+  const onSubmit: SubmitHandler<AdminUserUpdateFormData> = async (data) => {
     if (data.password === "") {
       data.password = undefined
     }
@@ -98,10 +98,7 @@ export const EditUser = ({ user }: EditUserProps) => {
               >
                 <Input
                   id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: emailPattern,
-                  })}
+                  {...register("email")}
                   placeholder="Email"
                   type="email"
                 />
@@ -121,37 +118,26 @@ export const EditUser = ({ user }: EditUserProps) => {
               </Field>
 
               <Field
-                required
                 invalid={!!errors.password}
                 errorText={errors.password?.message}
                 label="Set Password"
               >
                 <Input
                   id="password"
-                  {...register("password", {
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                  })}
+                  {...register("password")}
                   placeholder="Password"
                   type="password"
                 />
               </Field>
 
               <Field
-                required
                 invalid={!!errors.confirm_password}
                 errorText={errors.confirm_password?.message}
                 label="Confirm Password"
               >
                 <Input
                   id="confirm_password"
-                  {...register("confirm_password", {
-                    validate: (value) =>
-                      value === getValues().password ||
-                      "The passwords do not match",
-                  })}
+                  {...register("confirm_password")}
                   placeholder="Password"
                   type="password"
                 />
