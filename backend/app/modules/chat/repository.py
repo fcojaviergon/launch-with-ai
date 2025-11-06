@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 
 from sqlmodel import Session, select
 
+from app.core.base_crud import BaseCRUD
 from app.modules.chat.models import (
     ChatConversation,
     ChatMessage,
@@ -18,20 +19,19 @@ from app.modules.chat.schemas import (
 )
 
 
-class ChatConversationRepository:
+class ChatConversationRepository(BaseCRUD[ChatConversation, ChatConversationCreate, ChatConversationUpdate]):
     """Repository for the ChatConversation entity."""
 
+    def __init__(self):
+        super().__init__(ChatConversation)
+
     def create(self, session: Session, *, obj_in: ChatConversationCreate, user_id: uuid.UUID) -> ChatConversation:
-        """Create a new chat conversation."""
+        """Create a new chat conversation with user_id."""
         db_obj = ChatConversation(**obj_in.model_dump(), user_id=user_id)
         session.add(db_obj)
         session.commit()
         session.refresh(db_obj)
         return db_obj
-
-    def get(self, session: Session, id: uuid.UUID) -> Optional[ChatConversation]:
-        """Get a chat conversation by ID."""
-        return session.get(ChatConversation, id)
 
     def get_by_analysis_id(self, session: Session, analysis_id: uuid.UUID) -> List[ChatConversation]:
         """Get all chat conversations for an analysis."""
@@ -44,16 +44,15 @@ class ChatConversationRepository:
     def update(
         self, session: Session, *, db_obj: ChatConversation, obj_in: Union[ChatConversationUpdate, dict]
     ) -> ChatConversation:
-        """Update a chat conversation."""
+        """Update a chat conversation with automatic updated_at timestamp."""
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
             update_data = obj_in.model_dump(exclude_unset=True)
-            
+
         if update_data:
             update_data["updated_at"] = datetime.utcnow()
-            for field, value in update_data.items():
-                setattr(db_obj, field, value)
+            db_obj.sqlmodel_update(update_data)
             session.add(db_obj)
             session.commit()
             session.refresh(db_obj)
@@ -67,20 +66,19 @@ class ChatConversationRepository:
             session.commit()
 
 
-class ChatMessageRepository:
+class ChatMessageRepository(BaseCRUD[ChatMessage, ChatMessageCreate, ChatMessageUpdate]):
     """Repository for the ChatMessage entity."""
 
+    def __init__(self):
+        super().__init__(ChatMessage)
+
     def create(self, session: Session, *, obj_in: ChatMessageCreate, conversation_id: uuid.UUID) -> ChatMessage:
-        """Create a new chat message."""
+        """Create a new chat message with conversation_id."""
         db_obj = ChatMessage(**obj_in.model_dump(exclude={'document_references'}), conversation_id=conversation_id)
         session.add(db_obj)
         session.commit()
         session.refresh(db_obj)
         return db_obj
-
-    def get(self, session: Session, id: uuid.UUID) -> Optional[ChatMessage]:
-        """Get a chat message by ID."""
-        return session.get(ChatMessage, id)
 
     def get_by_conversation_id(self, session: Session, conversation_id: uuid.UUID) -> List[ChatMessage]:
         """Get all messages for a conversation."""
@@ -89,23 +87,6 @@ class ChatMessageRepository:
             .where(ChatMessage.conversation_id == conversation_id)
             .order_by(ChatMessage.created_at)
         ).all()
-
-    def update(
-        self, session: Session, *, db_obj: ChatMessage, obj_in: Union[ChatMessageUpdate, dict]
-    ) -> ChatMessage:
-        """Update a chat message."""
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.model_dump(exclude_unset=True)
-            
-        if update_data:
-            for field, value in update_data.items():
-                setattr(db_obj, field, value)
-            session.add(db_obj)
-            session.commit()
-            session.refresh(db_obj)
-        return db_obj
 
     def delete(self, session: Session, *, id: uuid.UUID) -> None:
         """Delete a chat message."""
