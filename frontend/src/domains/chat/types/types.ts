@@ -24,6 +24,7 @@ export interface MessageChat {
 
 export interface Conversation {
   id: string
+  user_id: string
   analysis_id: string
   title: string
   use_documents: boolean
