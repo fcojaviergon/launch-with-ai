@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.post("/conversations", response_model=ChatConversationResponse)
+@router.post("/conversations", response_model=ChatConversationResponse, status_code=201)
 def create_conversation(
     *,
     session: SessionDep,
@@ -87,7 +87,7 @@ def get_conversation(
     return conversation
 
 
-@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse)
+@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse, status_code=201)
 async def create_message(
     *,
     session: SessionDep,

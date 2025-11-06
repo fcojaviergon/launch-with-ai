@@ -46,7 +46,7 @@ def read_item(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
     return item
 
 
-@router.post("/", response_model=ItemPublic)
+@router.post("/", response_model=ItemPublic, status_code=201)
 def create_item(
     *, session: SessionDep, current_user: CurrentUser, item_in: ItemCreate
 ) -> Any:
