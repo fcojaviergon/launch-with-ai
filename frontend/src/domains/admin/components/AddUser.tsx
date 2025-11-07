@@ -25,7 +25,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
-import { Controller, type SubmitHandler, useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { FaPlus } from "react-icons/fa"
 import { useAdminCreateUser } from "../api/admin.api"
 
@@ -54,7 +54,7 @@ export const AddUser = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<AdminUserCreateFormData> = (data) => {
+  const onSubmit = (data: AdminUserCreateFormData) => {
     createUser.mutate(data, {
       onSuccess: () => {
         showSuccessToast("User created successfully.")

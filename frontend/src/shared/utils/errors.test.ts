@@ -1,10 +1,24 @@
 import { describe, expect, it } from "vitest"
+import { ApiError } from "@/client"
 import {
   getErrorMessage,
   isApiError,
   isStringDetail,
   isValidationErrorArray,
 } from "./errors"
+
+// Helper to create mock ApiError instances
+function createMockApiError(
+  status: number,
+  statusText: string,
+  body: unknown
+): ApiError {
+  return new ApiError(
+    { method: "GET", url: "/test" },
+    { url: "/test", ok: false, status, statusText, body },
+    "Mock error"
+  )
+}
 
 describe("Error Handling Utilities", () => {
   describe("isApiError", () => {
@@ -123,85 +137,66 @@ describe("Error Handling Utilities", () => {
 
   describe("getErrorMessage", () => {
     it("should extract message from validation error array", () => {
-      const apiError = {
-        body: {
-          detail: [
-            {
-              loc: ["body", "email"],
-              msg: "Invalid email format",
-              type: "value_error",
-            },
-          ],
-        },
-        status: 422,
-        statusText: "Unprocessable Entity",
-      }
+      const apiError = createMockApiError(422, "Unprocessable Entity", {
+        detail: [
+          {
+            loc: ["body", "email"],
+            msg: "Invalid email format",
+            type: "value_error",
+          },
+        ],
+      })
 
       expect(getErrorMessage(apiError)).toBe("Invalid email format")
     })
 
     it("should extract first message from multiple validation errors", () => {
-      const apiError = {
-        body: {
-          detail: [
-            {
-              loc: ["body", "email"],
-              msg: "First error",
-              type: "value_error",
-            },
-            {
-              loc: ["body", "password"],
-              msg: "Second error",
-              type: "value_error",
-            },
-          ],
-        },
-        status: 422,
-        statusText: "Unprocessable Entity",
-      }
+      const apiError = createMockApiError(422, "Unprocessable Entity", {
+        detail: [
+          {
+            loc: ["body", "email"],
+            msg: "First error",
+            type: "value_error",
+          },
+          {
+            loc: ["body", "password"],
+            msg: "Second error",
+            type: "value_error",
+          },
+        ],
+      })
 
       expect(getErrorMessage(apiError)).toBe("First error")
     })
 
     it("should extract string error detail", () => {
-      const apiError = {
-        body: {
-          detail: "User not found",
-        },
-        status: 404,
-        statusText: "Not Found",
-      }
+      const apiError = createMockApiError(404, "Not Found", {
+        detail: "User not found",
+      })
 
       expect(getErrorMessage(apiError)).toBe("User not found")
     })
 
     it("should return fallback message for unknown error format", () => {
-      const apiError = {
-        body: {
-          detail: { some: "unknown format" },
-        },
-        status: 500,
-        statusText: "Internal Server Error",
-      }
+      const apiError = createMockApiError(500, "Internal Server Error", {
+        detail: { some: "unknown format" },
+      })
 
       expect(getErrorMessage(apiError)).toBe("Something went wrong.")
     })
 
     it("should return fallback message when detail is missing", () => {
-      const apiError = {
-        body: {},
-        status: 500,
-        statusText: "Internal Server Error",
-      }
+      const apiError = createMockApiError(500, "Internal Server Error", {})
 
       expect(getErrorMessage(apiError)).toBe("Something went wrong.")
     })
 
     it("should return fallback message when body is missing", () => {
-      const apiError = {
-        status: 500,
-        statusText: "Internal Server Error",
-      }
+      const apiError = createMockApiError(
+        500,
+        "Internal Server Error",
+        undefined
+      )
 
       expect(getErrorMessage(apiError)).toBe("Something went wrong.")
     })

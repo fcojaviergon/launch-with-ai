@@ -20,8 +20,10 @@ export const Appearance = () => {
   }
 
   // Handle radio change
-  const handleThemeChange = (e: { value: string }) => {
-    setColorMode(e.value as "light" | "dark" | "system")
+  const handleThemeChange = (details: { value: string | null }) => {
+    if (details.value) {
+      setColorMode(details.value as "light" | "dark" | "system")
+    }
   }
 
   return (
@@ -37,7 +39,7 @@ export const Appearance = () => {
 
       <RadioGroup
         value={colorMode}
-        onChange={handleThemeChange}
+        onValueChange={handleThemeChange}
         colorPalette="teal"
       >
         <Stack gap={3}>

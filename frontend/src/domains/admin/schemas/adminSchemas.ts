@@ -18,8 +18,8 @@ export const adminUserCreateSchema = z
     full_name: z.string().optional(),
     password: passwordSchema,
     confirm_password: z.string().min(1, "Please confirm your password"),
-    is_superuser: z.boolean().default(false),
-    is_active: z.boolean().default(false),
+    is_superuser: z.boolean(),
+    is_active: z.boolean(),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "The passwords do not match",
