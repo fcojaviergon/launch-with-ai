@@ -13,6 +13,21 @@ import type {
 
 export class ChatService {
   /**
+   * Get all conversations for the current user
+   * @returns Conversation[] Successful Response
+   * @throws ApiError
+   */
+  public static getUserConversations(): CancelablePromise<ChatGetConversationsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/chat/conversations",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
    * Get conversations for an analysis
    * @param data The data for the request.
    * @param data.analysisId

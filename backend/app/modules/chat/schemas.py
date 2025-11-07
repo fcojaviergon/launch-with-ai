@@ -31,7 +31,7 @@ class ChatMessageBase(SQLModel):
 
 # Create schemas
 class ChatConversationCreate(ChatConversationBase):
-    analysis_id: uuid.UUID
+    analysis_id: Optional[uuid.UUID] = None
 
 
 class ChatMessageCreate(ChatMessageBase):
@@ -59,7 +59,7 @@ class ChatMessagePublic(ChatMessageBase):
 class ChatConversationPublic(ChatConversationBase):
     id: uuid.UUID
     user_id: uuid.UUID
-    analysis_id: uuid.UUID
+    analysis_id: Optional[uuid.UUID] = None
     created_at: datetime
     updated_at: datetime
     messages: List[ChatMessagePublic] = Field(default=[])

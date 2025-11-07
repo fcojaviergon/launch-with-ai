@@ -30,9 +30,9 @@ class ChatService:
         self,
         session: Session,
         user_id: uuid.UUID,
-        analysis_id: uuid.UUID,
         title: str,
-        use_documents: bool = True
+        use_documents: bool = True,
+        analysis_id: Optional[uuid.UUID] = None
     ) -> ChatConversation:
         """Create a new chat conversation."""
         conversation_obj = ChatConversationCreate(
@@ -68,6 +68,14 @@ class ChatService:
         """Get all conversations for an analysis."""
         return chat_conversation_repository.get_by_analysis_id(session, analysis_id)
 
+    def get_user_conversations(
+        self,
+        session: Session,
+        user_id: uuid.UUID
+    ) -> List[ChatConversation]:
+        """Get all conversations for a user."""
+        return chat_conversation_repository.get_by_user_id(session, user_id)
+
     def delete_conversation(self, session: Session, conversation_id: uuid.UUID) -> bool:
         """Delete a chat conversation."""
         conversation = chat_conversation_repository.get(session, conversation_id)
@@ -102,7 +110,8 @@ class ChatService:
         
         # Search relevant documents if enabled
         all_relevant_chunks = []
-        if conversation.use_documents and message.use_documents:
+        document_references = []
+        if conversation.use_documents and message.use_documents and conversation.analysis_id:
             # Search in vector store with metadata filter for analysis_id
             logger.info(f"Searching for relevant documents for conversation {conversation_id}")
             results = vector_store.search(
@@ -117,8 +126,7 @@ class ChatService:
             if not results.empty:
                 logger.info(f"Columns available: {results.columns.tolist()}")
                 logger.info(f"First row: {results.iloc[0].to_dict()}")
-                
-                document_references = []
+
                 for _, row in results.iterrows():
                     # Get distance from vector search
                     distance = float(row["distance"])
