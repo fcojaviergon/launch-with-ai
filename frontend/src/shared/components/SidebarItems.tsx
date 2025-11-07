@@ -48,9 +48,9 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
     return (
       <RouterLink key={title} to={path} onClick={onClose}>
         <Flex
-          gap={collapsed ? 0 : 4}
-          px={collapsed ? 2 : 4}
-          py={3}
+          gap={collapsed ? 0 : 3}
+          px={collapsed ? 2 : 3}
+          py={2.5}
           my={1}
           borderRadius="md"
           bg={isActive ? "ui.primary" : "transparent"}
@@ -58,7 +58,7 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
           fontWeight={isActive ? "semibold" : "normal"}
           _hover={{
             background: isActive ? "ui.primary" : "gray.100",
-            transform: collapsed ? "none" : "translateX(3px)",
+            transform: collapsed ? "none" : "translateX(2px)",
           }}
           alignItems="center"
           justifyContent={collapsed ? "center" : "flex-start"}
@@ -69,7 +69,7 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
           <Icon
             as={icon}
             alignSelf="center"
-            fontSize="lg"
+            fontSize="xl"
             color={isActive ? "white" : "ui.primary"}
           />
           {!collapsed && <Text>{title}</Text>}
@@ -79,23 +79,22 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
   })
 
   return (
-    <>
+    <Box px={collapsed ? 1 : 3} py={2}>
       {!collapsed && (
         <Text
           fontSize="sm"
-          px={4}
+          px={1}
           py={2}
           fontWeight="bold"
           color="gray.600"
           letterSpacing="wider"
           textTransform="uppercase"
-          mt={2}
         >
           Menu
         </Text>
       )}
       <Box>{listItems}</Box>
-    </>
+    </Box>
   )
 }
 
