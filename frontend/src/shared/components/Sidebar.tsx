@@ -1,4 +1,5 @@
-import { Box, Flex, IconButton, Text } from "@chakra-ui/react"
+import { Avatar } from "@/components/ui/avatar"
+import { Box, Flex, Icon, IconButton, Text } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { FaBars } from "react-icons/fa"
@@ -75,39 +76,54 @@ const Sidebar = () => {
             <Flex flexDir="column" justify="space-between" h="100%">
               <Box>
                 <SidebarItems />
+              </Box>
+              <Box>
                 <Flex
                   as="button"
                   onClick={handleLogout}
                   alignItems="center"
-                  gap={4}
+                  gap={3}
                   px={4}
                   py={3}
                   my={2}
                   borderRadius="md"
+                  width="100%"
                   _hover={{
                     bg: "red.50",
-                    color: "red.600",
                   }}
                   transition="all 0.2s"
                 >
-                  <FiLogOut color="red.500" />
-                  <Text fontWeight="medium">Log Out</Text>
-                </Flex>
-              </Box>
-              {currentUser?.email && (
-                <Text
-                  fontSize="sm"
-                  p={3}
-                  borderTop="1px solid"
-                  borderColor="gray.200"
-                  mt={4}
-                >
-                  Logged in as:{" "}
-                  <Text as="span" fontWeight="semibold">
-                    {currentUser.email}
+                  <Icon color="red.500" fontSize="lg">
+                    <FiLogOut />
+                  </Icon>
+                  <Text fontWeight="medium" color="red.500">
+                    Log Out
                   </Text>
-                </Text>
-              )}
+                </Flex>
+                {currentUser && (
+                  <Flex
+                    p={3}
+                    borderTop="1px solid"
+                    borderColor="gray.200"
+                    mt={2}
+                    gap={3}
+                    alignItems="center"
+                  >
+                    <Avatar
+                      name={currentUser.full_name || currentUser.email}
+                      size="sm"
+                    />
+                    <Box flex={1} minW={0}>
+                      <Text fontSize="sm" fontWeight="semibold" truncate>
+                        {currentUser.full_name || "User"}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500" truncate>
+                        {currentUser.email}
+                      </Text>
+                    </Box>
+                  </Flex>
+                )}
+              </Box>
             </Flex>
           </DrawerBody>
           <DrawerCloseTrigger />
@@ -148,7 +164,7 @@ const Sidebar = () => {
               onClick={handleLogout}
               alignItems="center"
               justifyContent={collapsed ? "center" : "flex-start"}
-              gap={collapsed ? 0 : 4}
+              gap={collapsed ? 0 : 3}
               px={collapsed ? 2 : 4}
               py={3}
               my={2}
@@ -156,38 +172,54 @@ const Sidebar = () => {
               width="100%"
               _hover={{
                 bg: "red.50",
-                color: "red.600",
               }}
               transition="all 0.2s"
               title={collapsed ? "Log Out" : ""}
             >
-              <FiLogOut color="red.500" />
-              {!collapsed && <Text fontWeight="medium">Log Out</Text>}
+              <Icon color="red.500" fontSize="lg">
+                <FiLogOut />
+              </Icon>
+              {!collapsed && (
+                <Text fontWeight="medium" color="red.500">
+                  Log Out
+                </Text>
+              )}
             </Flex>
-            {currentUser?.email && !collapsed && (
-              <Text
-                fontSize="sm"
+            {currentUser && !collapsed && (
+              <Flex
                 p={3}
                 borderTop="1px solid"
                 borderColor="gray.200"
-                mt={1}
+                mt={2}
+                gap={3}
+                alignItems="center"
               >
-                Logged in as:{" "}
-                <Text as="span" fontWeight="semibold">
-                  {currentUser.email}
-                </Text>
-              </Text>
+                <Avatar
+                  name={currentUser.full_name || currentUser.email}
+                  size="sm"
+                />
+                <Box flex={1} minW={0}>
+                  <Text fontSize="sm" fontWeight="semibold" truncate>
+                    {currentUser.full_name || "User"}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500" truncate>
+                    {currentUser.email}
+                  </Text>
+                </Box>
+              </Flex>
             )}
-            {currentUser?.email && collapsed && (
-              <Text
-                fontSize="xs"
-                textAlign="center"
-                p={1}
+            {currentUser && collapsed && (
+              <Flex
+                justify="center"
+                p={2}
                 mt={1}
-                title={`Logged in as: ${currentUser.email}`}
+                title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
               >
-                {currentUser.email.substring(0, 1).toUpperCase()}
-              </Text>
+                <Avatar
+                  name={currentUser.full_name || currentUser.email}
+                  size="sm"
+                />
+              </Flex>
             )}
           </Box>
         </Flex>
