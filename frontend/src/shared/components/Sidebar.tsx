@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text } from "@chakra-ui/react"
+import { Box, Flex, Icon, IconButton, Text } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { FaBars } from "react-icons/fa"
@@ -71,43 +71,49 @@ const Sidebar = () => {
         </DrawerTrigger>
         <DrawerContent maxW="280px">
           <DrawerCloseTrigger />
-          <DrawerBody>
+          <DrawerBody p={0}>
             <Flex flexDir="column" justify="space-between" h="100%">
-              <Box>
+              <Box px={4} pt={4} flex={1} overflowY="auto">
                 <SidebarItems />
+              </Box>
+              <Box px={4} pb={4}>
                 <Flex
                   as="button"
                   onClick={handleLogout}
                   alignItems="center"
-                  gap={4}
-                  px={4}
-                  py={3}
-                  my={2}
+                  gap={2}
+                  px={3}
+                  py={2}
                   borderRadius="md"
+                  width="100%"
                   _hover={{
                     bg: "red.50",
-                    color: "red.600",
                   }}
                   transition="all 0.2s"
                 >
-                  <FiLogOut color="red.500" />
-                  <Text fontWeight="medium">Log Out</Text>
-                </Flex>
-              </Box>
-              {currentUser?.email && (
-                <Text
-                  fontSize="sm"
-                  p={3}
-                  borderTop="1px solid"
-                  borderColor="gray.200"
-                  mt={4}
-                >
-                  Logged in as:{" "}
-                  <Text as="span" fontWeight="semibold">
-                    {currentUser.email}
+                  <Icon color="red.500">
+                    <FiLogOut />
+                  </Icon>
+                  <Text fontSize="sm" fontWeight="medium" color="red.500">
+                    Log Out
                   </Text>
-                </Text>
-              )}
+                </Flex>
+                {currentUser && (
+                  <Box
+                    p={2}
+                    borderTop="1px"
+                    borderColor="gray.200"
+                    mt={2}
+                  >
+                    <Text fontSize="xs" fontWeight="semibold" truncate>
+                      {currentUser.full_name || "User"}
+                    </Text>
+                    <Text fontSize="xs" color="gray.500" truncate>
+                      {currentUser.email}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
             </Flex>
           </DrawerBody>
           <DrawerCloseTrigger />
@@ -122,15 +128,14 @@ const Sidebar = () => {
         top={0}
         width={collapsed ? "70px" : "280px"}
         h="100vh"
-        p={collapsed ? 2 : 4}
-        borderRight="1px solid"
+        borderRight="1px"
         borderColor="gray.200"
         boxShadow="sm"
         transition="all 0.3s ease"
       >
         <Flex flexDir="column" justify="space-between" h="100%" w="100%">
-          <Box>
-            <Flex justify={collapsed ? "center" : "flex-end"} mb={2}>
+          <Box flex={1} overflowY="auto">
+            <Flex justify={collapsed ? "center" : "flex-end"} p={2}>
               <IconButton
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 size="sm"
@@ -148,46 +153,65 @@ const Sidebar = () => {
               onClick={handleLogout}
               alignItems="center"
               justifyContent={collapsed ? "center" : "flex-start"}
-              gap={collapsed ? 0 : 4}
-              px={collapsed ? 2 : 4}
-              py={3}
-              my={2}
+              gap={collapsed ? 0 : 2}
+              px={collapsed ? 2 : 3}
+              py={2}
+              mx={collapsed ? 2 : 3}
+              mb={2}
               borderRadius="md"
-              width="100%"
+              width={collapsed ? "auto" : "calc(100% - 24px)"}
               _hover={{
                 bg: "red.50",
-                color: "red.600",
               }}
               transition="all 0.2s"
               title={collapsed ? "Log Out" : ""}
             >
-              <FiLogOut color="red.500" />
-              {!collapsed && <Text fontWeight="medium">Log Out</Text>}
+              <Icon color="red.500">
+                <FiLogOut />
+              </Icon>
+              {!collapsed && (
+                <Text fontSize="sm" fontWeight="medium" color="red.500">
+                  Log Out
+                </Text>
+              )}
             </Flex>
-            {currentUser?.email && !collapsed && (
-              <Text
-                fontSize="sm"
-                p={3}
-                borderTop="1px solid"
+            {currentUser && !collapsed && (
+              <Box
+                p={2}
+                mx={3}
+                mb={3}
+                borderTop="1px"
                 borderColor="gray.200"
-                mt={1}
               >
-                Logged in as:{" "}
-                <Text as="span" fontWeight="semibold">
+                <Text fontSize="xs" fontWeight="semibold" truncate>
+                  {currentUser.full_name || "User"}
+                </Text>
+                <Text fontSize="xs" color="gray.500" truncate>
                   {currentUser.email}
                 </Text>
-              </Text>
+              </Box>
             )}
-            {currentUser?.email && collapsed && (
-              <Text
-                fontSize="xs"
-                textAlign="center"
-                p={1}
-                mt={1}
-                title={`Logged in as: ${currentUser.email}`}
+            {currentUser && collapsed && (
+              <Flex
+                justify="center"
+                p={2}
+                title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
               >
-                {currentUser.email.substring(0, 1).toUpperCase()}
-              </Text>
+                <Box
+                  w={8}
+                  h={8}
+                  borderRadius="full"
+                  bg="ui.primary"
+                  color="white"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontSize="xs"
+                  fontWeight="bold"
+                >
+                  {(currentUser.full_name || currentUser.email)[0].toUpperCase()}
+                </Box>
+              </Flex>
             )}
           </Box>
         </Flex>

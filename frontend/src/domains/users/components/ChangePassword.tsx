@@ -2,16 +2,17 @@ import type { ApiError } from "@/client"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Box, Button, Container, Heading, VStack } from "@chakra-ui/react"
 import type { UpdatePassword } from "@domains/users"
-import { UsersService } from "@domains/users"
+import {
+  UsersService,
+  updatePasswordSchema,
+  type UpdatePasswordFormData,
+} from "@domains/users"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
-import { confirmPasswordRules, handleError, passwordRules } from "@shared/utils"
+import { handleError } from "@shared/utils"
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FiLock } from "react-icons/fi"
-
-interface UpdatePasswordForm extends UpdatePassword {
-  confirm_password: string
-}
 
 export const ChangePassword = () => {
   const { showSuccessToast } = useCustomToast()
@@ -19,9 +20,9 @@ export const ChangePassword = () => {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<UpdatePasswordForm>({
+  } = useForm<UpdatePasswordFormData>({
+    resolver: zodResolver(updatePasswordSchema),
     mode: "onBlur",
     criteriaMode: "all",
   })
@@ -38,7 +39,7 @@ export const ChangePassword = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UpdatePasswordForm> = async (data) => {
+  const onSubmit: SubmitHandler<UpdatePasswordFormData> = async (data) => {
     mutation.mutate(data)
   }
 
@@ -56,21 +57,21 @@ export const ChangePassword = () => {
           <PasswordInput
             type="current_password"
             startElement={<FiLock />}
-            {...register("current_password", passwordRules())}
+            {...register("current_password")}
             placeholder="Current Password"
             errors={errors}
           />
           <PasswordInput
             type="new_password"
             startElement={<FiLock />}
-            {...register("new_password", passwordRules())}
+            {...register("new_password")}
             placeholder="New Password"
             errors={errors}
           />
           <PasswordInput
             type="confirm_password"
             startElement={<FiLock />}
-            {...register("confirm_password", confirmPasswordRules(getValues))}
+            {...register("confirm_password")}
             placeholder="Confirm Password"
             errors={errors}
           />

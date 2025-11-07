@@ -1,8 +1,156 @@
-# Scripts de Deployment Azure
+# Scripts Documentation
 
-Scripts automatizados para deployment en Azure de **flow.cunda.io**
+Esta carpeta contiene scripts útiles para gestión y deployment de Rocket GenAI.
 
-## 📁 Estructura de Scripts
+## 📋 Tabla de Contenidos
+
+- [Generación de Archivos .env](#-generación-de-archivos-env)
+- [Deployment Azure](#-scripts-de-deployment-azure)
+
+---
+
+## 🔐 Generación de Archivos .env
+
+Dos scripts para generar archivos `.env` con valores seguros automáticamente:
+
+### Script Python (Recomendado) - `generate-env.py`
+
+**Características:**
+- ✅ Validación interactiva de emails y dominios
+- ✅ Generación segura de secrets (32 caracteres)
+- ✅ Templates para local, staging y production
+- ✅ Permisos automáticos (600)
+- ✅ Crea archivos .example para documentación
+
+**Uso básico:**
+
+```bash
+# Desarrollo local
+python scripts/generate-env.py --env local
+
+# Producción (interactivo)
+python scripts/generate-env.py --env production --domain example.com
+
+# Staging/QA
+python scripts/generate-env.py --env staging --domain qa.example.com
+
+# Sobrescribir archivo existente
+python scripts/generate-env.py --env production --domain example.com --force
+```
+
+**Salida de ejemplo:**
+```
+🚀 Generating .env file for production environment...
+
+Admin email: admin@example.com
+OpenAI API key: sk-...
+
+✅ Created .env.production (permissions: 600)
+
+================================================================
+🔐 GENERATED SECRETS FOR PRODUCTION ENVIRONMENT
+================================================================
+
+🔑 SECRET_KEY: AbCdEf123456...
+👤 Admin User: admin@example.com
+🔒 Admin Password: xYz789AbC...
+🗄️  Postgres User: postgres
+🔒 Postgres Password: pQr456XyZ...
+
+================================================================
+⚠️  IMPORTANT: Save these credentials securely!
+================================================================
+```
+
+### Script Bash (Rápido) - `generate-env.sh`
+
+**Características:**
+- ✅ Interfaz simple de línea de comandos
+- ✅ Generación segura usando OpenSSL
+- ✅ Sin dependencias de Python
+
+**Uso:**
+
+```bash
+# Desarrollo local
+./scripts/generate-env.sh local
+
+# Producción
+./scripts/generate-env.sh production example.com
+
+# Staging
+./scripts/generate-env.sh staging qa.example.com
+```
+
+**Requiere:** `openssl` (pre-instalado en Linux/macOS)
+
+### Valores Generados Automáticamente
+
+| Variable | Método | Longitud | Ejemplo |
+|----------|--------|----------|---------|
+| `SECRET_KEY` | `secrets.token_urlsafe()` | 32 chars | `xK9pL2mN5qR8sT1vW4yZ...` |
+| `FIRST_SUPERUSER_PASSWORD` | `secrets.choice()` | 24 chars | `AbC123XyZ789PqR456...` |
+| `POSTGRES_PASSWORD` | `secrets.choice()` | 24 chars | `MnO789StU012VwX345...` |
+
+### Seguridad
+
+⚠️ **NUNCA commitear archivos .env a git**
+
+El `.gitignore` está configurado para bloquear:
+```gitignore
+.env
+.env.*
+!.env.example
+!.env.*.example
+```
+
+✅ **Permisos automáticos:**
+```bash
+-rw------- 1 user user 1234 Nov 5 12:00 .env.production  # 600
+```
+
+✅ **Rotar secrets regularmente:**
+- Después de incidentes de seguridad
+- Cuando miembros del equipo se van
+- Cada 90 días en producción
+
+### Deployment con .env Generado
+
+1. **Generar archivo:**
+   ```bash
+   python scripts/generate-env.py --env production --domain example.com
+   ```
+
+2. **Guardar credenciales:**
+   - Password manager (1Password, Bitwarden)
+   - Compartir de forma segura (nunca por email/Slack)
+
+3. **Copiar a servidor:**
+   ```bash
+   scp .env.production user@server:/path/to/app/.env
+   ```
+
+4. **Aplicar en servidor:**
+   ```bash
+   ssh user@server "cd /path/to/app && docker compose restart"
+   ```
+
+### Variables de Entorno - Referencia Rápida
+
+| Variable | Requerido | Default | Descripción |
+|----------|-----------|---------|-------------|
+| `SECRET_KEY` | ✅ | auto | Firma JWT (32 chars) |
+| `FIRST_SUPERUSER` | ✅ | - | Email del admin |
+| `FIRST_SUPERUSER_PASSWORD` | ✅ | auto | Password admin |
+| `POSTGRES_PASSWORD` | ✅ | auto | Password DB |
+| `OPENAI_API_KEY` | ✅ | - | API key de OpenAI |
+| `OPENAI_MODEL` | ❌ | `gpt-4o-mini` | Modelo a usar |
+| `DOMAIN` | ✅* | `localhost` | Dominio (*prod/staging) |
+| `SENTRY_DSN` | ❌ | - | Error tracking |
+
+---
+
+## 📁 Scripts de Deployment Azure
 
 ### QA/Staging Environment
 

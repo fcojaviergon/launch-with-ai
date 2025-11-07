@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.v1.dependencies import SessionDep, CurrentUser
+from app.common.schemas.message import Message
 # from app.modules.analysis.models import Analysis  # TODO: Restore when analysis module is added
 from app.modules.chat.repository import (
     chat_conversation_repository,
@@ -13,13 +14,12 @@ from app.modules.chat.repository import (
 )
 from app.modules.chat.schemas import (
     ChatConversationCreate,
-    ChatConversationList,
+    ChatConversationsPublic,
     ChatMessageCreate,
     DocumentReferenceCreate,
-    DocumentReferenceResponse,
-    ChatMessageResponse,
-    ChatConversationResponse,
-    ChatConversationList
+    DocumentReferencePublic,
+    ChatMessagePublic,
+    ChatConversationPublic,
 )
 from app.modules.chat.chat_service import chat_service
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.post("/conversations", response_model=ChatConversationResponse)
+@router.post("/conversations", response_model=ChatConversationPublic, status_code=201)
 def create_conversation(
     *,
     session: SessionDep,
@@ -40,16 +40,19 @@ def create_conversation(
     # analysis = session.get(Analysis, conversation.analysis_id)
     # if not analysis:
     #     raise HTTPException(status_code=404, detail="Analysis not found")
+    # if analysis.user_id != current_user.id and not current_user.is_superuser:
+    #     raise HTTPException(status_code=403, detail="Not authorized to access this analysis")
 
     return chat_service.create_conversation(
         session,
+        user_id=current_user.id,
         analysis_id=conversation.analysis_id,
         title=conversation.title,
         use_documents=conversation.use_documents
     )
 
 
-@router.get("/conversations/{analysis_id}", response_model=List[ChatConversationResponse])
+@router.get("/conversations/{analysis_id}", response_model=List[ChatConversationPublic])
 def get_conversations(
     *,
     session: SessionDep,
@@ -65,7 +68,7 @@ def get_conversations(
     return chat_service.get_conversations(session, analysis_id)
 
 
-@router.get("/conversations/{conversation_id}/detail", response_model=ChatConversationResponse)
+@router.get("/conversations/{conversation_id}/detail", response_model=ChatConversationPublic)
 def get_conversation(
     *,
     session: SessionDep,
@@ -76,10 +79,15 @@ def get_conversation(
     conversation = chat_service.get_conversation(session, conversation_id, include_messages=True)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to access this conversation")
+
     return conversation
 
 
-@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessageResponse)
+@router.post("/conversations/{conversation_id}/messages", response_model=ChatMessagePublic, status_code=201)
 async def create_message(
     *,
     session: SessionDep,
@@ -92,6 +100,10 @@ async def create_message(
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
 
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to access this conversation")
+
     return await chat_service.process_message(
         session,
         conversation_id=conversation_id,
@@ -99,7 +111,7 @@ async def create_message(
     )
 
 
-@router.delete("/conversations/{conversation_id}")
+@router.delete("/conversations/{conversation_id}", response_model=Message)
 def delete_conversation(
     *,
     session: SessionDep,
@@ -107,8 +119,15 @@ def delete_conversation(
     conversation_id: UUID
 ) -> Any:
     """Delete a conversation and all its messages."""
-   
-    deleted = chat_service.delete_conversation(conversation_id)
+    conversation = chat_service.get_conversation(session, conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Authorization check: verify conversation ownership
+    if conversation.user_id != current_user.id and not current_user.is_superuser:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this conversation")
+
+    deleted = chat_service.delete_conversation(session, conversation_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Conversation not found")
-    return {"success": True}
+    return Message(message="Conversation deleted successfully")

@@ -8,6 +8,7 @@ from sqlmodel import Column, Field, Relationship, SQLModel, JSON
 class ChatConversation(SQLModel, table=True):
     """Model for a chat conversation."""
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     # TODO: Restore foreign key when analysis module is added
     analysis_id: uuid.UUID  # Field(foreign_key="analysis.id", ondelete="CASCADE")
     title: str
