@@ -91,9 +91,7 @@ const Sidebar = () => {
                   }}
                   transition="all 0.2s"
                 >
-                  <Icon color="red.500">
-                    <FiLogOut />
-                  </Icon>
+                  <Icon as={FiLogOut} color="red.500" fontSize="lg" />
                   <Text fontSize="sm" fontWeight="medium" color="red.500">
                     Log Out
                   </Text>
@@ -123,41 +121,46 @@ const Sidebar = () => {
       {/* Desktop */}
       <Box
         display={{ base: "none", md: "flex" }}
-        position="sticky"
         bg="white"
-        top={0}
         width={collapsed ? "70px" : "280px"}
-        h="100vh"
+        h="100%"
         borderRight="1px"
         borderColor="gray.200"
         boxShadow="sm"
         transition="all 0.3s ease"
+        flexShrink={0}
       >
-        <Flex flexDir="column" justify="space-between" h="100%" w="100%">
-          <Box flex={1} overflowY="auto">
-            <Flex justify={collapsed ? "center" : "flex-end"} p={2}>
-              <IconButton
-                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-                size="sm"
-                variant="ghost"
-                onClick={toggleSidebar}
-              >
-                {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
-              </IconButton>
-            </Flex>
+        <Flex flexDir="column" h="100%" w="100%">
+          {/* Collapse/Expand Button */}
+          <Flex justify={collapsed ? "center" : "flex-end"} p={2} flexShrink={0}>
+            <IconButton
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              size="sm"
+              variant="ghost"
+              onClick={toggleSidebar}
+            >
+              {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
+            </IconButton>
+          </Flex>
+
+          {/* Menu Items - Scrollable */}
+          <Box flex={1} overflowY="auto" overflowX="hidden">
             <SidebarItems onClose={() => {}} collapsed={collapsed} />
           </Box>
-          <Box>
+
+          {/* Footer Section - Fixed at Bottom */}
+          <Box flexShrink={0} borderTop="1px" borderColor="gray.200" py={2}>
+            {/* Logout Button */}
             <Flex
               as="button"
               onClick={handleLogout}
               alignItems="center"
               justifyContent={collapsed ? "center" : "flex-start"}
-              gap={collapsed ? 0 : 2}
+              gap={collapsed ? 0 : 3}
               px={collapsed ? 2 : 3}
-              py={2}
+              py={2.5}
               mx={collapsed ? 2 : 3}
-              mb={2}
+              my={2}
               borderRadius="md"
               width={collapsed ? "auto" : "calc(100% - 24px)"}
               _hover={{
@@ -166,23 +169,17 @@ const Sidebar = () => {
               transition="all 0.2s"
               title={collapsed ? "Log Out" : ""}
             >
-              <Icon color="red.500">
-                <FiLogOut />
-              </Icon>
+              <Icon as={FiLogOut} color="red.500" fontSize="xl" />
               {!collapsed && (
-                <Text fontSize="sm" fontWeight="medium" color="red.500">
+                <Text fontSize="md" fontWeight="medium" color="red.500">
                   Log Out
                 </Text>
               )}
             </Flex>
+
+            {/* User Info */}
             {currentUser && !collapsed && (
-              <Box
-                p={2}
-                mx={3}
-                mb={3}
-                borderTop="1px"
-                borderColor="gray.200"
-              >
+              <Box px={4} py={2} mx={1} borderTop="1px" borderColor="gray.200">
                 <Text fontSize="xs" fontWeight="semibold" truncate>
                   {currentUser.full_name || "User"}
                 </Text>
@@ -194,7 +191,10 @@ const Sidebar = () => {
             {currentUser && collapsed && (
               <Flex
                 justify="center"
-                p={2}
+                py={2}
+                borderTop="1px"
+                borderColor="gray.200"
+                mx={2}
                 title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
               >
                 <Box
