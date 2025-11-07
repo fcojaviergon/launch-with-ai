@@ -42,26 +42,27 @@ class DocumentReferenceCreate(DocumentReferenceBase):
     message_id: uuid.UUID
 
 
-# Response schemas
-class DocumentReferenceResponse(DocumentReferenceBase):
+# Public schemas (for API responses)
+class DocumentReferencePublic(DocumentReferenceBase):
     id: uuid.UUID
     message_id: uuid.UUID
     created_at: datetime
 
 
-class ChatMessageResponse(ChatMessageBase):
+class ChatMessagePublic(ChatMessageBase):
     id: uuid.UUID
     conversation_id: uuid.UUID
     created_at: datetime
-    document_references: List[DocumentReferenceResponse] = Field(default=[])
+    document_references: List["DocumentReferencePublic"] = Field(default=[])
 
 
-class ChatConversationResponse(ChatConversationBase):
+class ChatConversationPublic(ChatConversationBase):
     id: uuid.UUID
+    user_id: uuid.UUID
     analysis_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    messages: List[ChatMessageResponse] = Field(default=[])
+    messages: List[ChatMessagePublic] = Field(default=[])
 
 
 # Update schemas
@@ -75,23 +76,7 @@ class ChatMessageUpdate(SQLModel):
     use_documents: Optional[bool] = None
 
 
-# Response schemas
-class DocumentReferenceResponse(DocumentReferenceBase):
-    id: uuid.UUID
-    message_id: uuid.UUID
-    created_at: datetime
-
-
-
-class ChatConversationResponse(ChatConversationBase):
-    id: uuid.UUID
-    analysis_id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
-    messages: List[ChatMessageResponse] = Field(default=[])
-
-
 # List schemas
-class ChatConversationList(SQLModel):
-    items: List[ChatConversationResponse]
-    total: int
+class ChatConversationsPublic(SQLModel):
+    data: List[ChatConversationPublic]
+    count: int

@@ -2,8 +2,9 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union
 
+from fastapi import HTTPException
 from app.core.config import settings
-from openai import AsyncOpenAI, OpenAI
+from openai import AsyncOpenAI, OpenAI, APIError, RateLimitError, APITimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +40,18 @@ class OpenAIService:
                 .embedding
             )
             return embedding
+        except RateLimitError as e:
+            logger.warning(f"OpenAI rate limit exceeded: {str(e)}")
+            raise HTTPException(status_code=429, detail="AI service rate limit exceeded. Please try again later.")
+        except APITimeoutError as e:
+            logger.error(f"OpenAI API timeout: {str(e)}")
+            raise HTTPException(status_code=504, detail="AI service timeout. Please try again.")
+        except APIError as e:
+            logger.error(f"OpenAI API error: {str(e)}")
+            raise HTTPException(status_code=503, detail="AI service unavailable")
         except Exception as e:
-            logger.error(f"Error generating embedding: {str(e)}")
-            raise
+            logger.exception("Unexpected error generating embedding")
+            raise HTTPException(status_code=500, detail="Internal server error")
 
     def create_completion(
         self,
@@ -87,9 +97,18 @@ class OpenAIService:
                 
             response = self.client.chat.completions.create(**params)
             return response.choices[0].message.content or ""
+        except RateLimitError as e:
+            logger.warning(f"OpenAI rate limit exceeded: {str(e)}")
+            raise HTTPException(status_code=429, detail="AI service rate limit exceeded. Please try again later.")
+        except APITimeoutError as e:
+            logger.error(f"OpenAI API timeout: {str(e)}")
+            raise HTTPException(status_code=504, detail="AI service timeout. Please try again.")
+        except APIError as e:
+            logger.error(f"OpenAI API error: {str(e)}")
+            raise HTTPException(status_code=503, detail="AI service unavailable")
         except Exception as e:
-            logger.error(f"Error creating completion: {str(e)}")
-            raise
+            logger.exception("Unexpected error creating completion")
+            raise HTTPException(status_code=500, detail="Internal server error")
 
     def create_json_completion(
         self,
@@ -240,9 +259,18 @@ class OpenAIService:
                 
             response = await self.async_client.chat.completions.create(**params)
             return response.choices[0].message.content or ""
+        except RateLimitError as e:
+            logger.warning(f"OpenAI rate limit exceeded: {str(e)}")
+            raise HTTPException(status_code=429, detail="AI service rate limit exceeded. Please try again later.")
+        except APITimeoutError as e:
+            logger.error(f"OpenAI API timeout: {str(e)}")
+            raise HTTPException(status_code=504, detail="AI service timeout. Please try again.")
+        except APIError as e:
+            logger.error(f"OpenAI API error: {str(e)}")
+            raise HTTPException(status_code=503, detail="AI service unavailable")
         except Exception as e:
-            logger.error(f"Error creating chat completion: {str(e)}")
-            raise
+            logger.exception("Unexpected error creating chat completion")
+            raise HTTPException(status_code=500, detail="Internal server error")
 
 
 # Create a singleton instance

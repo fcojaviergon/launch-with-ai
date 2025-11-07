@@ -15,5 +15,8 @@ export * from "./components"
 // API & Hooks
 export * from "./api"
 
+// Schemas (Zod validation)
+export * from "./schemas"
+
 // Types
 export type * from "./types/admin.types"

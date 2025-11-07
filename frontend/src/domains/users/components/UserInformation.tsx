@@ -10,13 +10,18 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useAuth } from "@domains/auth"
-import type { UserPublic, UserUpdateMe } from "@domains/users"
-import { UsersService } from "@domains/users"
+import type { UserUpdateMe } from "@domains/users"
+import {
+  UsersService,
+  userUpdateMeSchema,
+  type UserUpdateMeFormData,
+} from "@domains/users"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
-import { emailPattern, handleError } from "@shared/utils"
+import { handleError } from "@shared/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 export const UserInformation = () => {
   const queryClient = useQueryClient()
@@ -30,12 +35,13 @@ export const UserInformation = () => {
     reset,
     getValues,
     formState: { isSubmitting, errors, isDirty },
-  } = useForm<UserPublic>({
+  } = useForm<UserUpdateMeFormData>({
+    resolver: zodResolver(userUpdateMeSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      full_name: currentUser?.full_name,
-      email: currentUser?.email,
+      full_name: currentUser?.full_name ?? undefined,
+      email: currentUser?.email ?? "",
     },
   })
 
@@ -57,7 +63,7 @@ export const UserInformation = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UserUpdateMe> = async (data) => {
+  const onSubmit = async (data: UserUpdateMeFormData) => {
     mutation.mutate(data)
   }
 
@@ -79,7 +85,7 @@ export const UserInformation = () => {
         <Field label="Full name">
           {editMode ? (
             <Input
-              {...register("full_name", { maxLength: 30 })}
+              {...register("full_name")}
               type="text"
               size="md"
               w="auto"
@@ -104,10 +110,7 @@ export const UserInformation = () => {
         >
           {editMode ? (
             <Input
-              {...register("email", {
-                required: "Email is required",
-                pattern: emailPattern,
-              })}
+              {...register("email")}
               type="email"
               size="md"
               w="auto"

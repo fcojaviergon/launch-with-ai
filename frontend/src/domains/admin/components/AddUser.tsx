@@ -18,17 +18,16 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import type { UserCreate } from "@domains/users"
+import {
+  adminUserCreateSchema,
+  type AdminUserCreateFormData,
+} from "@domains/admin"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
-import { emailPattern } from "@shared/utils"
 import { useState } from "react"
-import { Controller, type SubmitHandler, useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { FaPlus } from "react-icons/fa"
 import { useAdminCreateUser } from "../api/admin.api"
-
-interface UserCreateForm extends UserCreate {
-  confirm_password: string
-}
 
 export const AddUser = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -40,9 +39,9 @@ export const AddUser = () => {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<UserCreateForm>({
+  } = useForm<AdminUserCreateFormData>({
+    resolver: zodResolver(adminUserCreateSchema),
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -55,7 +54,7 @@ export const AddUser = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UserCreateForm> = (data) => {
+  const onSubmit = (data: AdminUserCreateFormData) => {
     createUser.mutate(data, {
       onSuccess: () => {
         showSuccessToast("User created successfully.")
@@ -96,10 +95,7 @@ export const AddUser = () => {
               >
                 <Input
                   id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: emailPattern,
-                  })}
+                  {...register("email")}
                   placeholder="Email"
                   type="email"
                 />
@@ -126,13 +122,7 @@ export const AddUser = () => {
               >
                 <Input
                   id="password"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
-                    },
-                  })}
+                  {...register("password")}
                   placeholder="Password"
                   type="password"
                 />
@@ -146,12 +136,7 @@ export const AddUser = () => {
               >
                 <Input
                   id="confirm_password"
-                  {...register("confirm_password", {
-                    required: "Please confirm your password",
-                    validate: (value) =>
-                      value === getValues().password ||
-                      "The passwords do not match",
-                  })}
+                  {...register("confirm_password")}
                   placeholder="Password"
                   type="password"
                 />

@@ -1,8 +1,8 @@
 # Environment files (keep .env.azure.example)
 .env
-.env.local
-.env.azure
-.env.production
+.env.*
+!.env.example
+!.env.azure.example
 
 # IDE files
 .vscode/
