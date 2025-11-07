@@ -1,4 +1,3 @@
-import { Avatar } from "@/components/ui/avatar"
 import { Box, Flex, Icon, IconButton, Text } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
@@ -72,20 +71,19 @@ const Sidebar = () => {
         </DrawerTrigger>
         <DrawerContent maxW="280px">
           <DrawerCloseTrigger />
-          <DrawerBody>
+          <DrawerBody p={0}>
             <Flex flexDir="column" justify="space-between" h="100%">
-              <Box>
+              <Box px={4} pt={4} flex={1} overflowY="auto">
                 <SidebarItems />
               </Box>
-              <Box>
+              <Box px={4} pb={4}>
                 <Flex
                   as="button"
                   onClick={handleLogout}
                   alignItems="center"
-                  gap={3}
-                  px={4}
-                  py={3}
-                  my={2}
+                  gap={2}
+                  px={3}
+                  py={2}
                   borderRadius="md"
                   width="100%"
                   _hover={{
@@ -93,35 +91,27 @@ const Sidebar = () => {
                   }}
                   transition="all 0.2s"
                 >
-                  <Icon color="red.500" fontSize="lg">
+                  <Icon color="red.500">
                     <FiLogOut />
                   </Icon>
-                  <Text fontWeight="medium" color="red.500">
+                  <Text fontSize="sm" fontWeight="medium" color="red.500">
                     Log Out
                   </Text>
                 </Flex>
                 {currentUser && (
-                  <Flex
-                    p={3}
-                    borderTop="1px solid"
+                  <Box
+                    p={2}
+                    borderTop="1px"
                     borderColor="gray.200"
                     mt={2}
-                    gap={3}
-                    alignItems="center"
                   >
-                    <Avatar
-                      name={currentUser.full_name || currentUser.email}
-                      size="sm"
-                    />
-                    <Box flex={1} minW={0}>
-                      <Text fontSize="sm" fontWeight="semibold" truncate>
-                        {currentUser.full_name || "User"}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500" truncate>
-                        {currentUser.email}
-                      </Text>
-                    </Box>
-                  </Flex>
+                    <Text fontSize="xs" fontWeight="semibold" truncate>
+                      {currentUser.full_name || "User"}
+                    </Text>
+                    <Text fontSize="xs" color="gray.500" truncate>
+                      {currentUser.email}
+                    </Text>
+                  </Box>
                 )}
               </Box>
             </Flex>
@@ -138,15 +128,14 @@ const Sidebar = () => {
         top={0}
         width={collapsed ? "70px" : "280px"}
         h="100vh"
-        p={collapsed ? 2 : 4}
-        borderRight="1px solid"
+        borderRight="1px"
         borderColor="gray.200"
         boxShadow="sm"
         transition="all 0.3s ease"
       >
         <Flex flexDir="column" justify="space-between" h="100%" w="100%">
-          <Box>
-            <Flex justify={collapsed ? "center" : "flex-end"} mb={2}>
+          <Box flex={1} overflowY="auto">
+            <Flex justify={collapsed ? "center" : "flex-end"} p={2}>
               <IconButton
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 size="sm"
@@ -164,61 +153,64 @@ const Sidebar = () => {
               onClick={handleLogout}
               alignItems="center"
               justifyContent={collapsed ? "center" : "flex-start"}
-              gap={collapsed ? 0 : 3}
-              px={collapsed ? 2 : 4}
-              py={3}
-              my={2}
+              gap={collapsed ? 0 : 2}
+              px={collapsed ? 2 : 3}
+              py={2}
+              mx={collapsed ? 2 : 3}
+              mb={2}
               borderRadius="md"
-              width="100%"
+              width={collapsed ? "auto" : "calc(100% - 24px)"}
               _hover={{
                 bg: "red.50",
               }}
               transition="all 0.2s"
               title={collapsed ? "Log Out" : ""}
             >
-              <Icon color="red.500" fontSize="lg">
+              <Icon color="red.500">
                 <FiLogOut />
               </Icon>
               {!collapsed && (
-                <Text fontWeight="medium" color="red.500">
+                <Text fontSize="sm" fontWeight="medium" color="red.500">
                   Log Out
                 </Text>
               )}
             </Flex>
             {currentUser && !collapsed && (
-              <Flex
-                p={3}
-                borderTop="1px solid"
+              <Box
+                p={2}
+                mx={3}
+                mb={3}
+                borderTop="1px"
                 borderColor="gray.200"
-                mt={2}
-                gap={3}
-                alignItems="center"
               >
-                <Avatar
-                  name={currentUser.full_name || currentUser.email}
-                  size="sm"
-                />
-                <Box flex={1} minW={0}>
-                  <Text fontSize="sm" fontWeight="semibold" truncate>
-                    {currentUser.full_name || "User"}
-                  </Text>
-                  <Text fontSize="xs" color="gray.500" truncate>
-                    {currentUser.email}
-                  </Text>
-                </Box>
-              </Flex>
+                <Text fontSize="xs" fontWeight="semibold" truncate>
+                  {currentUser.full_name || "User"}
+                </Text>
+                <Text fontSize="xs" color="gray.500" truncate>
+                  {currentUser.email}
+                </Text>
+              </Box>
             )}
             {currentUser && collapsed && (
               <Flex
                 justify="center"
                 p={2}
-                mt={1}
                 title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
               >
-                <Avatar
-                  name={currentUser.full_name || currentUser.email}
-                  size="sm"
-                />
+                <Box
+                  w={8}
+                  h={8}
+                  borderRadius="full"
+                  bg="ui.primary"
+                  color="white"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontSize="xs"
+                  fontWeight="bold"
+                >
+                  {(currentUser.full_name || currentUser.email)[0].toUpperCase()}
+                </Box>
               </Flex>
             )}
           </Box>
