@@ -21,7 +21,7 @@ import { useCustomToast } from "@shared/hooks"
 import { handleError } from "@shared/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 export const UserInformation = () => {
   const queryClient = useQueryClient()
@@ -40,8 +40,8 @@ export const UserInformation = () => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      full_name: currentUser?.full_name,
-      email: currentUser?.email,
+      full_name: currentUser?.full_name ?? undefined,
+      email: currentUser?.email ?? "",
     },
   })
 
@@ -63,7 +63,7 @@ export const UserInformation = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<UserUpdateMeFormData> = async (data) => {
+  const onSubmit = async (data: UserUpdateMeFormData) => {
     mutation.mutate(data)
   }
 

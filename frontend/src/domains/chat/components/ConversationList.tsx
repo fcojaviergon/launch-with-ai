@@ -41,12 +41,12 @@ export const ConversationList = ({
   return (
     <VStack align="stretch" gap={2} height="100%">
       <Button
-        leftIcon={<FaPlus />}
         onClick={onCreateConversation}
         colorScheme="blue"
         size="sm"
         width="100%"
       >
+        <FaPlus />
         New Conversation
       </Button>
 

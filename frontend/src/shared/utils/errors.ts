@@ -48,7 +48,7 @@ export function isStringDetail(detail: unknown): detail is string {
  * Extract error message from ApiError with proper type checking
  */
 export function getErrorMessage(err: ApiError): string {
-  const errDetail = err.body?.detail
+  const errDetail = (err.body as Record<string, unknown> | undefined)?.detail
 
   if (isValidationErrorArray(errDetail)) {
     // FastAPI validation errors

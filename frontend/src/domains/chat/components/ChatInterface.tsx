@@ -22,7 +22,6 @@ export const ChatInterface = ({
 }: ChatInterfaceProps) => {
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null)
-  const [isCreatingConversation, setIsCreatingConversation] = useState(false)
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { data: conversations } = useConversations(analysisId)
@@ -30,7 +29,6 @@ export const ChatInterface = ({
   const sendMessage = useSendMessage()
 
   const handleCreateConversation = () => {
-    setIsCreatingConversation(true)
     const title = `Conversation ${(conversations?.length || 0) + 1}`
 
     createConversation.mutate(
@@ -42,11 +40,9 @@ export const ChatInterface = ({
       {
         onSuccess: (newConversation) => {
           setSelectedConversation(newConversation)
-          setIsCreatingConversation(false)
           showSuccessToast("Conversation created successfully")
         },
         onError: (error) => {
-          setIsCreatingConversation(false)
           showErrorToast("Failed to create conversation: " + error.message)
         },
       },
@@ -77,8 +73,9 @@ export const ChatInterface = ({
   }
 
   // Get messages for selected conversation
-  const selectedMessages =
-    (selectedConversation?.messages as MessageChat[]) || []
+  const selectedMessages = selectedConversation?.messages
+    ? (selectedConversation.messages as unknown as MessageChat[])
+    : []
 
   return (
     <Box height="100vh" display="flex" flexDirection="column">
