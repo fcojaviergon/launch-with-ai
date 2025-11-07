@@ -4,6 +4,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { ConversationCreate, MessageCreate } from "../types/chat.types"
 
 /**
+ * Hook to fetch all conversations for the current user
+ */
+export const useUserConversations = () => {
+  return useQuery<Conversation[]>({
+    queryKey: ["chat", "user-conversations"],
+    queryFn: async () => {
+      return ChatService.getUserConversations()
+    },
+  })
+}
+
+/**
  * Hook to fetch conversations for an analysis
  */
 export const useConversations = (analysisId: string | undefined) => {
@@ -26,9 +38,15 @@ export const useCreateConversation = () => {
   return useMutation<Conversation, Error, ConversationCreate>({
     mutationFn: (data) => ChatService.createConversation({ requestBody: data }),
     onSuccess: (_, variables) => {
+      // Invalidate both user conversations and specific analysis conversations
       queryClient.invalidateQueries({
-        queryKey: ["chat", "conversations", variables.analysis_id],
+        queryKey: ["chat", "user-conversations"],
       })
+      if (variables.analysis_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["chat", "conversations", variables.analysis_id],
+        })
+      }
     },
   })
 }

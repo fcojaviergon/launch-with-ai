@@ -1,22 +1,24 @@
 import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
-import { useConversations } from "../api/chat.api"
 import type { Conversation } from "../types/chat.types"
 import { FaPlus, FaComments } from "react-icons/fa"
 
 interface ConversationListProps {
-  analysisId: string
+  conversations?: Conversation[]
+  isLoading?: boolean
+  error?: Error | null
   selectedConversationId?: string
   onSelectConversation: (conversation: Conversation) => void
   onCreateConversation: () => void
 }
 
 export const ConversationList = ({
-  analysisId,
+  conversations,
+  isLoading,
+  error,
   selectedConversationId,
   onSelectConversation,
   onCreateConversation,
 }: ConversationListProps) => {
-  const { data: conversations, isLoading, error } = useConversations(analysisId)
 
   if (isLoading) {
     return (

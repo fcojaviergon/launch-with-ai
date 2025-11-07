@@ -10,7 +10,7 @@ class ChatConversation(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
     # TODO: Restore foreign key when analysis module is added
-    analysis_id: uuid.UUID  # Field(foreign_key="analysis.id", ondelete="CASCADE")
+    analysis_id: Optional[uuid.UUID] = Field(default=None, nullable=True)  # Field(foreign_key="analysis.id", ondelete="CASCADE")
     title: str
     use_documents: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)

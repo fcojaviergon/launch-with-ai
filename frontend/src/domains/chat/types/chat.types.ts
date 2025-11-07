@@ -5,7 +5,7 @@ export type { Conversation, MessageChat }
 
 // Type aliases for non-existent types (will be implemented in backend)
 export type ConversationCreate = {
-  analysis_id: string
+  analysis_id?: string
   title: string
   use_documents: boolean
 }
@@ -38,7 +38,7 @@ export interface SendMessageParams {
 }
 
 export interface CreateConversationParams {
-  analysisId: string
+  analysisId?: string
   title: string
   useDocuments?: boolean
 }

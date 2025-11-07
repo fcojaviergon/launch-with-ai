@@ -37,19 +37,30 @@ def create_conversation(
 ) -> Any:
     """Create a new chat conversation."""
     # TODO: Restore analysis verification when analysis module is added
-    # analysis = session.get(Analysis, conversation.analysis_id)
-    # if not analysis:
-    #     raise HTTPException(status_code=404, detail="Analysis not found")
-    # if analysis.user_id != current_user.id and not current_user.is_superuser:
-    #     raise HTTPException(status_code=403, detail="Not authorized to access this analysis")
+    # if conversation.analysis_id:
+    #     analysis = session.get(Analysis, conversation.analysis_id)
+    #     if not analysis:
+    #         raise HTTPException(status_code=404, detail="Analysis not found")
+    #     if analysis.user_id != current_user.id and not current_user.is_superuser:
+    #         raise HTTPException(status_code=403, detail="Not authorized to access this analysis")
 
     return chat_service.create_conversation(
         session,
         user_id=current_user.id,
-        analysis_id=conversation.analysis_id,
         title=conversation.title,
-        use_documents=conversation.use_documents
+        use_documents=conversation.use_documents,
+        analysis_id=conversation.analysis_id
     )
+
+
+@router.get("/conversations", response_model=List[ChatConversationPublic])
+def get_user_conversations(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser
+) -> Any:
+    """Get all conversations for the current user."""
+    return chat_service.get_user_conversations(session, current_user.id)
 
 
 @router.get("/conversations/{analysis_id}", response_model=List[ChatConversationPublic])

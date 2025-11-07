@@ -41,6 +41,14 @@ class ChatConversationRepository(BaseCRUD[ChatConversation, ChatConversationCrea
             .order_by(ChatConversation.created_at)
         ).all()
 
+    def get_by_user_id(self, session: Session, user_id: uuid.UUID) -> List[ChatConversation]:
+        """Get all chat conversations for a user."""
+        return session.exec(
+            select(ChatConversation)
+            .where(ChatConversation.user_id == user_id)
+            .order_by(ChatConversation.created_at.desc())
+        ).all()
+
     def update(
         self, session: Session, *, db_obj: ChatConversation, obj_in: Union[ChatConversationUpdate, dict]
     ) -> ChatConversation:

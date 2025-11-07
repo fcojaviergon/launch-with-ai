@@ -5,6 +5,7 @@ import { MessageList } from "./MessageList"
 import { MessageInput } from "./MessageInput"
 import {
   useConversations,
+  useUserConversations,
   useCreateConversation,
   useSendMessage,
 } from "../api/chat.api"
@@ -12,7 +13,7 @@ import type { Conversation, MessageChat } from "../types/chat.types"
 import { useCustomToast } from "@shared/hooks"
 
 interface ChatInterfaceProps {
-  analysisId: string
+  analysisId?: string
   analysisTitle?: string
 }
 
@@ -24,7 +25,15 @@ export const ChatInterface = ({
     useState<Conversation | null>(null)
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  const { data: conversations } = useConversations(analysisId)
+
+  // Use either user conversations or analysis-specific conversations
+  const { data: userConversations, isLoading: isLoadingUser, error: errorUser } = useUserConversations()
+  const { data: analysisConversations, isLoading: isLoadingAnalysis, error: errorAnalysis } = useConversations(analysisId)
+
+  const conversations = analysisId ? analysisConversations : userConversations
+  const isLoading = analysisId ? isLoadingAnalysis : isLoadingUser
+  const error = analysisId ? errorAnalysis : errorUser
+
   const createConversation = useCreateConversation()
   const sendMessage = useSendMessage()
 
@@ -35,7 +44,7 @@ export const ChatInterface = ({
       {
         analysis_id: analysisId,
         title,
-        use_documents: true,
+        use_documents: false, // Disable documents for general conversations
       },
       {
         onSuccess: (newConversation) => {
@@ -78,9 +87,9 @@ export const ChatInterface = ({
     : []
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100%" display="flex" flexDirection="column">
       {/* Header */}
-      <Box p={4} borderBottomWidth="1px" borderColor="gray.200">
+      <Box p={4} borderBottomWidth="1px" borderColor="gray.200" flexShrink={0}>
         <Heading size="md">Chat</Heading>
         {analysisTitle && (
           <Text fontSize="sm" color="gray.500">
@@ -98,7 +107,9 @@ export const ChatInterface = ({
           overflowY="auto"
         >
           <ConversationList
-            analysisId={analysisId}
+            conversations={conversations}
+            isLoading={isLoading}
+            error={error}
             selectedConversationId={selectedConversation?.id}
             onSelectConversation={setSelectedConversation}
             onCreateConversation={handleCreateConversation}
