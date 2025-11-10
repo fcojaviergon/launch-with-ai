@@ -12,15 +12,27 @@ class DocumentProcessor:
     """Service for processing documents and splitting them into chunks."""
 
     def __init__(self):
-        """Initialize the document processor with tiktoken encoding."""
-        try:
-            self.encoding = tiktoken.encoding_for_model("gpt-4o")
-            logger.info("Initialized DocumentProcessor with gpt-4o encoding")
-        except Exception as e:
-            logger.warning(
-                f"Error loading gpt-4o encoding: {e}, falling back to cl100k_base"
-            )
-            self.encoding = tiktoken.get_encoding("cl100k_base")
+        """Initialize the document processor."""
+        self._encoding = None
+
+    @property
+    def encoding(self):
+        """Lazy load the tiktoken encoding on first access."""
+        if self._encoding is None:
+            try:
+                self._encoding = tiktoken.encoding_for_model("gpt-4o")
+                logger.info("Initialized DocumentProcessor with gpt-4o encoding")
+            except Exception as e:
+                logger.warning(
+                    f"Error loading gpt-4o encoding: {e}, falling back to cl100k_base"
+                )
+                try:
+                    self._encoding = tiktoken.get_encoding("cl100k_base")
+                except Exception as e2:
+                    logger.error(f"Error loading cl100k_base encoding: {e2}")
+                    # Create a dummy encoding that falls back to character counting
+                    self._encoding = None
+        return self._encoding
 
     def count_tokens(self, text: str) -> int:
         """
@@ -35,7 +47,11 @@ class DocumentProcessor:
         if not text:
             return 0
         try:
-            return len(self.encoding.encode(text))
+            if self.encoding is not None:
+                return len(self.encoding.encode(text))
+            else:
+                # Fallback: rough estimate of 4 chars per token
+                return len(text) // 4
         except Exception as e:
             logger.error(f"Error counting tokens: {e}")
             # Fallback: rough estimate of 4 chars per token
