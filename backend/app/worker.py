@@ -3,19 +3,18 @@ from celery import Celery
 from app.core.config import settings
 
 # Initialize Celery with the broker URL
-celery = Celery(
+celery_app = Celery(
     "app.worker",
     broker=settings.celery_broker_url,
     backend=settings.celery_result_backend,
     include=[
-        # TODO: Add analysis tasks when analysis module is implemented
-        # "app.modules.analysis.tasks.extract_tasks",
-        # "app.modules.analysis.tasks.criteria_tasks",
-        # "app.modules.analysis.tasks.embedding_tasks",
-        # "app.modules.analysis.tasks.evaluation_tasks",
-        # "app.modules.analysis.tasks.workflow_tasks",
+        # Projects module tasks
+        "app.modules.projects.tasks.document_tasks",
     ],
 )
+
+# Keep 'celery' as alias for backwards compatibility
+celery = celery_app
 
 # Configure Celery
 celery.conf.update(
