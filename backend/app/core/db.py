@@ -8,6 +8,7 @@ from app.core.config import settings
 # Import all models to ensure proper SQLModel initialization
 from app.modules.users.models import User
 from app.modules.items.models import Item
+from app.modules.projects.models import Project, Document
 from app.modules.chat.models import ChatConversation
 
 from app.modules.users.schemas import UserCreate
