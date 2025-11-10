@@ -1,5 +1,6 @@
 import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
 import { useState } from "react"
+import { FaComments } from "react-icons/fa"
 import { ConversationList } from "./ConversationList"
 import { MessageList } from "./MessageList"
 import { MessageInput } from "./MessageInput"
@@ -87,24 +88,31 @@ export const ChatInterface = ({
     : []
 
   return (
-    <Box height="100%" display="flex" flexDirection="column">
+    <Box height="100%" display="flex" flexDirection="column" bg="gray.50">
       {/* Header */}
-      <Box p={4} borderBottomWidth="1px" borderColor="gray.200" flexShrink={0}>
+      <Box
+        p={4}
+        borderBottomWidth="1px"
+        borderColor="gray.200"
+        flexShrink={0}
+        bg="white"
+      >
         <Heading size="md">Chat</Heading>
         {analysisTitle && (
-          <Text fontSize="sm" color="gray.500">
+          <Text fontSize="sm" color="gray.500" mt={1}>
             {analysisTitle}
           </Text>
         )}
       </Box>
 
       {/* Main content */}
-      <Grid templateColumns="300px 1fr" flex={1} overflow="hidden">
+      <Grid templateColumns="350px 1fr" flex={1} overflow="hidden" gap={0}>
         {/* Sidebar - Conversation List */}
         <GridItem
           borderRightWidth="1px"
           borderColor="gray.200"
           overflowY="auto"
+          bg="white"
         >
           <ConversationList
             conversations={conversations}
@@ -117,11 +125,11 @@ export const ChatInterface = ({
         </GridItem>
 
         {/* Main chat area */}
-        <GridItem display="flex" flexDirection="column" overflow="hidden">
+        <GridItem display="flex" flexDirection="column" overflow="hidden" bg="white">
           {selectedConversation ? (
             <>
               {/* Messages */}
-              <Box flex={1} overflowY="auto">
+              <Box flex={1} overflowY="auto" p={4}>
                 <MessageList
                   messages={selectedMessages}
                   isLoading={sendMessage.isPending}
@@ -129,14 +137,22 @@ export const ChatInterface = ({
               </Box>
 
               {/* Input */}
-              <MessageInput
-                onSendMessage={handleSendMessage}
-                isLoading={sendMessage.isPending}
-              />
+              <Box
+                borderTopWidth="1px"
+                borderColor="gray.200"
+                p={4}
+                bg="gray.50"
+              >
+                <MessageInput
+                  onSendMessage={handleSendMessage}
+                  isLoading={sendMessage.isPending}
+                />
+              </Box>
             </>
           ) : (
             <VStack justify="center" height="100%" gap={4} p={8}>
-              <Text fontSize="lg" color="gray.500">
+              <FaComments size={64} color="#CBD5E0" />
+              <Text fontSize="lg" color="gray.500" textAlign="center">
                 Select a conversation or create a new one to start chatting
               </Text>
             </VStack>

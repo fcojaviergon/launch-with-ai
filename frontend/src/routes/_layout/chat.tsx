@@ -8,14 +8,7 @@ export const Route = createFileRoute("/_layout/chat")({
 
 function Chat() {
   return (
-    <Box
-      position="absolute"
-      top={0}
-      left={0}
-      right={0}
-      bottom={0}
-      margin="-20px"
-    >
+    <Box height="100%" width="100%">
       <ChatInterface />
     </Box>
   )
