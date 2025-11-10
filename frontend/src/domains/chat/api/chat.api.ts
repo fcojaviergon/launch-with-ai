@@ -16,16 +16,16 @@ export const useUserConversations = () => {
 }
 
 /**
- * Hook to fetch conversations for an analysis
+ * Hook to fetch conversations for a project
  */
-export const useConversations = (analysisId: string | undefined) => {
+export const useConversations = (projectId: string | undefined) => {
   return useQuery<Conversation[]>({
-    queryKey: ["chat", "conversations", analysisId],
+    queryKey: ["chat", "conversations", projectId],
     queryFn: async () => {
-      if (!analysisId) return []
-      return ChatService.getConversations({ analysisId })
+      if (!projectId) return []
+      return ChatService.getConversations({ projectId })
     },
-    enabled: !!analysisId,
+    enabled: !!projectId,
   })
 }
 
@@ -38,13 +38,39 @@ export const useCreateConversation = () => {
   return useMutation<Conversation, Error, ConversationCreate>({
     mutationFn: (data) => ChatService.createConversation({ requestBody: data }),
     onSuccess: (_, variables) => {
-      // Invalidate both user conversations and specific analysis conversations
+      // Invalidate both user conversations and specific project conversations
       queryClient.invalidateQueries({
         queryKey: ["chat", "user-conversations"],
       })
-      if (variables.analysis_id) {
+      if (variables.project_id) {
         queryClient.invalidateQueries({
-          queryKey: ["chat", "conversations", variables.analysis_id],
+          queryKey: ["chat", "conversations", variables.project_id],
+        })
+      }
+    },
+  })
+}
+
+/**
+ * Hook to update conversation title
+ */
+export const useUpdateConversationTitle = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    Conversation,
+    Error,
+    { conversationId: string; title: string }
+  >({
+    mutationFn: ({ conversationId, title }) =>
+      ChatService.updateConversationTitle({ conversationId, title }),
+    onSuccess: (conversation) => {
+      queryClient.invalidateQueries({
+        queryKey: ["chat", "conversations"],
+      })
+      if (conversation.project_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["chat", "conversations", conversation.project_id],
         })
       }
     },

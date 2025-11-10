@@ -25,9 +25,11 @@ export interface MessageChat {
 export interface Conversation {
   id: string
   user_id: string
-  analysis_id: string
+  project_id: string | null
   title: string
   use_documents: boolean
+  auto_generated_title: boolean
+  title_generation_task_id: string | null
   created_at: string
   updated_at: string
   messages: import("@/client").Message[]
@@ -35,18 +37,25 @@ export interface Conversation {
 
 // Request/Response types
 export type ChatGetConversationsData = {
-  analysisId: string
+  projectId: string
 }
 
 export type ChatGetConversationsResponse = Conversation[]
 
 export type ChatCreateConversationData = {
   requestBody: {
-    analysis_id: string
+    project_id?: string
     title: string
     use_documents: boolean
   }
 }
+
+export type ChatUpdateTitleData = {
+  conversationId: string
+  title: string
+}
+
+export type ChatUpdateTitleResponse = Conversation
 
 export type ChatCreateConversationResponse = Conversation
 
