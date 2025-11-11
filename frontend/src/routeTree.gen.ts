@@ -22,8 +22,10 @@ import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutChatImport } from './routes/_layout/chat'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects..index'
 import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects.index'
 import { Route as LayoutProjectsProjectIdImport } from './routes/_layout/projects.$projectId'
+import { Route as LayoutProjectsProjectIdIndexImport } from './routes/_layout/projects.$projectId.index'
 import { Route as LayoutProjectsProjectIdChatConversationIdImport } from './routes/_layout/projects.$projectId.chat.$conversationId'
 
 // Create/Update Routes
@@ -88,10 +90,21 @@ const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
   getParentRoute: () => LayoutProjectsRoute,
 } as any)
 
+const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
+  path: '/',
+  getParentRoute: () => LayoutProjectsRoute,
+} as any)
+
 const LayoutProjectsProjectIdRoute = LayoutProjectsProjectIdImport.update({
   path: '/$projectId',
   getParentRoute: () => LayoutProjectsRoute,
 } as any)
+
+const LayoutProjectsProjectIdIndexRoute =
+  LayoutProjectsProjectIdIndexImport.update({
+    path: '/',
+    getParentRoute: () => LayoutProjectsProjectIdRoute,
+  } as any)
 
 const LayoutProjectsProjectIdChatConversationIdRoute =
   LayoutProjectsProjectIdChatConversationIdImport.update({
@@ -155,9 +168,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProjectsIndexImport
       parentRoute: typeof LayoutProjectsImport
     }
+    '/_layout/projects/$projectId/': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdIndexImport
+      parentRoute: typeof LayoutProjectsProjectIdImport
+    }
     '/_layout/projects/$projectId/chat/$conversationId': {
       preLoaderRoute: typeof LayoutProjectsProjectIdChatConversationIdImport
       parentRoute: typeof LayoutProjectsProjectIdImport
+    }
+    '/_layout/projects/': {
+      preLoaderRoute: typeof LayoutProjectsIndexImport
+      parentRoute: typeof LayoutProjectsImport
     }
   }
 }
@@ -171,8 +192,10 @@ export const routeTree = rootRoute.addChildren([
     LayoutItemsRoute,
     LayoutProjectsRoute.addChildren([
       LayoutProjectsProjectIdRoute.addChildren([
+        LayoutProjectsProjectIdIndexRoute,
         LayoutProjectsProjectIdChatConversationIdRoute,
       ]),
+      LayoutProjectsIndexRoute,
       LayoutProjectsIndexRoute,
     ]),
     LayoutSettingsRoute,
