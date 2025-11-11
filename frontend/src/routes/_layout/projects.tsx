@@ -1,10 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { ProjectList } from "@domains/projects"
+import { Outlet, createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_layout/projects")({
-  component: Projects,
+  component: ProjectsLayout,
 })
 
-function Projects() {
-  return <ProjectList />
+function ProjectsLayout() {
+  return <Outlet />
 }

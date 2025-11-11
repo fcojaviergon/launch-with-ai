@@ -47,8 +47,8 @@ export const ConversationList = ({
         colorScheme="blue"
         size="md"
         width="100%"
-        leftIcon={<FaPlus />}
       >
+        <FaPlus />
         New Conversation
       </Button>
 
@@ -87,7 +87,7 @@ export const ConversationList = ({
                   <Text
                     fontWeight="semibold"
                     fontSize="sm"
-                    noOfLines={1}
+                    lineClamp={1}
                   >
                     {conversation.title}
                   </Text>

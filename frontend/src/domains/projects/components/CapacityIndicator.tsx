@@ -1,4 +1,5 @@
-import { Box, Flex, ProgressBar, ProgressRoot, Text } from "@chakra-ui/react"
+import { Box, Flex, Text } from "@chakra-ui/react"
+import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import type { ProjectCapacity } from "../types/projects.types"
 
 interface CapacityIndicatorProps {

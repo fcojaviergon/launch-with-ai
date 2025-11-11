@@ -22,6 +22,7 @@ import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutChatImport } from './routes/_layout/chat'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects.index'
 import { Route as LayoutProjectsProjectIdImport } from './routes/_layout/projects.$projectId'
 import { Route as LayoutProjectsProjectIdChatConversationIdImport } from './routes/_layout/projects.$projectId.chat.$conversationId'
 
@@ -82,15 +83,21 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutProjectsProjectIdRoute = LayoutProjectsProjectIdImport.update({
-  path: '/projects/$projectId',
-  getParentRoute: () => LayoutRoute,
+const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
+  path: '/',
+  getParentRoute: () => LayoutProjectsRoute,
 } as any)
 
-const LayoutProjectsProjectIdChatConversationIdRoute = LayoutProjectsProjectIdChatConversationIdImport.update({
-  path: '/projects/$projectId/chat/$conversationId',
-  getParentRoute: () => LayoutRoute,
+const LayoutProjectsProjectIdRoute = LayoutProjectsProjectIdImport.update({
+  path: '/$projectId',
+  getParentRoute: () => LayoutProjectsRoute,
 } as any)
+
+const LayoutProjectsProjectIdChatConversationIdRoute =
+  LayoutProjectsProjectIdChatConversationIdImport.update({
+    path: '/chat/$conversationId',
+    getParentRoute: () => LayoutProjectsProjectIdRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -132,14 +139,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProjectsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/projects/$projectId': {
-      preLoaderRoute: typeof LayoutProjectsProjectIdImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/projects/$projectId/chat/$conversationId': {
-      preLoaderRoute: typeof LayoutProjectsProjectIdChatConversationIdImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/settings': {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
@@ -147,6 +146,18 @@ declare module '@tanstack/react-router' {
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
+    }
+    '/_layout/projects/$projectId': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdImport
+      parentRoute: typeof LayoutProjectsImport
+    }
+    '/_layout/projects/': {
+      preLoaderRoute: typeof LayoutProjectsIndexImport
+      parentRoute: typeof LayoutProjectsImport
+    }
+    '/_layout/projects/$projectId/chat/$conversationId': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdChatConversationIdImport
+      parentRoute: typeof LayoutProjectsProjectIdImport
     }
   }
 }
@@ -158,9 +169,12 @@ export const routeTree = rootRoute.addChildren([
     LayoutAdminRoute,
     LayoutChatRoute,
     LayoutItemsRoute,
-    LayoutProjectsRoute,
-    LayoutProjectsProjectIdRoute,
-    LayoutProjectsProjectIdChatConversationIdRoute,
+    LayoutProjectsRoute.addChildren([
+      LayoutProjectsProjectIdRoute.addChildren([
+        LayoutProjectsProjectIdChatConversationIdRoute,
+      ]),
+      LayoutProjectsIndexRoute,
+    ]),
     LayoutSettingsRoute,
     LayoutIndexRoute,
   ]),

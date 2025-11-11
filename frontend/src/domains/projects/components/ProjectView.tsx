@@ -6,7 +6,6 @@ import {
   Heading,
   Spinner,
   Text,
-  VStack,
 } from "@chakra-ui/react"
 import { useProject, useProjectCapacity } from "../api/projects.api"
 import { CapacityIndicator } from "./CapacityIndicator"

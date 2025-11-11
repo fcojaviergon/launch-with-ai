@@ -7,12 +7,9 @@ import type {
   Project,
   ProjectCreate,
   ProjectUpdate,
-  ProjectCapacity,
   Document,
   DocumentUpdate,
-  DocumentProgress,
 } from "../types/projects.types"
-import { useCustomToast } from "@shared/hooks"
 
 /**
  * Hook to fetch all projects
@@ -157,8 +154,9 @@ export const useDocumentProgress = (documentId: string | undefined) => {
       return ProjectsService.getDocumentProgress({ documentId })
     },
     enabled: !!documentId,
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // Stop polling if completed or failed
+      const data = query.state.data
       if (
         data?.status === "completed" ||
         data?.status === "failed"
