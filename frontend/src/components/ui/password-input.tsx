@@ -58,10 +58,14 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     const inputRef = useRef<HTMLInputElement>(null)
 
+    // Use the field name from register() to access errors, fallback to type if name is not available
+    const fieldName = rest.name || type
+    const fieldError = errors?.[fieldName]
+
     return (
       <Field
-        invalid={!!errors[type]}
-        errorText={errors[type]?.message}
+        invalid={!!fieldError}
+        errorText={fieldError?.message}
         alignSelf="start"
       >
         <InputGroup
