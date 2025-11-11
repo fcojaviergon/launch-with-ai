@@ -52,6 +52,18 @@ export const ChatInterface = ({
     }
   }, [selectedConversationId, conversations])
 
+  // Update selected conversation when conversations data changes (e.g., after sending a message)
+  useEffect(() => {
+    if (selectedConversation && conversations) {
+      const updatedConversation = conversations.find(
+        c => c.id === selectedConversation.id
+      )
+      if (updatedConversation) {
+        setSelectedConversation(updatedConversation)
+      }
+    }
+  }, [conversations, selectedConversation?.id])
+
   const createConversation = useCreateConversation()
   const sendMessage = useSendMessage()
 
