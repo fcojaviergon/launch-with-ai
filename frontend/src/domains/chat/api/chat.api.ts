@@ -4,16 +4,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { ConversationCreate, MessageCreate } from "../types/chat.types"
 
 /**
- * Hook to fetch conversations for an analysis
+ * Hook to fetch all conversations for the current user
  */
-export const useConversations = (analysisId: string | undefined) => {
+export const useUserConversations = () => {
   return useQuery<Conversation[]>({
-    queryKey: ["chat", "conversations", analysisId],
+    queryKey: ["chat", "user-conversations"],
     queryFn: async () => {
-      if (!analysisId) return []
-      return ChatService.getConversations({ analysisId })
+      return ChatService.getUserConversations()
     },
-    enabled: !!analysisId,
+  })
+}
+
+/**
+ * Hook to fetch conversations for a project
+ */
+export const useConversations = (projectId: string | undefined) => {
+  return useQuery<Conversation[]>({
+    queryKey: ["chat", "conversations", projectId],
+    queryFn: async () => {
+      if (!projectId) return []
+      return ChatService.getConversations({ projectId })
+    },
+    enabled: !!projectId,
   })
 }
 
@@ -26,9 +38,41 @@ export const useCreateConversation = () => {
   return useMutation<Conversation, Error, ConversationCreate>({
     mutationFn: (data) => ChatService.createConversation({ requestBody: data }),
     onSuccess: (_, variables) => {
+      // Invalidate both user conversations and specific project conversations
       queryClient.invalidateQueries({
-        queryKey: ["chat", "conversations", variables.analysis_id],
+        queryKey: ["chat", "user-conversations"],
       })
+      if (variables.project_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["chat", "conversations", variables.project_id],
+        })
+      }
+    },
+  })
+}
+
+/**
+ * Hook to update conversation title
+ */
+export const useUpdateConversationTitle = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    Conversation,
+    Error,
+    { conversationId: string; title: string }
+  >({
+    mutationFn: ({ conversationId, title }) =>
+      ChatService.updateConversationTitle({ conversationId, title }),
+    onSuccess: (conversation) => {
+      queryClient.invalidateQueries({
+        queryKey: ["chat", "conversations"],
+      })
+      if (conversation.project_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["chat", "conversations", conversation.project_id],
+        })
+      }
     },
   })
 }

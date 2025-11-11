@@ -30,13 +30,13 @@ class ChatService:
         self,
         session: Session,
         user_id: uuid.UUID,
-        analysis_id: uuid.UUID,
         title: str,
-        use_documents: bool = True
+        use_documents: bool = True,
+        project_id: Optional[uuid.UUID] = None
     ) -> ChatConversation:
         """Create a new chat conversation."""
         conversation_obj = ChatConversationCreate(
-            analysis_id=analysis_id,
+            project_id=project_id,
             title=title,
             use_documents=use_documents
         )
@@ -63,10 +63,18 @@ class ChatService:
     def get_conversations(
         self,
         session: Session,
-        analysis_id: uuid.UUID
+        project_id: uuid.UUID
     ) -> List[ChatConversation]:
-        """Get all conversations for an analysis."""
-        return chat_conversation_repository.get_by_analysis_id(session, analysis_id)
+        """Get all conversations for a project."""
+        return chat_conversation_repository.get_by_project_id(session, project_id)
+
+    def get_user_conversations(
+        self,
+        session: Session,
+        user_id: uuid.UUID
+    ) -> List[ChatConversation]:
+        """Get all conversations for a user."""
+        return chat_conversation_repository.get_by_user_id(session, user_id)
 
     def delete_conversation(self, session: Session, conversation_id: uuid.UUID) -> bool:
         """Delete a chat conversation."""
@@ -102,14 +110,15 @@ class ChatService:
         
         # Search relevant documents if enabled
         all_relevant_chunks = []
-        if conversation.use_documents and message.use_documents:
-            # Search in vector store with metadata filter for analysis_id
+        document_references = []
+        if conversation.use_documents and message.use_documents and conversation.project_id:
+            # Search in vector store with metadata filter for project_id
             logger.info(f"Searching for relevant documents for conversation {conversation_id}")
             results = vector_store.search(
                 query_text=message.content,
                 limit=settings.chat.max_documents_per_query,
                 metadata_filter={
-                    "analysis_id": str(conversation.analysis_id)
+                    "project_id": str(conversation.project_id)
                 }
             )
             
@@ -117,8 +126,7 @@ class ChatService:
             if not results.empty:
                 logger.info(f"Columns available: {results.columns.tolist()}")
                 logger.info(f"First row: {results.iloc[0].to_dict()}")
-                
-                document_references = []
+
                 for _, row in results.iterrows():
                     # Get distance from vector search
                     distance = float(row["distance"])

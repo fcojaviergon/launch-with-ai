@@ -33,12 +33,20 @@ class ChatConversationRepository(BaseCRUD[ChatConversation, ChatConversationCrea
         session.refresh(db_obj)
         return db_obj
 
-    def get_by_analysis_id(self, session: Session, analysis_id: uuid.UUID) -> List[ChatConversation]:
-        """Get all chat conversations for an analysis."""
+    def get_by_project_id(self, session: Session, project_id: uuid.UUID) -> List[ChatConversation]:
+        """Get all chat conversations for a project."""
         return session.exec(
             select(ChatConversation)
-            .where(ChatConversation.analysis_id == analysis_id)
-            .order_by(ChatConversation.created_at)
+            .where(ChatConversation.project_id == project_id)
+            .order_by(ChatConversation.created_at.desc())
+        ).all()
+
+    def get_by_user_id(self, session: Session, user_id: uuid.UUID) -> List[ChatConversation]:
+        """Get all chat conversations for a user."""
+        return session.exec(
+            select(ChatConversation)
+            .where(ChatConversation.user_id == user_id)
+            .order_by(ChatConversation.created_at.desc())
         ).all()
 
     def update(

@@ -1,10 +1,12 @@
 import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { FaComments } from "react-icons/fa"
 import { ConversationList } from "./ConversationList"
 import { MessageList } from "./MessageList"
 import { MessageInput } from "./MessageInput"
 import {
   useConversations,
+  useUserConversations,
   useCreateConversation,
   useSendMessage,
 } from "../api/chat.api"
@@ -12,19 +14,44 @@ import type { Conversation, MessageChat } from "../types/chat.types"
 import { useCustomToast } from "@shared/hooks"
 
 interface ChatInterfaceProps {
-  analysisId: string
+  analysisId?: string
   analysisTitle?: string
+  projectId?: string
+  selectedConversationId?: string
 }
 
 export const ChatInterface = ({
   analysisId,
   analysisTitle,
+  projectId,
+  selectedConversationId,
 }: ChatInterfaceProps) => {
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null)
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
-  const { data: conversations } = useConversations(analysisId)
+
+  // Determine which ID to use (projectId takes precedence for new code)
+  const contextId = projectId || analysisId
+
+  // Use either user conversations or project/analysis-specific conversations
+  const { data: userConversations, isLoading: isLoadingUser, error: errorUser } = useUserConversations()
+  const { data: contextConversations, isLoading: isLoadingContext, error: errorContext } = useConversations(contextId)
+
+  const conversations = contextId ? contextConversations : userConversations
+  const isLoading = contextId ? isLoadingContext : isLoadingUser
+  const error = contextId ? errorContext : errorUser
+
+  // Auto-select conversation if selectedConversationId is provided
+  useEffect(() => {
+    if (selectedConversationId && conversations) {
+      const conversation = conversations.find(c => c.id === selectedConversationId)
+      if (conversation) {
+        setSelectedConversation(conversation)
+      }
+    }
+  }, [selectedConversationId, conversations])
+
   const createConversation = useCreateConversation()
   const sendMessage = useSendMessage()
 
@@ -33,9 +60,9 @@ export const ChatInterface = ({
 
     createConversation.mutate(
       {
-        analysis_id: analysisId,
+        project_id: projectId || analysisId,
         title,
-        use_documents: true,
+        use_documents: !!projectId, // Enable documents for project conversations
       },
       {
         onSuccess: (newConversation) => {
@@ -78,27 +105,36 @@ export const ChatInterface = ({
     : []
 
   return (
-    <Box height="100vh" display="flex" flexDirection="column">
+    <Box height="100%" display="flex" flexDirection="column" bg="gray.50">
       {/* Header */}
-      <Box p={4} borderBottomWidth="1px" borderColor="gray.200">
+      <Box
+        p={4}
+        borderBottomWidth="1px"
+        borderColor="gray.200"
+        flexShrink={0}
+        bg="white"
+      >
         <Heading size="md">Chat</Heading>
         {analysisTitle && (
-          <Text fontSize="sm" color="gray.500">
+          <Text fontSize="sm" color="gray.500" mt={1}>
             {analysisTitle}
           </Text>
         )}
       </Box>
 
       {/* Main content */}
-      <Grid templateColumns="300px 1fr" flex={1} overflow="hidden">
+      <Grid templateColumns="350px 1fr" flex={1} overflow="hidden" gap={0}>
         {/* Sidebar - Conversation List */}
         <GridItem
           borderRightWidth="1px"
           borderColor="gray.200"
           overflowY="auto"
+          bg="white"
         >
           <ConversationList
-            analysisId={analysisId}
+            conversations={conversations}
+            isLoading={isLoading}
+            error={error}
             selectedConversationId={selectedConversation?.id}
             onSelectConversation={setSelectedConversation}
             onCreateConversation={handleCreateConversation}
@@ -106,11 +142,11 @@ export const ChatInterface = ({
         </GridItem>
 
         {/* Main chat area */}
-        <GridItem display="flex" flexDirection="column" overflow="hidden">
+        <GridItem display="flex" flexDirection="column" overflow="hidden" bg="white">
           {selectedConversation ? (
             <>
               {/* Messages */}
-              <Box flex={1} overflowY="auto">
+              <Box flex={1} overflowY="auto" p={4}>
                 <MessageList
                   messages={selectedMessages}
                   isLoading={sendMessage.isPending}
@@ -118,14 +154,22 @@ export const ChatInterface = ({
               </Box>
 
               {/* Input */}
-              <MessageInput
-                onSendMessage={handleSendMessage}
-                isLoading={sendMessage.isPending}
-              />
+              <Box
+                borderTopWidth="1px"
+                borderColor="gray.200"
+                p={4}
+                bg="gray.50"
+              >
+                <MessageInput
+                  onSendMessage={handleSendMessage}
+                  isLoading={sendMessage.isPending}
+                />
+              </Box>
             </>
           ) : (
             <VStack justify="center" height="100%" gap={4} p={8}>
-              <Text fontSize="lg" color="gray.500">
+              <FaComments size={64} color="#CBD5E0" />
+              <Text fontSize="lg" color="gray.500" textAlign="center">
                 Select a conversation or create a new one to start chatting
               </Text>
             </VStack>

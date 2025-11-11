@@ -4,21 +4,28 @@ from typing import List, Optional, TYPE_CHECKING
 
 from sqlmodel import Column, Field, Relationship, SQLModel, JSON
 
+if TYPE_CHECKING:
+    from app.modules.projects.models import Project
+
 
 class ChatConversation(SQLModel, table=True):
     """Model for a chat conversation."""
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
-    # TODO: Restore foreign key when analysis module is added
-    analysis_id: uuid.UUID  # Field(foreign_key="analysis.id", ondelete="CASCADE")
+    project_id: Optional[uuid.UUID] = Field(default=None, nullable=True, foreign_key="project.id", ondelete="CASCADE")
+
     title: str
     use_documents: bool = Field(default=True)
+
+    # Auto-generated title fields
+    auto_generated_title: bool = Field(default=False)
+    title_generation_task_id: Optional[str] = None
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
-    # TODO: Restore relationship when analysis module is added
-    # analysis: "Analysis" = Relationship(back_populates="chat_conversations",)
+    project: Optional["Project"] = Relationship(back_populates="conversations")
     messages: List["ChatMessage"] = Relationship(back_populates="conversation", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
