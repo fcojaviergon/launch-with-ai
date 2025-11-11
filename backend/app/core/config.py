@@ -60,7 +60,8 @@ class VectorStoreSettings(BaseSettings):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         # Use top level .env file (one level above ./backend/)
-        env_file="../.env",
+        # and .env.local for local development overrides
+        env_file=("../.env", ".env.local"),
         env_ignore_empty=True,
         extra="ignore",
     )

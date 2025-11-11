@@ -39,7 +39,7 @@ export class ChatService {
   ): CancelablePromise<ChatGetConversationsResponse> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/chat/conversations/project/{project_id}",
+      url: "/api/v1/chat/conversations/{project_id}",
       path: {
         project_id: data.projectId,
       },

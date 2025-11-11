@@ -1,11 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { ProjectView } from "@domains/projects"
+import { Outlet, createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_layout/projects/$projectId")({
-  component: ProjectDetail,
+  component: ProjectLayout,
 })
 
-function ProjectDetail() {
-  const { projectId } = Route.useParams()
-  return <ProjectView projectId={projectId} />
+function ProjectLayout() {
+  return <Outlet />
 }
