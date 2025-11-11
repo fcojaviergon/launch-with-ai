@@ -1,5 +1,5 @@
 import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FaComments } from "react-icons/fa"
 import { ConversationList } from "./ConversationList"
 import { MessageList } from "./MessageList"
@@ -16,24 +16,41 @@ import { useCustomToast } from "@shared/hooks"
 interface ChatInterfaceProps {
   analysisId?: string
   analysisTitle?: string
+  projectId?: string
+  selectedConversationId?: string
 }
 
 export const ChatInterface = ({
   analysisId,
   analysisTitle,
+  projectId,
+  selectedConversationId,
 }: ChatInterfaceProps) => {
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null)
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
-  // Use either user conversations or analysis-specific conversations
-  const { data: userConversations, isLoading: isLoadingUser, error: errorUser } = useUserConversations()
-  const { data: analysisConversations, isLoading: isLoadingAnalysis, error: errorAnalysis } = useConversations(analysisId)
+  // Determine which ID to use (projectId takes precedence for new code)
+  const contextId = projectId || analysisId
 
-  const conversations = analysisId ? analysisConversations : userConversations
-  const isLoading = analysisId ? isLoadingAnalysis : isLoadingUser
-  const error = analysisId ? errorAnalysis : errorUser
+  // Use either user conversations or project/analysis-specific conversations
+  const { data: userConversations, isLoading: isLoadingUser, error: errorUser } = useUserConversations()
+  const { data: contextConversations, isLoading: isLoadingContext, error: errorContext } = useConversations(contextId)
+
+  const conversations = contextId ? contextConversations : userConversations
+  const isLoading = contextId ? isLoadingContext : isLoadingUser
+  const error = contextId ? errorContext : errorUser
+
+  // Auto-select conversation if selectedConversationId is provided
+  useEffect(() => {
+    if (selectedConversationId && conversations) {
+      const conversation = conversations.find(c => c.id === selectedConversationId)
+      if (conversation) {
+        setSelectedConversation(conversation)
+      }
+    }
+  }, [selectedConversationId, conversations])
 
   const createConversation = useCreateConversation()
   const sendMessage = useSendMessage()
@@ -43,9 +60,9 @@ export const ChatInterface = ({
 
     createConversation.mutate(
       {
-        analysis_id: analysisId,
+        project_id: projectId || analysisId,
         title,
-        use_documents: false, // Disable documents for general conversations
+        use_documents: !!projectId, // Enable documents for project conversations
       },
       {
         onSuccess: (newConversation) => {
