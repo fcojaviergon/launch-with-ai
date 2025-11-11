@@ -1,22 +1,24 @@
 import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
-import { useConversations } from "../api/chat.api"
 import type { Conversation } from "../types/chat.types"
 import { FaPlus, FaComments } from "react-icons/fa"
 
 interface ConversationListProps {
-  analysisId: string
+  conversations?: Conversation[]
+  isLoading?: boolean
+  error?: Error | null
   selectedConversationId?: string
   onSelectConversation: (conversation: Conversation) => void
   onCreateConversation: () => void
 }
 
 export const ConversationList = ({
-  analysisId,
+  conversations,
+  isLoading,
+  error,
   selectedConversationId,
   onSelectConversation,
   onCreateConversation,
 }: ConversationListProps) => {
-  const { data: conversations, isLoading, error } = useConversations(analysisId)
 
   if (isLoading) {
     return (
@@ -39,11 +41,11 @@ export const ConversationList = ({
   }
 
   return (
-    <VStack align="stretch" gap={2} height="100%">
+    <VStack align="stretch" gap={2} height="100%" p={4}>
       <Button
         onClick={onCreateConversation}
         colorScheme="blue"
-        size="sm"
+        size="md"
         width="100%"
       >
         <FaPlus />
@@ -77,10 +79,16 @@ export const ConversationList = ({
               }}
               onClick={() => onSelectConversation(conversation)}
             >
-              <HStack gap={2}>
-                <FaComments />
-                <VStack align="start" gap={0} flex={1}>
-                  <Text fontWeight="semibold" fontSize="sm">
+              <HStack gap={3}>
+                <Box color="blue.500">
+                  <FaComments size={20} />
+                </Box>
+                <VStack align="start" gap={0} flex={1} minWidth={0}>
+                  <Text
+                    fontWeight="semibold"
+                    fontSize="sm"
+                    lineClamp={1}
+                  >
                     {conversation.title}
                   </Text>
                   <Text fontSize="xs" color="gray.500">

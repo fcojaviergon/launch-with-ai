@@ -267,14 +267,14 @@ class VectorStore:
                 f"Deleted records matching metadata filter from {self.vector_settings.table_name}"
             )
 
-    def delete_by_analysis_id(self, analysis_id: str) -> None:
+    def delete_by_project_id(self, project_id: str) -> None:
         """
-        Delete all records associated with a specific analysis ID.
+        Delete all records associated with a specific project ID.
 
         Args:
-            analysis_id: The analysis ID to delete records for.
+            project_id: The project ID to delete records for.
         """
-        self.delete(metadata_filter={"analysis_id": analysis_id})
+        self.delete(metadata_filter={"project_id": project_id})
 
 
 # Create a singleton instance

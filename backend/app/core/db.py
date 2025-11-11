@@ -1,5 +1,6 @@
 from sqlmodel import Session, create_engine, select
 from collections.abc import Generator
+from contextlib import contextmanager
 from sqlalchemy.exc import ProgrammingError, OperationalError, IntegrityError
 from sqlalchemy import text
 
@@ -8,6 +9,7 @@ from app.core.config import settings
 # Import all models to ensure proper SQLModel initialization
 from app.modules.users.models import User
 from app.modules.items.models import Item
+from app.modules.projects.models import Project, Document
 from app.modules.chat.models import ChatConversation
 
 from app.modules.users.schemas import UserCreate
@@ -80,3 +82,20 @@ def get_session() -> Generator[Session, None, None]:
     """
     with Session(engine) as session:
         yield session
+
+
+@contextmanager
+def get_session_context():
+    """
+    Context manager for database sessions in Celery tasks.
+    Automatically commits on success and rolls back on error.
+    """
+    session = Session(engine)
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

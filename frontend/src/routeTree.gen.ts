@@ -18,8 +18,14 @@ import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
+import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
+import { Route as LayoutChatImport } from './routes/_layout/chat'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects.index'
+import { Route as LayoutProjectsProjectIdImport } from './routes/_layout/projects.$projectId'
+import { Route as LayoutProjectsProjectIdIndexImport } from './routes/_layout/projects.$projectId.index'
+import { Route as LayoutProjectsProjectIdChatConversationIdImport } from './routes/_layout/projects.$projectId.chat.$conversationId'
 
 // Create/Update Routes
 
@@ -58,8 +64,18 @@ const LayoutSettingsRoute = LayoutSettingsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutProjectsRoute = LayoutProjectsImport.update({
+  path: '/projects',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutItemsRoute = LayoutItemsImport.update({
   path: '/items',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutChatRoute = LayoutChatImport.update({
+  path: '/chat',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -67,6 +83,28 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+
+const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
+  path: '/',
+  getParentRoute: () => LayoutProjectsRoute,
+} as any)
+
+const LayoutProjectsProjectIdRoute = LayoutProjectsProjectIdImport.update({
+  path: '/$projectId',
+  getParentRoute: () => LayoutProjectsRoute,
+} as any)
+
+const LayoutProjectsProjectIdIndexRoute =
+  LayoutProjectsProjectIdIndexImport.update({
+    path: '/',
+    getParentRoute: () => LayoutProjectsProjectIdRoute,
+  } as any)
+
+const LayoutProjectsProjectIdChatConversationIdRoute =
+  LayoutProjectsProjectIdChatConversationIdImport.update({
+    path: '/chat/$conversationId',
+    getParentRoute: () => LayoutProjectsProjectIdRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -96,8 +134,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/chat': {
+      preLoaderRoute: typeof LayoutChatImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/items': {
       preLoaderRoute: typeof LayoutItemsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/projects': {
+      preLoaderRoute: typeof LayoutProjectsImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/settings': {
@@ -108,6 +154,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/projects/$projectId': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdImport
+      parentRoute: typeof LayoutProjectsImport
+    }
+    '/_layout/projects/': {
+      preLoaderRoute: typeof LayoutProjectsIndexImport
+      parentRoute: typeof LayoutProjectsImport
+    }
+    '/_layout/projects/$projectId/': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdIndexImport
+      parentRoute: typeof LayoutProjectsProjectIdImport
+    }
+    '/_layout/projects/$projectId/chat/$conversationId': {
+      preLoaderRoute: typeof LayoutProjectsProjectIdChatConversationIdImport
+      parentRoute: typeof LayoutProjectsProjectIdImport
+    }
   }
 }
 
@@ -116,7 +178,15 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutAdminRoute,
+    LayoutChatRoute,
     LayoutItemsRoute,
+    LayoutProjectsRoute.addChildren([
+      LayoutProjectsProjectIdRoute.addChildren([
+        LayoutProjectsProjectIdIndexRoute,
+        LayoutProjectsProjectIdChatConversationIdRoute,
+      ]),
+      LayoutProjectsIndexRoute,
+    ]),
     LayoutSettingsRoute,
     LayoutIndexRoute,
   ]),

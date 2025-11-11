@@ -13,9 +13,24 @@ import type {
 
 export class ChatService {
   /**
-   * Get conversations for an analysis
+   * Get all conversations for the current user
+   * @returns Conversation[] Successful Response
+   * @throws ApiError
+   */
+  public static getUserConversations(): CancelablePromise<ChatGetConversationsResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/chat/conversations",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Get conversations for a project
    * @param data The data for the request.
-   * @param data.analysisId
+   * @param data.projectId
    * @returns Conversation[] Successful Response
    * @throws ApiError
    */
@@ -24,9 +39,35 @@ export class ChatService {
   ): CancelablePromise<ChatGetConversationsResponse> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/chat/conversations/{analysis_id}",
+      url: "/api/v1/chat/conversations/{project_id}",
       path: {
-        analysis_id: data.analysisId,
+        project_id: data.projectId,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+  /**
+   * Update conversation title
+   * @param data The data for the request.
+   * @param data.conversationId
+   * @param data.title
+   * @returns Conversation Successful Response
+   * @throws ApiError
+   */
+  public static updateConversationTitle(
+    data: import("../types").ChatUpdateTitleData,
+  ): CancelablePromise<import("../types").ChatUpdateTitleResponse> {
+    return __request(OpenAPI, {
+      method: "PATCH",
+      url: "/api/v1/chat/conversations/{conversation_id}/title",
+      path: {
+        conversation_id: data.conversationId,
+      },
+      query: {
+        title: data.title,
       },
       errors: {
         422: "Validation Error",
