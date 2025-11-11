@@ -27,7 +27,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                 {project.name}
               </Heading>
               {project.description && (
-                <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                <Text fontSize="sm" color="gray.600" lineClamp={2}>
                   {project.description}
                 </Text>
               )}
@@ -45,9 +45,6 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           <Flex gap={2} flexWrap="wrap">
             <Badge colorPalette="blue" variant="subtle">
               {project.documents?.length || 0} documents
-            </Badge>
-            <Badge colorPalette="purple" variant="subtle">
-              {project.conversations?.length || 0} conversations
             </Badge>
           </Flex>
         </Card.Body>

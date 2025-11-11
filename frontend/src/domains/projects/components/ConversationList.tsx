@@ -138,7 +138,7 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
 
   const handleCreateConversation = () => {
     createConversation.mutate(
-      { projectId, title: "New Conversation" },
+      { project_id: projectId, title: "New Conversation", use_documents: true },
       {
         onSuccess: () => {
           showSuccessToast("Conversation created")

@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import {
+  NumberInputField,
+  NumberInputRoot,
+} from "@/components/ui/number-input"
+import {
   Button,
   DialogActionTrigger,
   DialogTitle,
   Input,
-  NumberInputField,
-  NumberInputRoot,
   Text,
   Textarea,
   VStack,

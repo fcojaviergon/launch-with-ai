@@ -3,10 +3,9 @@ import {
   Box,
   Flex,
   IconButton,
-  ProgressBar,
-  ProgressRoot,
   Text,
 } from "@chakra-ui/react"
+import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { formatDistanceToNow } from "date-fns"
 import { FaCheckCircle, FaExclamationCircle, FaRedo, FaTrash } from "react-icons/fa"
 import { useCustomToast } from "@shared/hooks"
@@ -141,14 +140,14 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
         </Box>
       )}
 
-      {document.status === "failed" && progress?.error && (
+      {document.status === "failed" && progress?.error_message && (
         <Text fontSize="xs" color="red.500" mt={2}>
-          Error: {progress.error}
+          Error: {progress.error_message}
         </Text>
       )}
 
       <Text fontSize="xs" color="gray.400" mt={2}>
-        Uploaded {formatDistanceToNow(new Date(document.created_at), { addSuffix: true })}
+        Uploaded {formatDistanceToNow(new Date(document.uploaded_at), { addSuffix: true })}
       </Text>
     </Box>
   )
