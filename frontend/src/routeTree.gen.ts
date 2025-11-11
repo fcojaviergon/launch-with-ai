@@ -22,7 +22,6 @@ import { Route as LayoutProjectsImport } from './routes/_layout/projects'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutChatImport } from './routes/_layout/chat'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects..index'
 import { Route as LayoutProjectsIndexImport } from './routes/_layout/projects.index'
 import { Route as LayoutProjectsProjectIdImport } from './routes/_layout/projects.$projectId'
 import { Route as LayoutProjectsProjectIdIndexImport } from './routes/_layout/projects.$projectId.index'
@@ -83,11 +82,6 @@ const LayoutChatRoute = LayoutChatImport.update({
 const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
-  path: '/',
-  getParentRoute: () => LayoutProjectsRoute,
 } as any)
 
 const LayoutProjectsIndexRoute = LayoutProjectsIndexImport.update({
@@ -176,10 +170,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutProjectsProjectIdChatConversationIdImport
       parentRoute: typeof LayoutProjectsProjectIdImport
     }
-    '/_layout/projects/': {
-      preLoaderRoute: typeof LayoutProjectsIndexImport
-      parentRoute: typeof LayoutProjectsImport
-    }
   }
 }
 
@@ -195,7 +185,6 @@ export const routeTree = rootRoute.addChildren([
         LayoutProjectsProjectIdIndexRoute,
         LayoutProjectsProjectIdChatConversationIdRoute,
       ]),
-      LayoutProjectsIndexRoute,
       LayoutProjectsIndexRoute,
     ]),
     LayoutSettingsRoute,
