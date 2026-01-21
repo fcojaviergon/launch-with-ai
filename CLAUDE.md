@@ -88,7 +88,7 @@ app/
 - **TanStack Query** for data fetching and caching
 - **React Hook Form** for form management
 - **Domain-Driven Design (DDD)** architecture organizing code by business domains
-- **Manual API client per domain** (DO NOT use `npm run generate-client` - we create API clients directly in each domain's `services/` folder)
+- **Hybrid API client strategy**: Types auto-generated from OpenAPI, services manual per domain
 
 Frontend follows a **domain-based structure** where each domain is self-contained:
 ```
@@ -111,7 +111,7 @@ frontend/src/
 │   ├── hooks/       # Global hooks
 │   └── utils/       # Utilities (validation, errors)
 ├── routes/          # TanStack Router routes
-├── client/          # OpenAPI infrastructure
+├── client/          # OpenAPI generated types & infrastructure
 └── theme/           # Chakra UI theme
 ```
 
@@ -199,9 +199,42 @@ git add backend/app/alembic/versions/
 git commit -m "chore: add migration for X"
 ```
 
-5. **API Changes**: Manually update the corresponding domain's `services/` file in the frontend (DO NOT use `npm run generate-client`)
+5. **API Changes**: Run `./scripts/generate-types.sh` to regenerate TypeScript types from the backend OpenAPI spec. Then update domain services if method signatures changed. TypeScript will flag any mismatches.
 6. **Testing**: Run both backend and frontend tests before commits
 7. **Linting**: Code is automatically formatted with ruff (backend) and Biome (frontend)
+
+### API Client Strategy (Hybrid Approach)
+
+We use a **hybrid** strategy for frontend-backend communication:
+
+1. **Types are auto-generated** from OpenAPI spec:
+   - Run `./scripts/generate-types.sh` after backend API changes
+   - Generates TypeScript types in `src/client/`
+   - Ensures type safety and sync with backend
+
+2. **Services are manual** per domain:
+   - Located in `domains/[domain]/services/service.ts`
+   - Import types from `@/client` or domain types
+   - Allows custom logic (retry, transformations, caching)
+
+**Workflow:**
+```
+Backend changes endpoint/schema
+       ↓
+Run: ./scripts/generate-types.sh
+       ↓
+Types updated in frontend/src/client/
+       ↓
+TypeScript flags if services need updates
+       ↓
+Update domains/*/services/ if method signatures changed
+```
+
+**Why hybrid?**
+- ✅ Types always in sync with backend (auto-generated)
+- ✅ Services remain customizable per domain
+- ✅ TypeScript acts as "guardian" for API changes
+- ✅ Domain isolation preserved
 
 ### Continuous Deployment Workflow
 
@@ -381,5 +414,13 @@ docker compose exec db psql -U postgres -d app
 
 For more detailed information:
 - **Azure Deployment Guide**: See [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) for complete step-by-step deployment instructions
-- **Frontend Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for complete domain-driven design patterns
 - **Environment Variables**: Check `.env.azure.example` for Azure deployment configuration
+
+## Claude Code Skills
+
+This project includes custom skills for Claude Code development assistance:
+
+- **`/rocket-frontend`**: Frontend development guide with DDD patterns, React Query hooks, Zod forms, and type generation workflow
+- **`/rocket-backend`**: Backend development guide with FastAPI modules, Repository-Service pattern, and Alembic migrations
+
+Skills are located in `.claude/skills/` and provide quick reference + extended examples for common development tasks.

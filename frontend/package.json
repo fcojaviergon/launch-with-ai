@@ -10,6 +10,7 @@
     "lint:ci": "biome check src/",
     "preview": "vite preview",
     "generate-client": "openapi-ts",
+    "generate-types": "openapi-ts && npx biome format --write ./src/client",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
