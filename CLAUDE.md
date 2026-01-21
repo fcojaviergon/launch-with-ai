@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project: Launch With AI
+
+Production-ready full-stack template for building AI-powered SaaS applications.
+
 ## Development Commands
 
 ### Backend (Python FastAPI)
@@ -56,7 +60,7 @@ docker compose stop backend   # Stop backend to run locally
 
 ## Project Architecture
 
-This is a full-stack GenAI SaaS application built with FastAPI backend and React frontend.
+Launch With AI is a full-stack GenAI SaaS template built with FastAPI backend and React frontend.
 
 ### Backend Architecture
 - **FastAPI** with Python 3.10+ using modern async/await patterns
@@ -385,7 +389,7 @@ git push origin main  # Auto-deploys in 2-3 minutes
 ```bash
 # SSH to server
 ssh azureuser@<VM_IP>
-cd ~/rocket-genai-v2
+cd ~/launch-with-ai
 
 # View logs
 docker compose logs -f                    # All services
@@ -420,7 +424,7 @@ For more detailed information:
 
 This project includes custom skills for Claude Code development assistance:
 
-- **`/rocket-frontend`**: Frontend development guide with DDD patterns, React Query hooks, Zod forms, and type generation workflow
-- **`/rocket-backend`**: Backend development guide with FastAPI modules, Repository-Service pattern, and Alembic migrations
+- **`/launch-frontend`**: Frontend development guide with DDD patterns, React Query hooks, Zod forms, and type generation workflow
+- **`/launch-backend`**: Backend development guide with FastAPI modules, Repository-Service pattern, and Alembic migrations
 
 Skills are located in `.claude/skills/` and provide quick reference + extended examples for common development tasks.
