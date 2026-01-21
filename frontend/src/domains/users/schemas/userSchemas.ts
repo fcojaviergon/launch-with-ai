@@ -28,7 +28,10 @@ export type UpdatePasswordFormData = z.infer<typeof updatePasswordSchema>
 
 // User information update schema
 export const userUpdateMeSchema = z.object({
-  full_name: z.string().max(30, "Name must be 30 characters or less").optional(),
+  full_name: z
+    .string()
+    .max(30, "Name must be 30 characters or less")
+    .optional(),
   email: emailSchema,
 })
 

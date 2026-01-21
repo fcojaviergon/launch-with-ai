@@ -1,3 +1,4 @@
+import logging
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
@@ -6,13 +7,23 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.v1.api import api_router
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
+
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
 
-if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+# Initialize Sentry for error tracking in non-local environments
+if settings.ENVIRONMENT != "local":
+    if settings.SENTRY_DSN:
+        sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+        logger.info("Sentry initialized for error tracking")
+    else:
+        logger.warning(
+            "SENTRY_DSN not configured - error tracking is disabled. "
+            "Set SENTRY_DSN environment variable to enable error monitoring."
+        )
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

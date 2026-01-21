@@ -1,7 +1,14 @@
 import { Box, Flex, Icon, Text } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
-import { FiBriefcase, FiFolder, FiHome, FiMessageSquare, FiSettings, FiUsers } from "react-icons/fi"
+import {
+  FiBriefcase,
+  FiFolder,
+  FiHome,
+  FiMessageSquare,
+  FiSettings,
+  FiUsers,
+} from "react-icons/fi"
 import type { IconType } from "react-icons/lib"
 
 import type { UserPublic } from "@domains/users"

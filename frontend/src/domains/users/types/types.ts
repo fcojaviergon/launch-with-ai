@@ -1,101 +1,36 @@
-// User-related types - auto-generated from OpenAPI spec
+// User-related types - Re-exported from auto-generated OpenAPI client
+// DO NOT duplicate types here - import from @/client/types.gen instead
 
-export type UpdatePassword = {
-  current_password: string
-  new_password: string
-}
+// Core user types from OpenAPI
+export type {
+  UpdatePassword,
+  UserCreate,
+  UserPublic,
+  UserRegister,
+  UsersPublic,
+  UserUpdate,
+  UserUpdateMe,
+  Message,
+} from "@/client/types.gen"
 
-export type UserCreate = {
-  email: string
-  is_active?: boolean
-  is_superuser?: boolean
-  full_name?: string | null
-  password: string
-}
-
-export type UserPublic = {
-  email: string
-  is_active?: boolean
-  is_superuser?: boolean
-  full_name?: string | null
-  id: string
-}
-
-export type UserRegister = {
-  email: string
-  password: string
-  full_name?: string | null
-}
-
-export type UsersPublic = {
-  data: Array<UserPublic>
-  count: number
-}
-
-export type UserUpdate = {
-  email?: string | null
-  is_active?: boolean
-  is_superuser?: boolean
-  full_name?: string | null
-  password?: string | null
-}
-
-export type UserUpdateMe = {
-  full_name?: string | null
-  email?: string | null
-}
-
-// Request/Response types
-export type UsersReadUsersData = {
-  skip?: number
-  limit?: number
-}
-
-export type UsersReadUsersResponse = UsersPublic
-
-export type UsersCreateUserData = {
-  requestBody: UserCreate
-}
-
-export type UsersCreateUserResponse = UserPublic
-
-export type UsersReadUserMeResponse = UserPublic
-
-export type UsersDeleteUserMeResponse = import("@/client").Message
-
-export type UsersUpdateUserMeData = {
-  requestBody: UserUpdateMe
-}
-
-export type UsersUpdateUserMeResponse = UserPublic
-
-export type UsersUpdatePasswordMeData = {
-  requestBody: UpdatePassword
-}
-
-export type UsersUpdatePasswordMeResponse = import("@/client").Message
-
-export type UsersRegisterUserData = {
-  requestBody: UserRegister
-}
-
-export type UsersRegisterUserResponse = UserPublic
-
-export type UsersReadUserByIdData = {
-  userId: string
-}
-
-export type UsersReadUserByIdResponse = UserPublic
-
-export type UsersUpdateUserData = {
-  requestBody: UserUpdate
-  userId: string
-}
-
-export type UsersUpdateUserResponse = UserPublic
-
-export type UsersDeleteUserData = {
-  userId: string
-}
-
-export type UsersDeleteUserResponse = import("@/client").Message
+// Request/Response types from OpenAPI
+export type {
+  UsersReadUsersData,
+  UsersReadUsersResponse,
+  UsersCreateUserData,
+  UsersCreateUserResponse,
+  UsersReadUserMeResponse,
+  UsersDeleteUserMeResponse,
+  UsersUpdateUserMeData,
+  UsersUpdateUserMeResponse,
+  UsersUpdatePasswordMeData,
+  UsersUpdatePasswordMeResponse,
+  UsersRegisterUserData,
+  UsersRegisterUserResponse,
+  UsersReadUserByIdData,
+  UsersReadUserByIdResponse,
+  UsersUpdateUserData,
+  UsersUpdateUserResponse,
+  UsersDeleteUserData,
+  UsersDeleteUserResponse,
+} from "@/client/types.gen"

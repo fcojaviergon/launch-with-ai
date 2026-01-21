@@ -87,7 +87,7 @@ describe("Validation Utilities", () => {
       expect(rules.required).toBe("Password is required")
       expect(rules.minLength.value).toBe(8)
       expect(rules.minLength.message).toBe(
-        "Password must be at least 8 characters"
+        "Password must be at least 8 characters",
       )
     })
 
@@ -97,7 +97,7 @@ describe("Validation Utilities", () => {
       expect(rules.required).toBeUndefined()
       expect(rules.minLength.value).toBe(8)
       expect(rules.minLength.message).toBe(
-        "Password must be at least 8 characters"
+        "Password must be at least 8 characters",
       )
     })
 
@@ -129,7 +129,7 @@ describe("Validation Utilities", () => {
       const rules = confirmPasswordRules(getValues, true)
 
       expect(rules.validate("differentpassword")).toBe(
-        "The passwords do not match"
+        "The passwords do not match",
       )
     })
 

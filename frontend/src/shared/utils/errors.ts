@@ -25,7 +25,7 @@ interface ValidationError {
 }
 
 export function isValidationErrorArray(
-  detail: unknown
+  detail: unknown,
 ): detail is ValidationError[] {
   return (
     Array.isArray(detail) &&

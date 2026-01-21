@@ -8,10 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
-import {
-  NumberInputField,
-  NumberInputRoot,
-} from "@/components/ui/number-input"
+import { NumberInputField, NumberInputRoot } from "@/components/ui/number-input"
 import {
   Button,
   DialogActionTrigger,
@@ -27,7 +24,7 @@ import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaPlus } from "react-icons/fa"
 import { useCreateProject } from "../api/projects.api"
-import { projectCreateSchema, type ProjectCreateFormData } from "../schemas"
+import { type ProjectCreateFormData, projectCreateSchema } from "../schemas"
 
 export const AddProject = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -80,7 +77,9 @@ export const AddProject = () => {
             <DialogTitle>Create New Project</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Create a new project to organize your documents and conversations.</Text>
+            <Text mb={4}>
+              Create a new project to organize your documents and conversations.
+            </Text>
             <VStack gap={4}>
               <Field
                 required
@@ -136,7 +135,9 @@ export const AddProject = () => {
                   max={1000000}
                   step={1000}
                 >
-                  <NumberInputField {...register("max_context_tokens", { valueAsNumber: true })} />
+                  <NumberInputField
+                    {...register("max_context_tokens", { valueAsNumber: true })}
+                  />
                 </NumberInputRoot>
               </Field>
             </VStack>

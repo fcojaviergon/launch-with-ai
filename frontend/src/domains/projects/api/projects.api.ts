@@ -4,11 +4,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { ProjectsService } from "../services/projects.service"
 import type {
+  Document,
+  DocumentUpdate,
   Project,
   ProjectCreate,
   ProjectUpdate,
-  Document,
-  DocumentUpdate,
 } from "../types/projects.types"
 
 /**
@@ -157,10 +157,7 @@ export const useDocumentProgress = (documentId: string | undefined) => {
     refetchInterval: (query) => {
       // Stop polling if completed or failed
       const data = query.state.data
-      if (
-        data?.status === "completed" ||
-        data?.status === "failed"
-      ) {
+      if (data?.status === "completed" || data?.status === "failed") {
         return false
       }
       return 1000 // Poll every second while processing

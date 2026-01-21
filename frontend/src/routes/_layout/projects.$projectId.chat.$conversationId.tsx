@@ -1,9 +1,9 @@
 import { Box } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
 import { ChatInterface } from "@domains/chat"
+import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute(
-  "/_layout/projects/$projectId/chat/$conversationId"
+  "/_layout/projects/$projectId/chat/$conversationId",
 )({
   component: ProjectChat,
 })

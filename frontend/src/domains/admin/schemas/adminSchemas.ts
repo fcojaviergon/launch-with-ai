@@ -33,7 +33,11 @@ export const adminUserUpdateSchema = z
   .object({
     email: emailSchema,
     full_name: z.string().optional().nullable(),
-    password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .optional()
+      .or(z.literal("")),
     confirm_password: z.string().optional().or(z.literal("")),
     is_superuser: z.boolean().optional(),
     is_active: z.boolean().optional(),
@@ -49,7 +53,7 @@ export const adminUserUpdateSchema = z
     {
       message: "The passwords do not match",
       path: ["confirm_password"],
-    }
+    },
   )
 
 export type AdminUserUpdateFormData = z.infer<typeof adminUserUpdateSchema>

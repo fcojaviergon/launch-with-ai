@@ -3,9 +3,9 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { Box, Button, Container, Heading, VStack } from "@chakra-ui/react"
 import type { UpdatePassword } from "@domains/users"
 import {
+  type UpdatePasswordFormData,
   UsersService,
   updatePasswordSchema,
-  type UpdatePasswordFormData,
 } from "@domains/users"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"

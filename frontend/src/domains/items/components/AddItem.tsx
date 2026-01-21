@@ -16,7 +16,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { itemCreateSchema, type ItemCreateFormData } from "@domains/items"
+import { type ItemCreateFormData, itemCreateSchema } from "@domains/items"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"

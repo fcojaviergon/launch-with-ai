@@ -19,8 +19,8 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import {
-  adminUserCreateSchema,
   type AdminUserCreateFormData,
+  adminUserCreateSchema,
 } from "@domains/admin"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"

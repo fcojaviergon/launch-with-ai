@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { useRef, useState } from "react"
 import { FaCloudUploadAlt } from "react-icons/fa"
@@ -49,10 +42,14 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
     const validExtensions = [".pdf", ".docx", ".txt"]
 
     for (const file of files) {
-      const fileExtension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase()
+      const fileExtension = file.name
+        .substring(file.name.lastIndexOf("."))
+        .toLowerCase()
 
       if (!validExtensions.includes(fileExtension)) {
-        showErrorToast(`File ${file.name} has unsupported format. Supported: PDF, DOCX, TXT`)
+        showErrorToast(
+          `File ${file.name} has unsupported format. Supported: PDF, DOCX, TXT`,
+        )
         continue
       }
 
@@ -66,7 +63,7 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
           onError: (error) => {
             showErrorToast(`Failed to upload ${file.name}: ${error.message}`)
           },
-        }
+        },
       )
     }
 

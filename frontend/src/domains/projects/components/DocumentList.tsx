@@ -1,10 +1,4 @@
-import {
-  Box,
-  EmptyState,
-  Heading,
-  Spinner,
-  VStack,
-} from "@chakra-ui/react"
+import { Box, EmptyState, Heading, Spinner, VStack } from "@chakra-ui/react"
 import { FiFile } from "react-icons/fi"
 import { useProjectDocuments } from "../api/projects.api"
 import { DocumentItem } from "./DocumentItem"
