@@ -9,7 +9,7 @@ export interface ProgressRootProps extends ChakraProgress.RootProps {
 export const ProgressRoot = forwardRef<HTMLDivElement, ProgressRootProps>(
   function ProgressRoot(props, ref) {
     return <ChakraProgress.Root ref={ref} {...props} />
-  }
+  },
 )
 
 export interface ProgressBarProps extends ChakraProgress.TrackProps {}
@@ -21,7 +21,7 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
         <ChakraProgress.Range />
       </ChakraProgress.Track>
     )
-  }
+  },
 )
 
 export const ProgressLabel = ChakraProgress.Label

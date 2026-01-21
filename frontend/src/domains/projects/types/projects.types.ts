@@ -1,87 +1,66 @@
 /**
- * Projects domain types
+ * Projects domain types - Re-exported from auto-generated OpenAPI client
+ * DO NOT duplicate types here - import from @/client/types.gen instead
  */
 
-export type DocumentStatus = "pending" | "processing" | "completed" | "failed"
+// Re-export core project types from OpenAPI
+export type {
+  ProjectCreate,
+  ProjectPublic,
+  ProjectsPublic,
+  ProjectUpdate,
+  ProjectCapacity,
+  DocumentPublic,
+  DocumentsPublic,
+  DocumentProgress,
+  DocumentStatus,
+  DocumentUpdate,
+  Message,
+  Body_projects_upload_document,
+} from "@/client/types.gen"
 
-export interface Project {
-  id: string
-  user_id: string
-  name: string
-  description: string | null
-  system_prompt: string | null
-  max_context_tokens: number
-  created_at: string
-  updated_at: string
-  documents?: Document[]
-  capacity?: ProjectCapacity
-}
+// Re-export request/response types from OpenAPI
+export type {
+  ProjectsCreateProjectData,
+  ProjectsCreateProjectResponse,
+  ProjectsGetProjectsData,
+  ProjectsGetProjectsResponse,
+  ProjectsGetProjectData,
+  ProjectsGetProjectResponse,
+  ProjectsUpdateProjectData,
+  ProjectsUpdateProjectResponse,
+  ProjectsDeleteProjectData,
+  ProjectsDeleteProjectResponse,
+  ProjectsGetProjectCapacityData,
+  ProjectsGetProjectCapacityResponse,
+  ProjectsGetProjectDocumentsData,
+  ProjectsGetProjectDocumentsResponse,
+  ProjectsUploadDocumentData,
+  ProjectsUploadDocumentResponse,
+  DocumentsGetDocumentData,
+  DocumentsGetDocumentResponse,
+  DocumentsUpdateDocumentData,
+  DocumentsUpdateDocumentResponse,
+  DocumentsDeleteDocumentData,
+  DocumentsDeleteDocumentResponse,
+  DocumentsGetDocumentProgressData,
+  DocumentsGetDocumentProgressResponse,
+  DocumentsRetryDocumentProcessingData,
+  DocumentsRetryDocumentProcessingResponse,
+} from "@/client/types.gen"
 
-export interface Document {
-  id: string
-  project_id: string
-  filename: string
-  file_path: string
-  file_size: number
-  file_type: string
-  document_type: string
-  status: DocumentStatus
-  error_message: string | null
-  total_chunks: number
-  processed_chunks: number
-  estimated_tokens: number
-  task_id: string | null
-  uploaded_at: string
-  processing_started_at: string | null
-  processing_completed_at: string | null
-}
+// =============================================================================
+// Type aliases for backward compatibility with existing code
+// =============================================================================
 
-export interface ProjectCapacity {
-  documents_tokens: number
-  conversations_tokens: number
-  total_tokens: number
-  max_tokens: number
-  usage_percentage: number
-  remaining_tokens: number
-  is_near_limit: boolean
-  is_over_limit: boolean
-}
+/** @deprecated Use ProjectPublic from OpenAPI instead */
+export type Project = import("@/client/types.gen").ProjectPublic
 
-export interface DocumentProgress {
-  document_id: string
-  status: DocumentStatus
-  total_chunks: number
-  processed_chunks: number
-  progress_percentage: number
-  error_message: string | null
-}
+/** @deprecated Use DocumentPublic from OpenAPI instead */
+export type Document = import("@/client/types.gen").DocumentPublic
 
-// Create types
-export interface ProjectCreate {
-  name: string
-  description?: string | null
-  system_prompt?: string | null
-  max_context_tokens?: number
-}
+/** @deprecated Use ProjectsPublic from OpenAPI instead */
+export type ProjectsResponse = import("@/client/types.gen").ProjectsPublic
 
-export interface ProjectUpdate {
-  name?: string
-  description?: string | null
-  system_prompt?: string | null
-  max_context_tokens?: number
-}
-
-export interface DocumentUpdate {
-  document_type?: string
-}
-
-// List responses
-export interface ProjectsResponse {
-  data: Project[]
-  count: number
-}
-
-export interface DocumentsResponse {
-  data: Document[]
-  count: number
-}
+/** @deprecated Use DocumentsPublic from OpenAPI instead */
+export type DocumentsResponse = import("@/client/types.gen").DocumentsPublic

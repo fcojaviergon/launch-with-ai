@@ -1,17 +1,17 @@
 import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
-import { useState, useEffect } from "react"
+import { useCustomToast } from "@shared/hooks"
+import { useEffect, useState } from "react"
 import { FaComments } from "react-icons/fa"
-import { ConversationList } from "./ConversationList"
-import { MessageList } from "./MessageList"
-import { MessageInput } from "./MessageInput"
 import {
   useConversations,
-  useUserConversations,
   useCreateConversation,
   useSendMessage,
+  useUserConversations,
 } from "../api/chat.api"
 import type { Conversation, MessageChat } from "../types/chat.types"
-import { useCustomToast } from "@shared/hooks"
+import { ConversationList } from "./ConversationList"
+import { MessageInput } from "./MessageInput"
+import { MessageList } from "./MessageList"
 
 interface ChatInterfaceProps {
   analysisId?: string
@@ -35,8 +35,16 @@ export const ChatInterface = ({
   const contextId = projectId || analysisId
 
   // Use either user conversations or project/analysis-specific conversations
-  const { data: userConversations, isLoading: isLoadingUser, error: errorUser } = useUserConversations()
-  const { data: contextConversations, isLoading: isLoadingContext, error: errorContext } = useConversations(contextId)
+  const {
+    data: userConversations,
+    isLoading: isLoadingUser,
+    error: errorUser,
+  } = useUserConversations()
+  const {
+    data: contextConversations,
+    isLoading: isLoadingContext,
+    error: errorContext,
+  } = useConversations(contextId)
 
   const conversations = contextId ? contextConversations : userConversations
   const isLoading = contextId ? isLoadingContext : isLoadingUser
@@ -45,7 +53,9 @@ export const ChatInterface = ({
   // Auto-select conversation if selectedConversationId is provided
   useEffect(() => {
     if (selectedConversationId && conversations) {
-      const conversation = conversations.find(c => c.id === selectedConversationId)
+      const conversation = conversations.find(
+        (c) => c.id === selectedConversationId,
+      )
       if (conversation) {
         setSelectedConversation(conversation)
       }
@@ -56,7 +66,7 @@ export const ChatInterface = ({
   useEffect(() => {
     if (selectedConversation && conversations) {
       const updatedConversation = conversations.find(
-        c => c.id === selectedConversation.id
+        (c) => c.id === selectedConversation.id,
       )
       if (updatedConversation) {
         setSelectedConversation(updatedConversation)
@@ -82,7 +92,7 @@ export const ChatInterface = ({
           showSuccessToast("Conversation created successfully")
         },
         onError: (error) => {
-          showErrorToast("Failed to create conversation: " + error.message)
+          showErrorToast(`Failed to create conversation: ${error.message}`)
         },
       },
     )
@@ -105,7 +115,7 @@ export const ChatInterface = ({
           // Messages will be refreshed by query invalidation
         },
         onError: (error) => {
-          showErrorToast("Failed to send message: " + error.message)
+          showErrorToast(`Failed to send message: ${error.message}`)
         },
       },
     )
@@ -154,7 +164,12 @@ export const ChatInterface = ({
         </GridItem>
 
         {/* Main chat area */}
-        <GridItem display="flex" flexDirection="column" overflow="hidden" bg="white">
+        <GridItem
+          display="flex"
+          flexDirection="column"
+          overflow="hidden"
+          bg="white"
+        >
           {selectedConversation ? (
             <>
               {/* Messages */}

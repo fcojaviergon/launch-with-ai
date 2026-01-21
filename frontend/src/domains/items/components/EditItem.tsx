@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import type { ItemPublic } from "@domains/items"
-import { itemUpdateSchema, type ItemUpdateFormData } from "@domains/items"
+import { type ItemUpdateFormData, itemUpdateSchema } from "@domains/items"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"

@@ -11,9 +11,9 @@ export type ConversationCreate = {
 }
 
 export type MessageCreate = {
-  role: "user"
+  role: string
   content: string
-  use_documents: boolean
+  use_documents?: boolean
 }
 
 // Extended conversation type with properly typed messages

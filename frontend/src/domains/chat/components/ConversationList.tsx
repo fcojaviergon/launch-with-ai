@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
+import { FaComments, FaPlus } from "react-icons/fa"
 import type { Conversation } from "../types/chat.types"
-import { FaPlus, FaComments } from "react-icons/fa"
 
 interface ConversationListProps {
   conversations?: Conversation[]
@@ -19,7 +19,6 @@ export const ConversationList = ({
   onSelectConversation,
   onCreateConversation,
 }: ConversationListProps) => {
-
   if (isLoading) {
     return (
       <VStack p={4} gap={4}>
@@ -62,9 +61,7 @@ export const ConversationList = ({
               borderRadius="md"
               cursor="pointer"
               bg={
-                selectedConversationId === conversation.id
-                  ? "blue.50"
-                  : "white"
+                selectedConversationId === conversation.id ? "blue.50" : "white"
               }
               borderColor={
                 selectedConversationId === conversation.id
@@ -84,11 +81,7 @@ export const ConversationList = ({
                   <FaComments size={20} />
                 </Box>
                 <VStack align="start" gap={0} flex={1} minWidth={0}>
-                  <Text
-                    fontWeight="semibold"
-                    fontSize="sm"
-                    lineClamp={1}
-                  >
+                  <Text fontWeight="semibold" fontSize="sm" lineClamp={1}>
                     {conversation.title}
                   </Text>
                   <Text fontSize="xs" color="gray.500">

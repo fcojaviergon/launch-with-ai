@@ -116,11 +116,19 @@ test("Logged-out user cannot access protected routes", async ({ page }) => {
   await page.waitForURL("/login")
 })
 
-test("Redirects to /login when token is wrong", async ({ page }) => {
-  await page.goto("/settings")
-  await page.evaluate(() => {
-    localStorage.setItem("access_token", "invalid_token")
-  })
+test("Redirects to /login when token is wrong", async ({ page, context }) => {
+  // Set an invalid httpOnly cookie (simulating expired/invalid token)
+  await context.addCookies([
+    {
+      name: "access_token",
+      value: "invalid_token",
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    },
+  ])
   await page.goto("/settings")
   await page.waitForURL("/login")
   await expect(page).toHaveURL("/login")

@@ -20,7 +20,8 @@ interface ProjectViewProps {
 
 export const ProjectView = ({ projectId }: ProjectViewProps) => {
   const { data: project, isLoading: projectLoading } = useProject(projectId)
-  const { data: capacity, isLoading: capacityLoading } = useProjectCapacity(projectId)
+  const { data: capacity, isLoading: capacityLoading } =
+    useProjectCapacity(projectId)
 
   if (projectLoading) {
     return (
@@ -65,14 +66,12 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
 
         {/* Capacity Indicator */}
         {capacity && !capacityLoading && (
-          <Box
-            p={4}
-            borderWidth="1px"
-            borderRadius="lg"
-            bg="gray.50"
-            mb={6}
-          >
-            <CapacityIndicator capacity={capacity} size="md" showDetails={true} />
+          <Box p={4} borderWidth="1px" borderRadius="lg" bg="gray.50" mb={6}>
+            <CapacityIndicator
+              capacity={capacity}
+              size="md"
+              showDetails={true}
+            />
           </Box>
         )}
 
@@ -97,11 +96,7 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
       </Box>
 
       {/* Main Content Grid */}
-      <Grid
-        templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
-        gap={6}
-        pb={8}
-      >
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={6} pb={8}>
         {/* Left Column - Conversations */}
         <Box>
           <ConversationList projectId={projectId} />

@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useCurrentUser } from "../api/currentUser.api"
-import { removeAccessToken, useLogin } from "../api/login.api"
+import { logout as logoutApi, useLogin } from "../api/login.api"
 import { useSignup } from "../api/signup.api"
 
 /**
@@ -9,6 +9,11 @@ import { useSignup } from "../api/signup.api"
  *
  * This is the primary hook for auth operations in the application.
  * It combines login, signup, logout, and current user functionality.
+ *
+ * Authentication uses httpOnly cookies (XSS-immune):
+ * - Login: Server sets httpOnly cookie automatically
+ * - Requests: Browser sends cookie automatically
+ * - Logout: Server clears the cookie
  *
  * @example
  * ```tsx
@@ -18,7 +23,7 @@ import { useSignup } from "../api/signup.api"
  * await login.mutateAsync({ username: 'user@example.com', password: 'pass' })
  *
  * // Logout
- * logout()
+ * await logout()
  *
  * // Check user
  * if (user) {
@@ -36,10 +41,15 @@ export const useAuth = () => {
   const { data: user, isLoading } = useCurrentUser()
 
   /**
-   * Logout user and redirect to login page
+   * Logout user and redirect to login page.
+   * Calls the server to clear the httpOnly cookie.
    */
-  const logout = () => {
-    removeAccessToken()
+  const logout = async () => {
+    try {
+      await logoutApi()
+    } catch {
+      // Ignore logout errors - cookie might already be expired
+    }
     queryClient.clear()
     navigate({ to: "/login" })
   }

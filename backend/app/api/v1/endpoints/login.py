@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -22,13 +22,21 @@ from app.common.utils.email import (
 
 router = APIRouter(tags=["login"])
 
+# Cookie configuration
+COOKIE_NAME = "access_token"
+COOKIE_MAX_AGE = settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60  # Convert to seconds
+
 
 @router.post("/login/access-token", response_model=Token)
 def login_access_token(
-    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    response: Response,
+    session: SessionDep,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     """
-    OAuth2 compatible token login, get an access token for future requests
+    OAuth2 compatible token login, get an access token for future requests.
+    Sets httpOnly cookie for secure token storage (XSS-immune).
+    Also returns token in response body for backward compatibility.
     """
     user = user_service.authenticate(
         session=session, email=form_data.username, password=form_data.password
@@ -37,12 +45,26 @@ def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return Token(
-        access_token=security.create_access_token(
-            user.id, expires_delta=access_token_expires
-        )
+    access_token = security.create_access_token(
+        user.id, expires_delta=access_token_expires
     )
+
+    # Set httpOnly cookie (secure in production, lax samesite for CSRF protection)
+    is_production = settings.ENVIRONMENT != "local"
+    response.set_cookie(
+        key=COOKIE_NAME,
+        value=access_token,
+        httponly=True,  # JavaScript cannot access this cookie (XSS protection)
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",  # CSRF protection - cookie sent on same-site requests and top-level navigations
+        max_age=COOKIE_MAX_AGE,
+        path="/",  # Cookie available for all paths
+    )
+
+    # Also return token in response body for backward compatibility
+    return Token(access_token=access_token)
 
 
 @router.post("/login/test-token", response_model=UserPublic)
@@ -51,6 +73,20 @@ def test_token(current_user: CurrentUser) -> Any:
     Test access token
     """
     return current_user
+
+
+@router.post("/logout", response_model=Message)
+def logout(response: Response) -> Message:
+    """
+    Logout user by clearing the httpOnly cookie.
+    """
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        path="/",
+        httponly=True,
+        samesite="lax",
+    )
+    return Message(message="Successfully logged out")
 
 
 @router.post("/password-recovery/{email}", response_model=Message)

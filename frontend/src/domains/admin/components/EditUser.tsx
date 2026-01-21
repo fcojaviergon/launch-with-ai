@@ -18,11 +18,11 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import type { UserPublic } from "@domains/users"
 import {
-  adminUserUpdateSchema,
   type AdminUserUpdateFormData,
+  adminUserUpdateSchema,
 } from "@domains/admin"
+import type { UserPublic } from "@domains/users"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"

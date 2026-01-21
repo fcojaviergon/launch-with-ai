@@ -1,71 +1,77 @@
-// Chat-related types - auto-generated from OpenAPI spec
+// Chat-related types - Re-exported from auto-generated OpenAPI client
+// DO NOT duplicate types here - import from @/client/types.gen instead
 
-export interface DocumentReference {
-  id: string
-  message_id: string
-  document_id: string
-  document_type: string
-  filename: string
-  relevance_score: number
-  created_at: string
-  page_number: number
-  page_total: number
-}
+// Re-export core chat types from OpenAPI
+export type {
+  ChatConversationCreate,
+  ChatConversationPublic,
+  ChatMessageCreate,
+  ChatMessagePublic,
+  DocumentReferenceBase,
+  DocumentReferencePublic,
+  Message,
+} from "@/client/types.gen"
 
-export interface MessageChat {
-  id: string
-  conversation_id: string
-  role: "user" | "assistant"
-  content: string
-  use_documents: boolean
-  created_at: string
-  document_references?: DocumentReference[]
-}
+// Re-export request/response types from OpenAPI
+export type {
+  ChatGetUserConversationsResponse,
+  ChatCreateConversationData,
+  ChatCreateConversationResponse,
+  ChatGetProjectConversationsData,
+  ChatGetProjectConversationsResponse,
+  ChatGetConversationData,
+  ChatGetConversationResponse,
+  ChatCreateMessageData,
+  ChatCreateMessageResponse,
+  ChatUpdateConversationTitleData,
+  ChatUpdateConversationTitleResponse,
+  ChatGenerateConversationTitleData,
+  ChatGenerateConversationTitleResponse,
+  ChatDeleteConversationData,
+  ChatDeleteConversationResponse,
+} from "@/client/types.gen"
 
-export interface Conversation {
-  id: string
-  user_id: string
-  project_id: string | null
-  title: string
-  use_documents: boolean
-  auto_generated_title: boolean
-  title_generation_task_id: string | null
-  created_at: string
-  updated_at: string
-  messages: import("@/client").Message[]
-}
+// =============================================================================
+// Type aliases for backward compatibility with existing code
+// =============================================================================
 
-// Request/Response types
+/** @deprecated Use ChatConversationPublic from OpenAPI instead */
+export type Conversation = import("@/client/types.gen").ChatConversationPublic
+
+/** @deprecated Use ChatMessagePublic from OpenAPI instead */
+export type MessageChat = import("@/client/types.gen").ChatMessagePublic
+
+/** @deprecated Use DocumentReferencePublic from OpenAPI instead */
+export type DocumentReference =
+  import("@/client/types.gen").DocumentReferencePublic
+
+// =============================================================================
+// Legacy request types - kept for service layer compatibility
+// =============================================================================
+
 export type ChatGetConversationsData = {
   projectId: string
 }
 
-export type ChatGetConversationsResponse = Conversation[]
-
-export type ChatCreateConversationData = {
-  requestBody: {
-    project_id?: string
-    title: string
-    use_documents: boolean
-  }
-}
+export type ChatGetConversationsResponse =
+  import("@/client/types.gen").ChatConversationPublic[]
 
 export type ChatUpdateTitleData = {
   conversationId: string
   title: string
 }
 
-export type ChatUpdateTitleResponse = Conversation
-
-export type ChatCreateConversationResponse = Conversation
+export type ChatUpdateTitleResponse =
+  import("@/client/types.gen").ChatConversationPublic
 
 export type ChatSendMessageData = {
   conversationId: string
   requestBody: {
-    role: "user"
+    role: string
     content: string
-    use_documents: boolean
+    use_documents?: boolean
   }
 }
 
-export type ChatSendMessageResponse = MessageChat
+export type ChatSendMessageResponse =
+  import("@/client/types.gen").ChatMessagePublic

@@ -65,7 +65,8 @@ export const ProjectList = () => {
             <VStack textAlign="center">
               <EmptyState.Title>No projects yet</EmptyState.Title>
               <EmptyState.Description>
-                Create your first project to organize documents and conversations
+                Create your first project to organize documents and
+                conversations
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>

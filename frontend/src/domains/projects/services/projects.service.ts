@@ -5,15 +5,15 @@ import type { CancelablePromise } from "@/client/core/CancelablePromise"
 import { OpenAPI } from "@/client/core/OpenAPI"
 import { request as __request } from "@/client/core/request"
 import type {
-  Project,
-  ProjectCreate,
-  ProjectUpdate,
-  ProjectCapacity,
-  ProjectsResponse,
   Document,
+  DocumentProgress,
   DocumentUpdate,
   DocumentsResponse,
-  DocumentProgress,
+  Project,
+  ProjectCapacity,
+  ProjectCreate,
+  ProjectUpdate,
+  ProjectsResponse,
 } from "../types/projects.types"
 
 export class ProjectsService {
@@ -44,7 +44,9 @@ export class ProjectsService {
   /**
    * Get a project by ID
    */
-  public static getProject(data: { projectId: string }): CancelablePromise<Project> {
+  public static getProject(data: {
+    projectId: string
+  }): CancelablePromise<Project> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/projects/{project_id}",
@@ -143,7 +145,9 @@ export class ProjectsService {
   /**
    * Get document details
    */
-  public static getDocument(data: { documentId: string }): CancelablePromise<Document> {
+  public static getDocument(data: {
+    documentId: string
+  }): CancelablePromise<Document> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/documents/{document_id}",

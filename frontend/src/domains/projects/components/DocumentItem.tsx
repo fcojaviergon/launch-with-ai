@@ -1,15 +1,18 @@
-import {
-  Badge,
-  Box,
-  Flex,
-  IconButton,
-  Text,
-} from "@chakra-ui/react"
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
-import { formatDistanceToNow } from "date-fns"
-import { FaCheckCircle, FaExclamationCircle, FaRedo, FaTrash } from "react-icons/fa"
+import { Badge, Box, Flex, IconButton, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
-import { useDeleteDocument, useDocumentProgress, useRetryDocument } from "../api/projects.api"
+import { formatDistanceToNow } from "date-fns"
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaRedo,
+  FaTrash,
+} from "react-icons/fa"
+import {
+  useDeleteDocument,
+  useDocumentProgress,
+  useRetryDocument,
+} from "../api/projects.api"
 import type { Document } from "../types/projects.types"
 
 interface DocumentItemProps {
@@ -22,7 +25,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
   const deleteDocument = useDeleteDocument()
   const retryDocument = useRetryDocument()
   const { data: progress } = useDocumentProgress(
-    document.status === "processing" ? document.id : undefined
+    document.status === "processing" ? document.id : undefined,
   )
 
   const handleDelete = () => {
@@ -32,7 +35,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
         onSuccess: () => {
           showSuccessToast("Document deleted successfully")
         },
-      }
+      },
     )
   }
 
@@ -73,9 +76,10 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
     }
   }
 
-  const processingPercentage = document.total_chunks > 0
-    ? (document.processed_chunks / document.total_chunks) * 100
-    : 0
+  const processingPercentage =
+    document.total_chunks > 0
+      ? (document.processed_chunks / document.total_chunks) * 100
+      : 0
 
   return (
     <Box
@@ -134,7 +138,11 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
               {document.processed_chunks} / {document.total_chunks}
             </Text>
           </Flex>
-          <ProgressRoot value={processingPercentage} colorPalette="blue" size="sm">
+          <ProgressRoot
+            value={processingPercentage}
+            colorPalette="blue"
+            size="sm"
+          >
             <ProgressBar />
           </ProgressRoot>
         </Box>
@@ -147,7 +155,10 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
       )}
 
       <Text fontSize="xs" color="gray.400" mt={2}>
-        Uploaded {formatDistanceToNow(new Date(document.uploaded_at), { addSuffix: true })}
+        Uploaded{" "}
+        {formatDistanceToNow(new Date(document.uploaded_at), {
+          addSuffix: true,
+        })}
       </Text>
     </Box>
   )

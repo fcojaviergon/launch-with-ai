@@ -1,8 +1,8 @@
 import { Badge, Box, Card, Flex, Heading, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
-import type { Project } from "../types/projects.types"
 import { useProjectCapacity } from "../api/projects.api"
+import type { Project } from "../types/projects.types"
 import { CapacityIndicator } from "./CapacityIndicator"
 
 interface ProjectCardProps {
@@ -38,7 +38,11 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         <Card.Body>
           {capacity && (
             <Box mb={4}>
-              <CapacityIndicator capacity={capacity} size="sm" showDetails={false} />
+              <CapacityIndicator
+                capacity={capacity}
+                size="sm"
+                showDetails={false}
+              />
             </Box>
           )}
 
@@ -51,7 +55,10 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
         <Card.Footer>
           <Text fontSize="xs" color="gray.500">
-            Updated {formatDistanceToNow(new Date(project.updated_at), { addSuffix: true })}
+            Updated{" "}
+            {formatDistanceToNow(new Date(project.updated_at), {
+              addSuffix: true,
+            })}
           </Text>
         </Card.Footer>
       </Card.Root>

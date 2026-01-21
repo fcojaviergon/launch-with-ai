@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest"
 import { ApiError } from "@/client"
+import { describe, expect, it } from "vitest"
 import {
   getErrorMessage,
   isApiError,
@@ -11,12 +11,12 @@ import {
 function createMockApiError(
   status: number,
   statusText: string,
-  body: unknown
+  body: unknown,
 ): ApiError {
   return new ApiError(
     { method: "GET", url: "/test" },
     { url: "/test", ok: false, status, statusText, body },
-    "Mock error"
+    "Mock error",
   )
 }
 
@@ -195,7 +195,7 @@ describe("Error Handling Utilities", () => {
       const apiError = createMockApiError(
         500,
         "Internal Server Error",
-        undefined
+        undefined,
       )
 
       expect(getErrorMessage(apiError)).toBe("Something went wrong.")

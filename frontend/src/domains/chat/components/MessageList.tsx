@@ -1,7 +1,7 @@
-import { Box, HStack, Text, VStack, Badge } from "@chakra-ui/react"
-import type { MessageChat } from "../types/chat.types"
+import { Badge, Box, HStack, Text, VStack } from "@chakra-ui/react"
 import { useEffect, useRef } from "react"
-import { FaUser, FaRobot, FaFileAlt } from "react-icons/fa"
+import { FaFileAlt, FaRobot, FaUser } from "react-icons/fa"
+import type { MessageChat } from "../types/chat.types"
 
 interface MessageListProps {
   messages: MessageChat[]

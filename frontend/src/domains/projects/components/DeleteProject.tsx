@@ -15,9 +15,9 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
+import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import { FaTrash } from "react-icons/fa"
-import { useNavigate } from "@tanstack/react-router"
 import { useDeleteProject } from "../api/projects.api"
 import type { Project } from "../types/projects.types"
 
@@ -64,7 +64,8 @@ export const DeleteProject = ({ project }: DeleteProjectProps) => {
             Are you sure you want to delete the project "{project.name}"?
           </Text>
           <Text mt={2} color="red.500" fontWeight="semibold">
-            This action cannot be undone. All documents and conversations will be permanently deleted.
+            This action cannot be undone. All documents and conversations will
+            be permanently deleted.
           </Text>
         </DialogBody>
         <DialogFooter gap={2}>

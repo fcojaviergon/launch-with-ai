@@ -20,16 +20,16 @@ declare global {
 }
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
-OpenAPI.TOKEN = async () => {
-  return localStorage.getItem("access_token") || ""
-}
+// Enable credentials (cookies) for all API requests
+// httpOnly cookies are automatically sent with requests - no manual token handling needed
+OpenAPI.WITH_CREDENTIALS = true
 
 // Configuration to use system theme by default
 const USE_SYSTEM_THEME = true
 
 const handleApiError = (error: Error) => {
   if (error instanceof ApiError && [401, 403].includes(error.status)) {
-    localStorage.removeItem("access_token")
+    // No need to clear localStorage - cookies are managed by the browser
     window.location.href = "/login"
   }
 }

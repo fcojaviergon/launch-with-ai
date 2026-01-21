@@ -10,18 +10,18 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
-import { formatDistanceToNow } from "date-fns"
-import { useState } from "react"
-import { FaCheck, FaEdit, FaPlus, FaTimes } from "react-icons/fa"
-import { FiMessageSquare } from "react-icons/fi"
-import { useCustomToast } from "@shared/hooks"
 import {
   useConversations,
   useCreateConversation,
   useUpdateConversationTitle,
 } from "@domains/chat"
 import type { ChatConversation } from "@domains/chat"
+import { useCustomToast } from "@shared/hooks"
+import { Link } from "@tanstack/react-router"
+import { formatDistanceToNow } from "date-fns"
+import { useState } from "react"
+import { FaCheck, FaEdit, FaPlus, FaTimes } from "react-icons/fa"
+import { FiMessageSquare } from "react-icons/fi"
 
 interface ConversationListProps {
   projectId: string
@@ -45,7 +45,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
           showSuccessToast("Conversation title updated")
           setIsEditing(false)
         },
-      }
+      },
     )
   }
 
@@ -143,7 +143,7 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
         onSuccess: () => {
           showSuccessToast("Conversation created")
         },
-      }
+      },
     )
   }
 
@@ -185,7 +185,10 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
       {!isLoading && conversations && conversations.length > 0 && (
         <VStack gap={2} align="stretch">
           {conversations.map((conversation) => (
-            <ConversationItem key={conversation.id} conversation={conversation} />
+            <ConversationItem
+              key={conversation.id}
+              conversation={conversation}
+            />
           ))}
         </VStack>
       )}

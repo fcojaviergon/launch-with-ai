@@ -1,5 +1,5 @@
-import { Box, Flex, Text } from "@chakra-ui/react"
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
+import { Box, Flex, Text } from "@chakra-ui/react"
 import type { ProjectCapacity } from "../types/projects.types"
 
 interface CapacityIndicatorProps {
@@ -11,7 +11,7 @@ interface CapacityIndicatorProps {
 export const CapacityIndicator = ({
   capacity,
   size = "md",
-  showDetails = true
+  showDetails = true,
 }: CapacityIndicatorProps) => {
   const getColorScheme = () => {
     if (capacity.is_over_limit) return "red"
@@ -34,35 +34,32 @@ export const CapacityIndicator = ({
         <Text fontSize={size === "sm" ? "xs" : "sm"} fontWeight="medium">
           Capacity Usage
         </Text>
-        <Text fontSize={size === "sm" ? "xs" : "sm"} fontWeight="semibold" color={`${colorScheme}.600`}>
+        <Text
+          fontSize={size === "sm" ? "xs" : "sm"}
+          fontWeight="semibold"
+          color={`${colorScheme}.600`}
+        >
           {percentage.toFixed(1)}%
         </Text>
       </Flex>
 
-      <ProgressRoot
-        value={percentage}
-        colorPalette={colorScheme}
-        size={size}
-      >
+      <ProgressRoot value={percentage} colorPalette={colorScheme} size={size}>
         <ProgressBar />
       </ProgressRoot>
 
       {showDetails && (
         <Flex justify="space-between" mt={2} fontSize="xs" color="gray.600">
           <Text>
-            {formatTokens(capacity.total_tokens)} / {formatTokens(capacity.max_tokens)} tokens
+            {formatTokens(capacity.total_tokens)} /{" "}
+            {formatTokens(capacity.max_tokens)} tokens
           </Text>
-          <Text>
-            {formatTokens(capacity.remaining_tokens)} remaining
-          </Text>
+          <Text>{formatTokens(capacity.remaining_tokens)} remaining</Text>
         </Flex>
       )}
 
       {showDetails && (
         <Flex mt={2} gap={4} fontSize="xs" color="gray.600">
-          <Text>
-            Documents: {formatTokens(capacity.documents_tokens)}
-          </Text>
+          <Text>Documents: {formatTokens(capacity.documents_tokens)}</Text>
           <Text>
             Conversations: {formatTokens(capacity.conversations_tokens)}
           </Text>

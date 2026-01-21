@@ -97,12 +97,7 @@ const Sidebar = () => {
                   </Text>
                 </Flex>
                 {currentUser && (
-                  <Box
-                    p={2}
-                    borderTop="1px"
-                    borderColor="gray.200"
-                    mt={2}
-                  >
+                  <Box p={2} borderTop="1px" borderColor="gray.200" mt={2}>
                     <Text fontSize="xs" fontWeight="semibold" truncate>
                       {currentUser.full_name || "User"}
                     </Text>
@@ -132,7 +127,11 @@ const Sidebar = () => {
       >
         <Flex flexDir="column" h="100%" w="100%">
           {/* Collapse/Expand Button */}
-          <Flex justify={collapsed ? "center" : "flex-end"} p={2} flexShrink={0}>
+          <Flex
+            justify={collapsed ? "center" : "flex-end"}
+            p={2}
+            flexShrink={0}
+          >
             <IconButton
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               size="sm"
@@ -195,7 +194,9 @@ const Sidebar = () => {
                 borderTop="1px"
                 borderColor="gray.200"
                 mx={2}
-                title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
+                title={`${currentUser.full_name || "User"}\n${
+                  currentUser.email
+                }`}
               >
                 <Box
                   w={8}
@@ -209,7 +210,8 @@ const Sidebar = () => {
                   fontSize="xs"
                   fontWeight="bold"
                 >
-                  {(currentUser.full_name || currentUser.email)[0].toUpperCase()}
+                  {(currentUser.full_name ||
+                    currentUser.email)[0].toUpperCase()}
                 </Box>
               </Flex>
             )}

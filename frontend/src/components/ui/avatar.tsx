@@ -17,7 +17,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         <ChakraAvatar.Fallback>{getInitials(name)}</ChakraAvatar.Fallback>
       </ChakraAvatar.Root>
     )
-  }
+  },
 )
 
 function getInitials(name?: string): string {

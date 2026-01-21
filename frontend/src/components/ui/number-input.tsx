@@ -9,17 +9,18 @@ export interface NumberInputRootProps extends ChakraNumberInput.RootProps {
 export const NumberInputRoot = forwardRef<HTMLDivElement, NumberInputRootProps>(
   function NumberInputRoot(props, ref) {
     return <ChakraNumberInput.Root ref={ref} {...props} />
-  }
+  },
 )
 
 export interface NumberInputFieldProps
   extends ComponentPropsWithoutRef<typeof ChakraNumberInput.Input> {}
 
-export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldProps>(
-  function NumberInputField(props, ref) {
-    return <ChakraNumberInput.Input ref={ref} {...props} />
-  }
-)
+export const NumberInputField = forwardRef<
+  HTMLInputElement,
+  NumberInputFieldProps
+>(function NumberInputField(props, ref) {
+  return <ChakraNumberInput.Input ref={ref} {...props} />
+})
 
 export const NumberInputControl = ChakraNumberInput.Control
 export const NumberInputLabel = ChakraNumberInput.Label

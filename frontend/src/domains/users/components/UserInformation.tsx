@@ -12,9 +12,9 @@ import {
 import { useAuth } from "@domains/auth"
 import type { UserUpdateMe } from "@domains/users"
 import {
+  type UserUpdateMeFormData,
   UsersService,
   userUpdateMeSchema,
-  type UserUpdateMeFormData,
 } from "@domains/users"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
@@ -84,12 +84,7 @@ export const UserInformation = () => {
       >
         <Field label="Full name">
           {editMode ? (
-            <Input
-              {...register("full_name")}
-              type="text"
-              size="md"
-              w="auto"
-            />
+            <Input {...register("full_name")} type="text" size="md" w="auto" />
           ) : (
             <Text
               fontSize="md"
@@ -109,12 +104,7 @@ export const UserInformation = () => {
           errorText={errors.email?.message}
         >
           {editMode ? (
-            <Input
-              {...register("email")}
-              type="email"
-              size="md"
-              w="auto"
-            />
+            <Input {...register("email")} type="email" size="md" w="auto" />
           ) : (
             <Text fontSize="md" py={2} truncate maxWidth="250px">
               {currentUser?.email}

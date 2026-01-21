@@ -1,8 +1,8 @@
 from collections.abc import Generator
-from typing import Annotated
+from typing import Annotated, Optional
 
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
@@ -14,8 +14,14 @@ from app.core.db import engine
 from app.common.schemas.token import TokenPayload
 from app.modules.users.models import User
 
+
+# Cookie name for access token
+COOKIE_NAME = "access_token"
+
+# OAuth2 scheme for backward compatibility (Authorization header)
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token",
+    auto_error=False,  # Don't auto-error, we'll check cookie as fallback
 )
 
 
@@ -25,7 +31,37 @@ def get_db() -> Generator[Session, None, None]:
 
 
 SessionDep = Annotated[Session, Depends(get_db)]
-TokenDep = Annotated[str, Depends(reusable_oauth2)]
+
+
+def get_token_from_cookie_or_header(
+    request: Request,
+    authorization_token: Optional[str] = Depends(reusable_oauth2),
+) -> str:
+    """
+    Extract token from httpOnly cookie (preferred) or Authorization header (fallback).
+
+    Priority:
+    1. httpOnly cookie (more secure, XSS-immune)
+    2. Authorization header (backward compatibility)
+    """
+    # Try cookie first (more secure)
+    cookie_token = request.cookies.get(COOKIE_NAME)
+    if cookie_token:
+        return cookie_token
+
+    # Fallback to Authorization header for backward compatibility
+    if authorization_token:
+        return authorization_token
+
+    # No token found
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Not authenticated",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+
+TokenDep = Annotated[str, Depends(get_token_from_cookie_or_header)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:

@@ -9,10 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
-import {
-  NumberInputField,
-  NumberInputRoot,
-} from "@/components/ui/number-input"
+import { NumberInputField, NumberInputRoot } from "@/components/ui/number-input"
 import {
   Button,
   ButtonGroup,
@@ -28,7 +25,7 @@ import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FaEdit } from "react-icons/fa"
 import { useUpdateProject } from "../api/projects.api"
-import { projectUpdateSchema, type ProjectUpdateFormData } from "../schemas"
+import { type ProjectUpdateFormData, projectUpdateSchema } from "../schemas"
 import type { Project } from "../types/projects.types"
 
 interface EditProjectProps {
@@ -66,7 +63,7 @@ export const EditProject = ({ project }: EditProjectProps) => {
           reset()
           setIsOpen(false)
         },
-      }
+      },
     )
   }
 
@@ -140,12 +137,16 @@ export const EditProject = ({ project }: EditProjectProps) => {
               >
                 <NumberInputRoot
                   id="max_context_tokens"
-                  defaultValue={project.max_context_tokens.toString()}
+                  defaultValue={(
+                    project.max_context_tokens ?? 128000
+                  ).toString()}
                   min={1000}
                   max={1000000}
                   step={1000}
                 >
-                  <NumberInputField {...register("max_context_tokens", { valueAsNumber: true })} />
+                  <NumberInputField
+                    {...register("max_context_tokens", { valueAsNumber: true })}
+                  />
                 </NumberInputRoot>
               </Field>
             </VStack>
