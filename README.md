@@ -1,191 +1,165 @@
-# Rocket GenAI
+# Launch With AI
 
-Clean, production-ready full-stack template with modular architecture and Azure deployment configuration.
+Production-ready full-stack template for building AI-powered SaaS applications. Clean architecture, secure by default, and ready to deploy.
 
-## Technology Stack and Features
+## Technology Stack
 
-- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
-    - 🧰 [SQLModel](https://sqlmodel.tiangolo.com) for the Python SQL database interactions (ORM).
-    - 🔍 [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
-    - 💾 [PostgreSQL](https://www.postgresql.org) as the SQL database.
-- 🚀 [React](https://react.dev) for the frontend.
-    - 💃 Using TypeScript, hooks, Vite, and other parts of a modern frontend stack.
-    - 🎨 [Chakra UI](https://chakra-ui.com) for the frontend components.
-    - 🤖 An automatically generated frontend client.
-    - 🧪 [Playwright](https://playwright.dev) for End-to-End testing.
-    - 🦇 Dark mode support.
-- 🐋 [Docker Compose](https://www.docker.com) for development and production.
-- 🔒 Secure password hashing by default.
-- 🔑 JWT (JSON Web Token) authentication.
-- 📫 Email based password recovery.
-- ✅ Tests with [Pytest](https://pytest.org).
-- 📞 [Traefik](https://traefik.io) as a reverse proxy / load balancer.
-- 🚢 Deployment instructions using Docker Compose, including how to set up a frontend Traefik proxy to handle automatic HTTPS certificates.
-- 🏭 CI (continuous integration) and CD (continuous deployment) based on GitHub Actions.
+- **Backend**: [FastAPI](https://fastapi.tiangolo.com) with Python 3.10+
+  - [SQLModel](https://sqlmodel.tiangolo.com) ORM for type-safe database operations
+  - [Pydantic](https://docs.pydantic.dev) for data validation
+  - [PostgreSQL](https://www.postgresql.org) with TimescaleDB for vector operations
+  - [Celery](https://docs.celeryq.dev) + Redis for background tasks
+  - [Alembic](https://alembic.sqlalchemy.org) for database migrations
+
+- **Frontend**: [React 18](https://react.dev) with TypeScript
+  - [Chakra UI](https://chakra-ui.com) component library
+  - [TanStack Router](https://tanstack.com/router) for file-based routing
+  - [TanStack Query](https://tanstack.com/query) for data fetching
+  - [React Hook Form](https://react-hook-form.com) + Zod for forms
+  - Domain-Driven Design (DDD) architecture
+
+- **Infrastructure**:
+  - [Docker Compose](https://www.docker.com) for development and production
+  - [Traefik](https://traefik.io) reverse proxy with automatic HTTPS
+  - GitHub Actions for CI/CD
+  - Azure VM deployment ready
 
 ## Key Features
 
-- 🏗️ **Modular Frontend Architecture**: Organized API client with domain-based modules
-- 🐋 **Azure VM Deployment**: Ready-to-deploy configuration with Traefik
-- 🔄 **Automatic Database Migrations**: Alembic integration with Docker
-- 📱 **Responsive UI**: Clean Chakra UI components with dark mode
-- 🔒 **Production Security**: JWT authentication with secure defaults
+- **Secure Authentication**: JWT with httpOnly cookies (XSS-immune)
+- **AI Integration Ready**: OpenAI client configured, vector store support
+- **Modular Architecture**: Domain-based frontend, module-based backend
+- **Auto-generated API Client**: TypeScript types from OpenAPI spec
+- **Production Security**: CORS, CSRF protection, secure defaults
+- **Dark Mode**: System theme detection with manual override
 
-## How To Use It
+## Quick Start
 
-You can **just fork or clone** this repository and use it as is.
+### Prerequisites
 
-✨ It just works. ✨
+- Docker and Docker Compose
+- Node.js 18+ (for frontend development)
+- Python 3.10+ (for backend development)
 
-### How to Use a Private Repository
+### Local Development
 
-If you want to have a private repository, GitHub won't allow you to simply fork it as it doesn't allow changing the visibility of forks.
-
-But you can do the following:
-
-- Create a new GitHub repo, for example `my-project`.
-- Clone this repository manually:
-
+1. **Clone and configure**:
 ```bash
-git clone https://github.com/vaibes-dev/flow-seguros-la-camara.git my-project
+git clone https://github.com/yourusername/launch-with-ai.git
+cd launch-with-ai
+cp .env.example .env
+# Edit .env with your configuration (especially OPENAI_API_KEY)
 ```
 
-- Enter into the new directory:
-
+2. **Start all services**:
 ```bash
-cd my-project
+docker compose watch
 ```
 
-- Set the new origin to your new repository:
-
-```bash
-git remote set-url origin git@github.com:yourusername/my-project.git
-```
-
-- Push the code to your new repository:
-
-```bash
-git push -u origin main
-```
-
-### Update From the Original Template
-
-After cloning the repository, and after doing changes, you might want to get the latest changes from this original template.
-
-- Make sure you added the original repository as a remote, you can check it with:
-
-```bash
-git remote -v
-
-origin    git@github.com:yourusername/my-project.git (fetch)
-origin    git@github.com:yourusername/my-project.git (push)
-upstream    https://github.com/vaibes-dev/flow-seguros-la-camara.git (fetch)
-upstream    https://github.com/vaibes-dev/flow-seguros-la-camara.git (push)
-```
-
-- Pull the latest changes without merging:
-
-```bash
-git pull --no-commit upstream main
-```
-
-This will download the latest changes from this template without committing them, that way you can check everything is right before committing.
-
-- If there are conflicts, solve them in your editor.
-
-- Once you are done, commit the changes:
-
-```bash
-git merge --continue
-```
-
-### Configure
-
-You can then update configs in the `.env` files to customize your configurations.
-
-Before deploying it, make sure you change at least the values for:
-
-- `SECRET_KEY`
-- `FIRST_SUPERUSER_PASSWORD`
-- `POSTGRES_PASSWORD`
-
-You can (and should) pass these as environment variables from secrets.
-
-For production deployment details, see [CLAUDE.md](./CLAUDE.md).
+3. **Access the application**:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
 ### Generate Secret Keys
-
-Some environment variables in the `.env` file have a default value of `changethis`.
-
-You have to change them with a secret key, to generate secret keys you can run the following command:
 
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-Copy the content and use that as password / secret key. And run that again to generate another secure key.
+## Project Structure
 
-## Quick Start
-
-### Local Development
-
-1. **Clone the repository**:
-```bash
-git clone https://github.com/vaibes-dev/flow-seguros-la-camara.git
-cd flow-seguros-la-camara
+```
+launch-with-ai/
+├── backend/                 # FastAPI backend
+│   ├── app/
+│   │   ├── api/v1/         # API endpoints
+│   │   ├── core/           # Config, DB, security
+│   │   ├── modules/        # Domain modules (users, items, chat)
+│   │   └── services/       # External integrations (OpenAI)
+│   └── scripts/            # Utility scripts
+├── frontend/               # React frontend
+│   └── src/
+│       ├── domains/        # Business domains (DDD)
+│       ├── shared/         # Shared components
+│       ├── routes/         # TanStack Router pages
+│       └── client/         # Auto-generated API client
+├── docker-compose.yml      # Development & production config
+└── CLAUDE.md              # AI assistant guide
 ```
 
-2. **Set up environment**:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+## Configuration
 
-3. **Start with Docker Compose**:
-```bash
-docker compose watch
-```
+### Required Environment Variables
 
-### Azure VM Deployment
+| Variable | Description |
+|----------|-------------|
+| `SECRET_KEY` | JWT signing key (generate with command above) |
+| `POSTGRES_PASSWORD` | Database password |
+| `FIRST_SUPERUSER_PASSWORD` | Initial admin password |
+| `OPENAI_API_KEY` | OpenAI API key for AI features |
 
-1. **Prepare Azure environment**:
-```bash
-cp .env.azure.example .env.azure
-# Configure your domain and credentials
-```
+### Optional Variables
 
-2. **Deploy to Azure**:
-```bash
-./scripts/deploy-azure.sh
-```
-
-The deployment includes:
-- Automatic SSL certificates via Traefik
-- Database backups before updates
-- Health checks and rollback capabilities
-
-## Backend Development
-
-Backend docs: [backend/README.md](./backend/README.md).
-
-## Frontend Development
-
-Frontend docs: [frontend/README.md](./frontend/README.md).
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENAI_MODEL` | Chat model | `gpt-4o-mini` |
+| `OPENAI_EMBEDDING_MODEL` | Embedding model | `text-embedding-3-small` |
+| `SENTRY_DSN` | Error tracking | - |
+| `SMTP_HOST` | Email server | - |
 
 ## Deployment
 
-Deployment docs: [deployment.md](./deployment.md).
+### Azure VM Deployment
 
-## Development
+```bash
+# One-time setup
+./scripts/deploy-qa.sh
 
-General development docs: [development.md](./development.md).
+# Continuous deployment (after setup)
+git push origin main  # Auto-deploys via GitHub Actions
+```
 
-This includes using Docker Compose, custom local domains, `.env` configurations, etc.
+### Manual Deployment
 
-## Release Notes
+```bash
+./scripts/deploy.sh
+```
 
-Check the file [release-notes.md](./release-notes.md).
+See [CLAUDE.md](./CLAUDE.md) for detailed deployment instructions.
+
+## Development Workflow
+
+### Adding a New Feature
+
+1. **Backend**: Create module in `backend/app/modules/`
+2. **Generate types**: `./scripts/generate-types.sh`
+3. **Frontend**: Create domain in `frontend/src/domains/`
+
+### Database Changes
+
+```bash
+cd backend
+alembic revision --autogenerate -m "description"
+# Review migration, then commit
+```
+
+### Running Tests
+
+```bash
+# Backend
+cd backend && ./scripts/test.sh
+
+# Frontend E2E
+cd frontend && npx playwright test
+```
+
+## Documentation
+
+- [CLAUDE.md](./CLAUDE.md) - Complete development guide
+- [backend/README.md](./backend/README.md) - Backend documentation
+- [frontend/README.md](./frontend/README.md) - Frontend documentation
 
 ## License
 
-The Full Stack FastAPI Template is licensed under the terms of the MIT license.
+MIT License - Use freely for your projects.
