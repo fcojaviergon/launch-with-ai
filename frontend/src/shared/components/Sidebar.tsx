@@ -20,7 +20,7 @@ import {
 import { useAuth } from "@domains/auth"
 import type { UserPublic } from "@domains/users"
 import SidebarItems from "./SidebarItems"
-import Logo from "/assets/images/rocket-logo.svg"
+import Logo from "/assets/images/launch-logo.svg"
 
 const Sidebar = () => {
   const queryClient = useQueryClient()
