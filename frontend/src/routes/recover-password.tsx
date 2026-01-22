@@ -1,6 +1,14 @@
-import { Container, Heading, Input, Text } from "@chakra-ui/react"
+import {
+  Center,
+  Container,
+  Heading,
+  Input,
+  Spinner,
+  Text,
+} from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FiMail } from "react-icons/fi"
 
@@ -8,8 +16,7 @@ import type { ApiError } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { InputGroup } from "@/components/ui/input-group"
-import { LoginService } from "@domains/auth"
-import { isLoggedIn } from "@domains/auth"
+import { LoginService, useCurrentUser } from "@domains/auth"
 import { useCustomToast } from "@shared/hooks"
 import { emailPattern, handleError } from "@shared/utils"
 
@@ -19,16 +26,11 @@ interface FormData {
 
 export const Route = createFileRoute("/recover-password")({
   component: RecoverPassword,
-  beforeLoad: async () => {
-    if (isLoggedIn()) {
-      throw redirect({
-        to: "/",
-      })
-    }
-  },
 })
 
 function RecoverPassword() {
+  const { data: user, isLoading } = useCurrentUser()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -36,6 +38,13 @@ function RecoverPassword() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>()
   const { showSuccessToast } = useCustomToast()
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate({ to: "/" })
+    }
+  }, [isLoading, user, navigate])
 
   const recoverPassword = async (data: FormData) => {
     await LoginService.recoverPassword({
@@ -56,6 +65,18 @@ function RecoverPassword() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     mutation.mutate(data)
+  }
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
+  }
+
+  if (user) {
+    return null
   }
 
   return (

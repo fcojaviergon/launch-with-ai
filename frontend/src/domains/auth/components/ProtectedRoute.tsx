@@ -1,5 +1,6 @@
+import { Center, Spinner } from "@chakra-ui/react"
 import { Navigate } from "@tanstack/react-router"
-import { isLoggedIn, useAuth } from "../hooks"
+import { useAuth } from "../hooks"
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -8,6 +9,9 @@ interface ProtectedRouteProps {
 
 /**
  * ProtectedRoute component that guards routes requiring authentication
+ *
+ * With httpOnly cookies, we can't check auth from JS directly.
+ * Instead, we rely on the useAuth hook which tries to fetch the current user.
  *
  * @example
  * ```tsx
@@ -28,11 +32,15 @@ export const ProtectedRoute = ({
 
   // Show loading state while checking auth
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
   }
 
   // Redirect to login if not authenticated
-  if (!isLoggedIn() || !user) {
+  if (!user) {
     return <Navigate to="/login" />
   }
 
