@@ -1,4 +1,5 @@
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { Box, Flex, Text } from "@chakra-ui/react"
 import type { ProjectCapacity } from "../types/projects.types"
 
@@ -13,6 +14,9 @@ export const CapacityIndicator = ({
   size = "md",
   showDetails = true,
 }: CapacityIndicatorProps) => {
+  // Theme-aware colors
+  const textMuted = useColorModeValue("gray.600", "gray.400")
+
   const getColorScheme = () => {
     if (capacity.is_over_limit) return "red"
     if (capacity.is_near_limit) return "yellow"
@@ -48,7 +52,7 @@ export const CapacityIndicator = ({
       </ProgressRoot>
 
       {showDetails && (
-        <Flex justify="space-between" mt={2} fontSize="xs" color="gray.600">
+        <Flex justify="space-between" mt={2} fontSize="xs" color={textMuted}>
           <Text>
             {formatTokens(capacity.total_tokens)} /{" "}
             {formatTokens(capacity.max_tokens)} tokens
@@ -58,7 +62,7 @@ export const CapacityIndicator = ({
       )}
 
       {showDetails && (
-        <Flex mt={2} gap={4} fontSize="xs" color="gray.600">
+        <Flex mt={2} gap={4} fontSize="xs" color={textMuted}>
           <Text>Documents: {formatTokens(capacity.documents_tokens)}</Text>
           <Text>
             Conversations: {formatTokens(capacity.conversations_tokens)}
