@@ -1,4 +1,5 @@
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { Badge, Box, Flex, IconButton, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { formatDistanceToNow } from "date-fns"
@@ -27,6 +28,12 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
   const { data: progress } = useDocumentProgress(
     document.status === "processing" ? document.id : undefined,
   )
+
+  // Theme-aware colors
+  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const textMuted = useColorModeValue("gray.500", "gray.400")
+  const textSubtle = useColorModeValue("gray.400", "gray.500")
+  const processingText = useColorModeValue("gray.600", "gray.400")
 
   const handleDelete = () => {
     deleteDocument.mutate(
@@ -85,6 +92,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
     <Box
       p={4}
       borderWidth="1px"
+      borderColor={borderColor}
       borderRadius="md"
       _hover={{ shadow: "md" }}
       transition="all 0.2s"
@@ -96,7 +104,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
           </Text>
           <Flex gap={2} align="center" flexWrap="wrap">
             {getStatusBadge()}
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color={textMuted}>
               {document.estimated_tokens.toLocaleString()} tokens
             </Text>
           </Flex>
@@ -131,7 +139,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
       {document.status === "processing" && (
         <Box mt={3}>
           <Flex justify="space-between" mb={1}>
-            <Text fontSize="xs" color="gray.600">
+            <Text fontSize="xs" color={processingText}>
               Processing chunks...
             </Text>
             <Text fontSize="xs" fontWeight="semibold">
@@ -154,7 +162,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
         </Text>
       )}
 
-      <Text fontSize="xs" color="gray.400" mt={2}>
+      <Text fontSize="xs" color={textSubtle} mt={2}>
         Uploaded{" "}
         {formatDistanceToNow(new Date(document.uploaded_at), {
           addSuffix: true,

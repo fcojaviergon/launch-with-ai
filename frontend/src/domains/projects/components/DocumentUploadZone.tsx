@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { useCustomToast } from "@shared/hooks"
 import { useRef, useState } from "react"
 import { FaCloudUploadAlt } from "react-icons/fa"
@@ -13,6 +14,18 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const uploadDocument = useUploadDocument()
+
+  // Theme-aware colors
+  const borderColor = useColorModeValue("gray.300", "gray.600")
+  const borderColorHover = useColorModeValue("blue.400", "blue.400")
+  const bgColor = useColorModeValue("gray.50", "gray.800")
+  const bgColorHover = useColorModeValue("blue.50", "blue.900")
+  const bgColorDragging = useColorModeValue("blue.50", "blue.900")
+  const iconBg = useColorModeValue("gray.200", "gray.700")
+  const iconBgDragging = useColorModeValue("blue.100", "blue.800")
+  const iconColor = useColorModeValue("gray.600", "gray.400")
+  const iconColorDragging = useColorModeValue("blue.600", "blue.300")
+  const textMuted = useColorModeValue("gray.600", "gray.400")
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -85,16 +98,16 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
         onDrop={handleDrop}
         onClick={handleClick}
         border="2px dashed"
-        borderColor={isDragging ? "blue.500" : "gray.300"}
+        borderColor={isDragging ? "blue.500" : borderColor}
         borderRadius="lg"
         p={8}
         textAlign="center"
         cursor="pointer"
-        bg={isDragging ? "blue.50" : "gray.50"}
+        bg={isDragging ? bgColorDragging : bgColor}
         transition="all 0.2s"
         _hover={{
-          borderColor: "blue.400",
-          bg: "blue.50",
+          borderColor: borderColorHover,
+          bg: bgColorHover,
         }}
       >
         <VStack gap={3}>
@@ -104,8 +117,8 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
             w={16}
             h={16}
             borderRadius="full"
-            bg={isDragging ? "blue.100" : "gray.200"}
-            color={isDragging ? "blue.600" : "gray.600"}
+            bg={isDragging ? iconBgDragging : iconBg}
+            color={isDragging ? iconColorDragging : iconColor}
             transition="all 0.2s"
           >
             <FaCloudUploadAlt size={32} />
@@ -113,12 +126,9 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
 
           <VStack gap={1}>
             <Text fontWeight="semibold" fontSize="lg">
-              {isDragging ? "Drop files here" : "Upload Documents"}
+              {isDragging ? "Drop files here" : "Drag & drop files or click to browse"}
             </Text>
-            <Text fontSize="sm" color="gray.600">
-              Drag & drop files or click to browse
-            </Text>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="sm" color={textMuted}>
               Supported formats: PDF, DOCX, TXT
             </Text>
           </VStack>
