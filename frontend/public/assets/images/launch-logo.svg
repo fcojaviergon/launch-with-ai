@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rocket Icon -->
+  <g transform="translate(0, 4)">
+    <!-- Rocket body -->
+    <path d="M16 2C16 2 22 8 22 16C22 24 16 30 16 30C16 30 10 24 10 16C10 8 16 2 16 2Z" fill="url(#rocketGradient)" stroke="url(#rocketStroke)" stroke-width="1.5"/>
+    <!-- Window -->
+    <circle cx="16" cy="14" r="3" fill="white" opacity="0.9"/>
+    <!-- Fins -->
+    <path d="M10 22L6 28L10 26V22Z" fill="url(#finGradient)"/>
+    <path d="M22 22L26 28L22 26V22Z" fill="url(#finGradient)"/>
+    <!-- Flame -->
+    <path d="M13 30C13 30 16 36 16 36C16 36 19 30 19 30C18 32 14 32 13 30Z" fill="url(#flameGradient)"/>
+  </g>
+
+  <!-- Text: Launch -->
+  <text x="36" y="26" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="18" font-weight="700" fill="currentColor">
+    Launch
+  </text>
+
+  <!-- Text: With AI -->
+  <text x="104" y="26" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="18" font-weight="400" fill="currentColor" opacity="0.7">
+    With AI
+  </text>
+
+  <defs>
+    <linearGradient id="rocketGradient" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="rocketStroke" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A5B4FC"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="finGradient" x1="16" y1="22" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="flameGradient" x1="16" y1="30" x2="16" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+  </defs>
+</svg>
