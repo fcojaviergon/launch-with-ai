@@ -1,3 +1,4 @@
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { Badge, Box, Card, Flex, Heading, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
@@ -12,10 +13,19 @@ interface ProjectCardProps {
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   const { data: capacity } = useProjectCapacity(project.id)
 
+  // Theme-aware colors
+  const cardBg = useColorModeValue("white", "gray.800")
+  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const textMuted = useColorModeValue("gray.600", "gray.400")
+  const textSubtle = useColorModeValue("gray.500", "gray.400")
+
   return (
     <Link to="/projects/$projectId" params={{ projectId: project.id }}>
       <Card.Root
-        _hover={{ shadow: "lg", transform: "translateY(-2px)" }}
+        bg={cardBg}
+        borderWidth="1px"
+        borderColor={borderColor}
+        _hover={{ shadow: "lg", transform: "translateY(-2px)", borderColor: "blue.400" }}
         transition="all 0.2s"
         cursor="pointer"
         h="100%"
@@ -27,7 +37,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                 {project.name}
               </Heading>
               {project.description && (
-                <Text fontSize="sm" color="gray.600" lineClamp={2}>
+                <Text fontSize="sm" color={textMuted} lineClamp={2}>
                   {project.description}
                 </Text>
               )}
@@ -54,7 +64,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         </Card.Body>
 
         <Card.Footer>
-          <Text fontSize="xs" color="gray.500">
+          <Text fontSize="xs" color={textSubtle}>
             Updated{" "}
             {formatDistanceToNow(new Date(project.updated_at), {
               addSuffix: true,

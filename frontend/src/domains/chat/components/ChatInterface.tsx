@@ -1,8 +1,18 @@
-import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Heading,
+  IconButton,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 import { useColorModeValue } from "@/components/ui/color-mode"
 import { useCustomToast } from "@shared/hooks"
+import { Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
-import { FaComments } from "react-icons/fa"
+import { FaArrowLeft, FaComments } from "react-icons/fa"
 import {
   useConversations,
   useCreateConversation,
@@ -18,6 +28,7 @@ interface ChatInterfaceProps {
   analysisId?: string
   analysisTitle?: string
   projectId?: string
+  projectName?: string
   selectedConversationId?: string
 }
 
@@ -25,6 +36,7 @@ export const ChatInterface = ({
   analysisId,
   analysisTitle,
   projectId,
+  projectName,
   selectedConversationId,
 }: ChatInterfaceProps) => {
   const [selectedConversation, setSelectedConversation] =
@@ -39,6 +51,7 @@ export const ChatInterface = ({
   const inputBg = useColorModeValue("gray.50", "gray.900")
   const textMuted = useColorModeValue("gray.500", "gray.400")
   const emptyIconColor = useColorModeValue("#CBD5E0", "#4A5568")
+  const backButtonHoverBg = useColorModeValue("gray.100", "gray.700")
 
   // Determine which ID to use (projectId takes precedence for new code)
   const contextId = projectId || analysisId
@@ -145,12 +158,48 @@ export const ChatInterface = ({
         flexShrink={0}
         bg={cardBg}
       >
-        <Heading size="md">Chat</Heading>
-        {analysisTitle && (
-          <Text fontSize="sm" color={textMuted} mt={1}>
-            {analysisTitle}
-          </Text>
-        )}
+        <Flex align="center" gap={3}>
+          {/* Back button for project context */}
+          {projectId && (
+            <Link to="/projects/$projectId" params={{ projectId }}>
+              <IconButton
+                aria-label="Back to project"
+                variant="ghost"
+                size="sm"
+                _hover={{ bg: backButtonHoverBg }}
+              >
+                <FaArrowLeft />
+              </IconButton>
+            </Link>
+          )}
+          <Box>
+            <Flex align="center" gap={2}>
+              {projectId && projectName && (
+                <>
+                  <Link to="/projects/$projectId" params={{ projectId }}>
+                    <Text
+                      fontSize="sm"
+                      color={textMuted}
+                      _hover={{ textDecoration: "underline", color: "blue.500" }}
+                      cursor="pointer"
+                    >
+                      {projectName}
+                    </Text>
+                  </Link>
+                  <Text color={textMuted} fontSize="sm">
+                    /
+                  </Text>
+                </>
+              )}
+              <Heading size="md">Chat</Heading>
+            </Flex>
+            {analysisTitle && (
+              <Text fontSize="sm" color={textMuted} mt={1}>
+                {analysisTitle}
+              </Text>
+            )}
+          </Box>
+        </Flex>
       </Box>
 
       {/* Main content */}
