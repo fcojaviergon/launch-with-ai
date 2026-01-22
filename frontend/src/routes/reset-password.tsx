@@ -1,14 +1,14 @@
-import { Container, Heading, Text } from "@chakra-ui/react"
+import { Center, Container, Heading, Spinner, Text } from "@chakra-ui/react"
 import { useMutation } from "@tanstack/react-query"
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
 import { FiLock } from "react-icons/fi"
 
 import type { ApiError } from "@/client"
 import { Button } from "@/components/ui/button"
 import { PasswordInput } from "@/components/ui/password-input"
-import { LoginService, type NewPassword } from "@domains/auth"
-import { isLoggedIn } from "@domains/auth"
+import { LoginService, type NewPassword, useCurrentUser } from "@domains/auth"
 import { useCustomToast } from "@shared/hooks"
 import { confirmPasswordRules, handleError, passwordRules } from "@shared/utils"
 
@@ -18,16 +18,11 @@ interface NewPasswordForm extends NewPassword {
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPassword,
-  beforeLoad: async () => {
-    if (isLoggedIn()) {
-      throw redirect({
-        to: "/",
-      })
-    }
-  },
 })
 
 function ResetPassword() {
+  const { data: user, isLoading } = useCurrentUser()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -42,7 +37,13 @@ function ResetPassword() {
     },
   })
   const { showSuccessToast } = useCustomToast()
-  const navigate = useNavigate()
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigate({ to: "/" })
+    }
+  }, [isLoading, user, navigate])
 
   const resetPassword = async (data: NewPassword) => {
     const token = new URLSearchParams(window.location.search).get("token")
@@ -66,6 +67,18 @@ function ResetPassword() {
 
   const onSubmit: SubmitHandler<NewPasswordForm> = async (data) => {
     mutation.mutate(data)
+  }
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
+  }
+
+  if (user) {
+    return null
   }
 
   return (
