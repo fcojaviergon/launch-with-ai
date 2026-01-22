@@ -7,6 +7,7 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { useProject, useProjectCapacity } from "../api/projects.api"
 import { CapacityIndicator } from "./CapacityIndicator"
 import { ConversationList } from "./ConversationList"
@@ -22,6 +23,14 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
   const { data: project, isLoading: projectLoading } = useProject(projectId)
   const { data: capacity, isLoading: capacityLoading } =
     useProjectCapacity(projectId)
+
+  // Theme-aware colors
+  const textMuted = useColorModeValue("gray.600", "gray.400")
+  const cardBg = useColorModeValue("gray.50", "gray.800")
+  const systemPromptBg = useColorModeValue("blue.50", "blue.900")
+  const systemPromptBorder = useColorModeValue("blue.200", "blue.700")
+  const systemPromptTitle = useColorModeValue("blue.700", "blue.300")
+  const systemPromptText = useColorModeValue("gray.700", "gray.300")
 
   if (projectLoading) {
     return (
@@ -53,7 +62,7 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
               {project.name}
             </Heading>
             {project.description && (
-              <Text color="gray.600" fontSize="md">
+              <Text color={textMuted} fontSize="md">
                 {project.description}
               </Text>
             )}
@@ -66,7 +75,7 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
 
         {/* Capacity Indicator */}
         {capacity && !capacityLoading && (
-          <Box p={4} borderWidth="1px" borderRadius="lg" bg="gray.50" mb={6}>
+          <Box p={4} borderWidth="1px" borderRadius="lg" bg={cardBg} mb={6}>
             <CapacityIndicator
               capacity={capacity}
               size="md"
@@ -81,14 +90,14 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
             p={4}
             borderWidth="1px"
             borderRadius="lg"
-            bg="blue.50"
-            borderColor="blue.200"
+            bg={systemPromptBg}
+            borderColor={systemPromptBorder}
             mb={6}
           >
-            <Text fontSize="sm" fontWeight="semibold" mb={2} color="blue.700">
+            <Text fontSize="sm" fontWeight="semibold" mb={2} color={systemPromptTitle}>
               System Prompt
             </Text>
-            <Text fontSize="sm" color="gray.700" whiteSpace="pre-wrap">
+            <Text fontSize="sm" color={systemPromptText} whiteSpace="pre-wrap">
               {project.system_prompt}
             </Text>
           </Box>

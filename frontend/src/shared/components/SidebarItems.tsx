@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi"
 import type { IconType } from "react-icons/lib"
 
+import { useColorModeValue } from "@/components/ui/color-mode"
 import type { UserPublic } from "@domains/users"
 
 const items = [
@@ -18,7 +19,7 @@ const items = [
   { icon: FiFolder, title: "Projects", path: "/projects" },
   { icon: FiMessageSquare, title: "Chat", path: "/chat" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiSettings, title: "User Settings", path: "/settings" },
+  { icon: FiSettings, title: "Settings", path: "/settings" },
 ]
 
 interface SidebarItemsProps {
@@ -38,19 +39,23 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
 
+  // Theme-aware colors
+  const textColor = useColorModeValue("gray.600", "gray.300")
+  const textHover = useColorModeValue("gray.900", "gray.100")
+  const hoverBg = useColorModeValue("gray.50", "gray.800")
+  const iconColor = useColorModeValue("gray.500", "gray.400")
+  const labelColor = useColorModeValue("gray.400", "gray.500")
+
   const finalItems: Item[] = currentUser?.is_superuser
     ? [...items, { icon: FiUsers, title: "Admin", path: "/admin" }]
     : items
 
   const listItems = finalItems.map(({ icon, title, path }) => {
-    // Check if this route is active based on the current path
     let isActive = false
 
     if (path === "/") {
-      // Special case for home route
       isActive = currentPath === "/"
     } else {
-      // For other routes, check if the current route starts with this path
       isActive = currentPath === path || currentPath.startsWith(`${path}/`)
     }
 
@@ -58,28 +63,37 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
       <RouterLink key={title} to={path} onClick={onClose}>
         <Flex
           gap={collapsed ? 0 : 3}
-          px={collapsed ? 2 : 3}
-          py={2.5}
+          px={collapsed ? 0 : 4}
+          py={3}
           my={1}
-          borderRadius="md"
-          bg={isActive ? "ui.primary" : "transparent"}
-          color={isActive ? "white" : "inherit"}
-          fontWeight={isActive ? "semibold" : "normal"}
+          mx={collapsed ? 1 : 0}
+          borderRadius="xl"
+          bg={isActive ? "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)" : "transparent"}
+          color={isActive ? "white" : textColor}
+          fontWeight={isActive ? "semibold" : "medium"}
           _hover={{
-            background: isActive ? "ui.primary" : "gray.100",
-            transform: collapsed ? "none" : "translateX(2px)",
+            background: isActive
+              ? "linear-gradient(135deg, #4338CA 0%, #4F46E5 100%)"
+              : hoverBg,
+            color: isActive ? "white" : textHover,
+            transform: collapsed ? "scale(1.05)" : "translateX(4px)",
+          }}
+          _active={{
+            transform: "scale(0.98)",
           }}
           alignItems="center"
           justifyContent={collapsed ? "center" : "flex-start"}
-          fontSize="md"
-          transition="all 0.2s ease"
+          fontSize="sm"
+          transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
           title={collapsed ? title : ""}
+          boxShadow={isActive ? "0 4px 14px rgba(79, 70, 229, 0.3)" : "none"}
         >
           <Icon
             as={icon}
             alignSelf="center"
-            fontSize="xl"
-            color={isActive ? "white" : "ui.primary"}
+            fontSize="lg"
+            color={isActive ? "white" : iconColor}
+            transition="color 0.2s"
           />
           {!collapsed && <Text>{title}</Text>}
         </Flex>
@@ -88,18 +102,18 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
   })
 
   return (
-    <Box px={collapsed ? 1 : 3} py={2}>
+    <Box px={collapsed ? 1 : 3} py={1}>
       {!collapsed && (
         <Text
-          fontSize="sm"
-          px={1}
-          py={2}
-          fontWeight="bold"
-          color="gray.600"
-          letterSpacing="wider"
+          fontSize="xs"
+          px={4}
+          py={3}
+          fontWeight="semibold"
+          color={labelColor}
+          letterSpacing="0.1em"
           textTransform="uppercase"
         >
-          Menu
+          Navigation
         </Text>
       )}
       <Box>{listItems}</Box>

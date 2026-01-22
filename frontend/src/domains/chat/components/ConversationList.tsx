@@ -1,4 +1,5 @@
 import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { FaComments, FaPlus } from "react-icons/fa"
 import type { Conversation } from "../types/chat.types"
 
@@ -19,11 +20,22 @@ export const ConversationList = ({
   onSelectConversation,
   onCreateConversation,
 }: ConversationListProps) => {
+  // Theme-aware colors
+  const textMuted = useColorModeValue("gray.500", "gray.400")
+  const textSubtle = useColorModeValue("gray.400", "gray.500")
+  const cardBg = useColorModeValue("white", "gray.800")
+  const cardHoverBg = useColorModeValue("gray.50", "gray.700")
+  const selectedBg = useColorModeValue("blue.50", "blue.900")
+  const selectedHoverBg = useColorModeValue("blue.100", "blue.800")
+  const borderColor = useColorModeValue("gray.200", "gray.600")
+  const selectedBorderColor = useColorModeValue("blue.500", "blue.400")
+  const emptyIconColor = useColorModeValue("gray", "#4A5568")
+
   if (isLoading) {
     return (
       <VStack p={4} gap={4}>
         <Spinner size="lg" />
-        <Text color="gray.500">Loading conversations...</Text>
+        <Text color={textMuted}>Loading conversations...</Text>
       </VStack>
     )
   }
@@ -32,7 +44,7 @@ export const ConversationList = ({
     return (
       <VStack p={4} gap={4}>
         <Text color="red.500">Error loading conversations</Text>
-        <Text fontSize="sm" color="gray.500">
+        <Text fontSize="sm" color={textMuted}>
           {error.message}
         </Text>
       </VStack>
@@ -61,20 +73,21 @@ export const ConversationList = ({
               borderRadius="md"
               cursor="pointer"
               bg={
-                selectedConversationId === conversation.id ? "blue.50" : "white"
+                selectedConversationId === conversation.id ? selectedBg : cardBg
               }
               borderColor={
                 selectedConversationId === conversation.id
-                  ? "blue.500"
-                  : "gray.200"
+                  ? selectedBorderColor
+                  : borderColor
               }
               _hover={{
                 bg:
                   selectedConversationId === conversation.id
-                    ? "blue.100"
-                    : "gray.50",
+                    ? selectedHoverBg
+                    : cardHoverBg,
               }}
               onClick={() => onSelectConversation(conversation)}
+              transition="all 0.2s"
             >
               <HStack gap={3}>
                 <Box color="blue.500">
@@ -84,7 +97,7 @@ export const ConversationList = ({
                   <Text fontWeight="semibold" fontSize="sm" lineClamp={1}>
                     {conversation.title}
                   </Text>
-                  <Text fontSize="xs" color="gray.500">
+                  <Text fontSize="xs" color={textMuted}>
                     {new Date(conversation.created_at).toLocaleDateString()}
                   </Text>
                 </VStack>
@@ -94,11 +107,11 @@ export const ConversationList = ({
         </VStack>
       ) : (
         <VStack p={8} gap={2}>
-          <FaComments size={48} color="gray" />
-          <Text color="gray.500" textAlign="center">
+          <FaComments size={48} color={emptyIconColor} />
+          <Text color={textMuted} textAlign="center">
             No conversations yet
           </Text>
-          <Text fontSize="sm" color="gray.400" textAlign="center">
+          <Text fontSize="sm" color={textSubtle} textAlign="center">
             Click "New Conversation" to start
           </Text>
         </VStack>

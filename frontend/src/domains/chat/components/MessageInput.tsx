@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { Box, Button, HStack, Textarea } from "@chakra-ui/react"
 import { useState } from "react"
 import { FaPaperPlane } from "react-icons/fa"
@@ -18,6 +19,9 @@ export const MessageInput = ({
 }: MessageInputProps) => {
   const [content, setContent] = useState("")
   const [useDocuments, setUseDocuments] = useState(true)
+
+  // Theme-aware colors
+  const borderColor = useColorModeValue("gray.200", "gray.600")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,7 +46,7 @@ export const MessageInput = ({
       onSubmit={handleSubmit}
       p={4}
       borderTopWidth="1px"
-      borderColor="gray.200"
+      borderColor={borderColor}
     >
       <HStack align="end" gap={2}>
         <Box flex={1}>

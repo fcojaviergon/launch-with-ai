@@ -1,4 +1,5 @@
 import { Box, Grid, GridItem, Heading, Text, VStack } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { useCustomToast } from "@shared/hooks"
 import { useEffect, useState } from "react"
 import { FaComments } from "react-icons/fa"
@@ -30,6 +31,14 @@ export const ChatInterface = ({
     useState<Conversation | null>(null)
 
   const { showSuccessToast, showErrorToast } = useCustomToast()
+
+  // Theme-aware colors
+  const bgColor = useColorModeValue("gray.50", "gray.900")
+  const cardBg = useColorModeValue("white", "gray.800")
+  const borderColor = useColorModeValue("gray.200", "gray.700")
+  const inputBg = useColorModeValue("gray.50", "gray.900")
+  const textMuted = useColorModeValue("gray.500", "gray.400")
+  const emptyIconColor = useColorModeValue("#CBD5E0", "#4A5568")
 
   // Determine which ID to use (projectId takes precedence for new code)
   const contextId = projectId || analysisId
@@ -127,18 +136,18 @@ export const ChatInterface = ({
     : []
 
   return (
-    <Box height="100%" display="flex" flexDirection="column" bg="gray.50">
+    <Box height="100%" display="flex" flexDirection="column" bg={bgColor}>
       {/* Header */}
       <Box
         p={4}
         borderBottomWidth="1px"
-        borderColor="gray.200"
+        borderColor={borderColor}
         flexShrink={0}
-        bg="white"
+        bg={cardBg}
       >
         <Heading size="md">Chat</Heading>
         {analysisTitle && (
-          <Text fontSize="sm" color="gray.500" mt={1}>
+          <Text fontSize="sm" color={textMuted} mt={1}>
             {analysisTitle}
           </Text>
         )}
@@ -149,9 +158,9 @@ export const ChatInterface = ({
         {/* Sidebar - Conversation List */}
         <GridItem
           borderRightWidth="1px"
-          borderColor="gray.200"
+          borderColor={borderColor}
           overflowY="auto"
-          bg="white"
+          bg={cardBg}
         >
           <ConversationList
             conversations={conversations}
@@ -168,7 +177,7 @@ export const ChatInterface = ({
           display="flex"
           flexDirection="column"
           overflow="hidden"
-          bg="white"
+          bg={cardBg}
         >
           {selectedConversation ? (
             <>
@@ -183,9 +192,9 @@ export const ChatInterface = ({
               {/* Input */}
               <Box
                 borderTopWidth="1px"
-                borderColor="gray.200"
+                borderColor={borderColor}
                 p={4}
-                bg="gray.50"
+                bg={inputBg}
               >
                 <MessageInput
                   onSendMessage={handleSendMessage}
@@ -195,8 +204,8 @@ export const ChatInterface = ({
             </>
           ) : (
             <VStack justify="center" height="100%" gap={4} p={8}>
-              <FaComments size={64} color="#CBD5E0" />
-              <Text fontSize="lg" color="gray.500" textAlign="center">
+              <FaComments size={64} color={emptyIconColor} />
+              <Text fontSize="lg" color={textMuted} textAlign="center">
                 Select a conversation or create a new one to start chatting
               </Text>
             </VStack>

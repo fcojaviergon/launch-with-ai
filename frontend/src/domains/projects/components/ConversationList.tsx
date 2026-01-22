@@ -10,6 +10,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import {
   useConversations,
   useCreateConversation,
@@ -37,6 +38,10 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
   const { showSuccessToast } = useCustomToast()
   const updateTitle = useUpdateConversationTitle()
 
+  // Theme-aware colors
+  const textMuted = useColorModeValue("gray.500", "gray.400")
+  const hoverBorderColor = useColorModeValue("blue.300", "blue.500")
+
   const handleSaveTitle = () => {
     updateTitle.mutate(
       { conversationId: conversation.id, title: editedTitle },
@@ -59,7 +64,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
       p={3}
       borderWidth="1px"
       borderRadius="md"
-      _hover={{ shadow: "md", borderColor: "blue.300" }}
+      _hover={{ shadow: "md", borderColor: hoverBorderColor }}
       transition="all 0.2s"
     >
       <Flex justify="space-between" align="center" gap={2}>
@@ -109,7 +114,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
                 <Text fontWeight="semibold" fontSize="sm" mb={1}>
                   {conversation.title || "New Conversation"}
                 </Text>
-                <Text fontSize="xs" color="gray.500">
+                <Text fontSize="xs" color={textMuted}>
                   {formatDistanceToNow(new Date(conversation.updated_at), {
                     addSuffix: true,
                   })}

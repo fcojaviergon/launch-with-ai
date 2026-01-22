@@ -1,4 +1,5 @@
 import { Badge, Box, HStack, Text, VStack } from "@chakra-ui/react"
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { useEffect, useRef } from "react"
 import { FaFileAlt, FaRobot, FaUser } from "react-icons/fa"
 import type { MessageChat } from "../types/chat.types"
@@ -11,6 +12,13 @@ interface MessageListProps {
 export const MessageList = ({ messages, isLoading }: MessageListProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // Theme-aware colors
+  const textMuted = useColorModeValue("gray.500", "gray.400")
+  const textSubtle = useColorModeValue("gray.400", "gray.500")
+  const assistantBg = useColorModeValue("gray.100", "gray.700")
+  const assistantText = useColorModeValue("gray.900", "gray.100")
+  const thinkingBg = useColorModeValue("gray.100", "gray.700")
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -19,10 +27,10 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
   if (messages.length === 0 && !isLoading) {
     return (
       <VStack p={8} gap={2} justify="center" height="100%">
-        <Text color="gray.500" textAlign="center">
+        <Text color={textMuted} textAlign="center">
           No messages yet
         </Text>
-        <Text fontSize="sm" color="gray.400" textAlign="center">
+        <Text fontSize="sm" color={textSubtle} textAlign="center">
           Start the conversation by sending a message
         </Text>
       </VStack>
@@ -63,8 +71,8 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
             maxWidth="70%"
           >
             <Box
-              bg={message.role === "user" ? "blue.500" : "gray.100"}
-              color={message.role === "user" ? "white" : "black"}
+              bg={message.role === "user" ? "blue.500" : assistantBg}
+              color={message.role === "user" ? "white" : assistantText}
               px={4}
               py={3}
               borderRadius="lg"
@@ -98,7 +106,7 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
                 </HStack>
               )}
 
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color={textMuted}>
               {new Date(message.created_at).toLocaleTimeString()}
             </Text>
           </VStack>
@@ -128,9 +136,9 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
           >
             <FaRobot />
           </Box>
-          <Box bg="gray.100" px={4} py={3} borderRadius="lg">
+          <Box bg={thinkingBg} px={4} py={3} borderRadius="lg">
             <HStack gap={2}>
-              <Text>Thinking</Text>
+              <Text color={assistantText}>Thinking</Text>
               <Box as="span" animation="pulse 1.5s ease-in-out infinite">
                 ...
               </Box>

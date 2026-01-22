@@ -1,9 +1,10 @@
-import { Center, Flex, Spinner } from "@chakra-ui/react"
+import { Box, Center, Flex, Spinner } from "@chakra-ui/react"
 import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { useCurrentUser } from "@domains/auth"
-import { Navbar, Sidebar } from "@shared/components"
+import { Sidebar } from "@shared/components"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -12,6 +13,14 @@ export const Route = createFileRoute("/_layout")({
 function Layout() {
   const { data: user, isLoading, isError } = useCurrentUser()
   const navigate = useNavigate()
+
+  // Theme-aware colors
+  const bgColor = useColorModeValue("gray.50", "gray.950")
+  const cardBg = useColorModeValue("white", "gray.900")
+  const cardShadow = useColorModeValue(
+    "0 1px 3px rgba(0,0,0,0.05)",
+    "0 1px 3px rgba(0,0,0,0.3)"
+  )
 
   useEffect(() => {
     if (!isLoading && (isError || !user)) {
@@ -22,8 +31,8 @@ function Layout() {
   // Show loading while checking auth
   if (isLoading) {
     return (
-      <Center h="100vh">
-        <Spinner size="xl" />
+      <Center h="100vh" bg={bgColor}>
+        <Spinner size="xl" color="ui.primary" borderWidth="3px" />
       </Center>
     )
   }
@@ -34,14 +43,26 @@ function Layout() {
   }
 
   return (
-    <Flex direction="column" h="100vh">
-      <Navbar />
-      <Flex flex="1" overflow="hidden">
-        <Sidebar />
-        <Flex flex="1" direction="column" p={5} overflowY="auto">
+    <Flex h="100vh" bg={bgColor}>
+      <Sidebar />
+      <Box
+        flex="1"
+        overflowY="auto"
+        p={{ base: 4, md: 6, lg: 8 }}
+        ml={{ base: 0, md: 0 }}
+      >
+        <Box
+          maxW="1600px"
+          mx="auto"
+          bg={cardBg}
+          borderRadius="xl"
+          minH="calc(100vh - 64px)"
+          boxShadow={cardShadow}
+          p={{ base: 4, md: 6 }}
+        >
           <Outlet />
-        </Flex>
-      </Flex>
+        </Box>
+      </Box>
     </Flex>
   )
 }
