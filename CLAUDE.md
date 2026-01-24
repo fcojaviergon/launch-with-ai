@@ -424,7 +424,82 @@ For more detailed information:
 
 This project includes custom skills for Claude Code development assistance:
 
+### Development Skills
 - **`/launch-frontend`**: Frontend development guide with DDD patterns, React Query hooks, Zod forms, and type generation workflow
 - **`/launch-backend`**: Backend development guide with FastAPI modules, Repository-Service pattern, and Alembic migrations
 
+### Project Management Skills
+- **`/prd`**: PRD Manager - View project status, generate GitHub issues from PRD requirements
+- **`/sprint`**: Sprint Planner - Create and manage sprints with GitHub Projects and Milestones
+
 Skills are located in `.claude/skills/` and provide quick reference + extended examples for common development tasks.
+
+## AI-Driven Development Workflow
+
+This project uses an AI-assisted development workflow that connects the PRD directly to GitHub Issues and sprints.
+
+### Workflow Overview
+
+```
+PRD Requirements → GitHub Issues → Sprints → Development → Delivery
+```
+
+### Daily Workflow
+
+1. **Planning Phase**
+   ```bash
+   /prd status              # Ver estado actual del proyecto
+   /prd next                # Ver próximo feature recomendado
+   /sprint status           # Ver progreso del sprint actual
+   ```
+
+2. **Issue Generation** (cuando inicias una nueva fase)
+   ```bash
+   /prd issues --phase MVP  # Genera issues para la fase
+   ```
+
+3. **Sprint Management**
+   ```bash
+   /sprint create --name "Sprint 1"  # Crear nuevo sprint
+   /sprint backlog                    # Ver issues disponibles
+   ```
+
+4. **Development**
+   - Seleccionar un issue del sprint
+   - Usar Plan Mode para diseñar la implementación
+   - Usar `/launch-backend` para módulos backend
+   - Usar `/launch-frontend` para dominios frontend
+
+5. **Delivery**
+   ```bash
+   git commit -m "feat: implement RF-001 #123"  # Referencia al issue
+   /sprint status                                 # Verificar progreso
+   ```
+
+6. **Sprint Close**
+   ```bash
+   /sprint close  # Cerrar sprint y generar reporte
+   ```
+
+### PRD to GitHub Mapping
+
+| PRD Element | GitHub Element |
+|-------------|----------------|
+| Fase (MVP, etc.) | Milestone |
+| Requisito (RF-XXX) | Issue |
+| Must/Should/Could | Label (priority) |
+| Backend/Frontend | Label (area) |
+
+### Recommended Labels
+
+```bash
+# Priority labels
+gh label create "must-have" --color "d73a4a" --description "MVP Required"
+gh label create "should-have" --color "fbca04" --description "High priority"
+gh label create "could-have" --color "0e8a16" --description "Nice to have"
+
+# Area labels
+gh label create "backend" --color "1d76db" --description "Backend/API work"
+gh label create "frontend" --color "5319e7" --description "Frontend/UI work"
+gh label create "integration" --color "006b75" --description "External integrations"
+```
