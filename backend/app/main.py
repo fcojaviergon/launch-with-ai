@@ -1,4 +1,7 @@
-import logging
+import structlog
+from app.core.logger import setup_logging
+
+setup_logging()
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
@@ -7,7 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.v1.api import api_router
 from app.core.config import settings
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
