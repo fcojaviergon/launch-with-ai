@@ -434,6 +434,18 @@ This project includes custom skills for Claude Code development assistance:
 
 Skills are located in `.claude/skills/` and provide quick reference + extended examples for common development tasks.
 
+### Custom Subagents
+
+Specialized agents that Claude can delegate to automatically based on task context:
+
+| Subagent | Role | Model | Skills Used |
+|----------|------|-------|-------------|
+| `backend-architect` | Database modeling, API design, module architecture | Opus | launch-backend |
+| `frontend-developer` | React domains, components, forms, hooks | Sonnet | launch-frontend |
+| `proposal-writer` | PRDs, specs, proposals, decision docs | Opus | prd-manager |
+
+Subagents are defined in `.claude/agents/` and are automatically invoked based on their description.
+
 ## AI-Driven Development Workflow
 
 This project uses an AI-assisted development workflow that connects the PRD directly to GitHub Issues and sprints.
