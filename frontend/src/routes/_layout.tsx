@@ -1,19 +1,39 @@
-import { Box, Center, Flex, Spinner } from "@chakra-ui/react"
-import { Outlet, createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useEffect } from "react"
+import { Box, Flex } from "@chakra-ui/react"
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import { useColorModeValue } from "@/components/ui/color-mode"
-import { useCurrentUser } from "@domains/auth"
 import { Sidebar } from "@shared/components"
+import { UsersService } from "@domains/users"
 
 export const Route = createFileRoute("/_layout")({
+  // Auth guard - runs BEFORE component renders (no loading spinner)
+  beforeLoad: async ({ context }) => {
+    // Try to get cached user first, otherwise fetch
+    let user = context.queryClient.getQueryData(["currentUser"])
+
+    if (!user) {
+      try {
+        user = await context.queryClient.fetchQuery({
+          queryKey: ["currentUser"],
+          queryFn: UsersService.readUserMe,
+          staleTime: 5 * 60 * 1000,
+        })
+      } catch {
+        // Not authenticated - redirect to login
+        throw redirect({ to: "/login" })
+      }
+    }
+
+    if (!user) {
+      throw redirect({ to: "/login" })
+    }
+
+    return { user }
+  },
   component: Layout,
 })
 
 function Layout() {
-  const { data: user, isLoading, isError } = useCurrentUser()
-  const navigate = useNavigate()
-
   // Theme-aware colors
   const bgColor = useColorModeValue("gray.50", "gray.950")
   const cardBg = useColorModeValue("white", "gray.900")
@@ -22,26 +42,7 @@ function Layout() {
     "0 1px 3px rgba(0,0,0,0.3)"
   )
 
-  useEffect(() => {
-    if (!isLoading && (isError || !user)) {
-      navigate({ to: "/login" })
-    }
-  }, [isLoading, isError, user, navigate])
-
-  // Show loading while checking auth
-  if (isLoading) {
-    return (
-      <Center h="100vh" bg={bgColor}>
-        <Spinner size="xl" color="ui.primary" borderWidth="3px" />
-      </Center>
-    )
-  }
-
-  // Don't render layout if not authenticated
-  if (isError || !user) {
-    return null
-  }
-
+  // User is guaranteed to be authenticated at this point (beforeLoad ensures it)
   return (
     <Flex h="100vh" bg={bgColor}>
       <Sidebar />

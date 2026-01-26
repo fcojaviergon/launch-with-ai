@@ -1,15 +1,10 @@
-import {
-  MutationCache,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
-import React, { StrictMode } from "react"
+import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
-import { ApiError, OpenAPI } from "./client"
+import { OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/provider"
 
 // TypeScript needs this declaration to understand Vite's import.meta.env
@@ -27,22 +22,22 @@ OpenAPI.WITH_CREDENTIALS = true
 // Configuration to use system theme by default
 const USE_SYSTEM_THEME = true
 
-const handleApiError = (error: Error) => {
-  if (error instanceof ApiError && [401, 403].includes(error.status)) {
-    // No need to clear localStorage - cookies are managed by the browser
-    window.location.href = "/login"
-  }
-}
+// QueryClient without global error handlers
+// Auth redirects are handled by route guards (beforeLoad) to avoid infinite loops
 const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: handleApiError,
-  }),
-  mutationCache: new MutationCache({
-    onError: handleApiError,
-  }),
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
 })
 
-const router = createRouter({ routeTree })
+// Create router with context - provides queryClient to all routes
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+})
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router
