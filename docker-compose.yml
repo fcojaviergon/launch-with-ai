@@ -1,9 +1,24 @@
 services:
 
+  # Init container: ensures volume has correct permissions for timescaledb-ha
+  # The HA image runs as UID 1000 (hardcoded), so the data dir must be owned by 1000:1000
+  # See: https://github.com/timescale/timescaledb-docker-ha/issues/620
+  db-init:
+    image: alpine
+    volumes:
+      - app-db-data:/data
+    command: sh -c "chown -R 1000:1000 /data && chmod -R 700 /data"
+    restart: "no"
+    networks:
+      - default
+
   db:
     image: timescale/timescaledb-ha:pg16
     container_name: ${STACK_NAME?Variable not set}-timescaledb
     restart: always
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -15,6 +30,7 @@ services:
     env_file:
       - .env
     environment:
+      - PGDATA=/var/lib/postgresql/data
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
