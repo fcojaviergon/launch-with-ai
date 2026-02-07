@@ -44,7 +44,7 @@ docker compose up -d --build
 
 1. **Always create a backup first**
    ```bash
-   cd ~/rocket-genai-v2
+   cd ~/launch-with-ai
    ./scripts/backup-azure-db.sh
    ```
 
@@ -87,7 +87,7 @@ crontab -l | grep backup
 
 ```bash
 # Create manual backup
-cd ~/rocket-genai-v2
+cd ~/launch-with-ai
 ./scripts/backup-azure-db.sh
 
 # Backups are stored in:

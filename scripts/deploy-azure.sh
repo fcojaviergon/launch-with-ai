@@ -7,7 +7,7 @@ echo "🚀 Starting deployment on Azure VM..."
 echo ""
 
 # Navigate to project directory
-cd ~/rocket-genai-v2
+cd ~/launch-with-ai
 
 # Pull latest changes from git
 echo "1️⃣  Pulling latest code from git..."
@@ -46,10 +46,10 @@ echo "================================"
 echo "✅ Deployment Complete!"
 echo ""
 echo "🌐 URLs:"
-echo "   Frontend:   https://dashboard.flow.cunda.io"
-echo "   Backend:    https://api.flow.cunda.io/docs"
-echo "   Traefik:    https://traefik.flow.cunda.io"
-echo "   Adminer:    https://adminer.flow.cunda.io"
+echo "   Frontend:   https://dashboard.\$DOMAIN"
+echo "   Backend:    https://api.\$DOMAIN/docs"
+echo "   Traefik:    https://traefik.\$DOMAIN"
+echo "   Adminer:    https://adminer.\$DOMAIN"
 echo ""
 echo "📊 Check full logs: docker compose logs -f"
 echo "================================"

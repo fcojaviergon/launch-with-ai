@@ -132,8 +132,8 @@ if [ "$ENV_TYPE" == "local" ]; then
 DOMAIN=localhost
 FRONTEND_HOST=http://localhost:5173
 BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-DOCKER_IMAGE_BACKEND=rocket-genai-backend-local
-DOCKER_IMAGE_FRONTEND=rocket-genai-frontend-local
+DOCKER_IMAGE_BACKEND=launch-with-ai-backend-local
+DOCKER_IMAGE_FRONTEND=launch-with-ai-frontend-local
 
 # Admin User
 FIRST_SUPERUSER=admin@example.com

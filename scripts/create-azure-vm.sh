@@ -2,8 +2,8 @@
 # Create Azure VM for QA deployment
 set -e
 
-RG_NAME="rg-flow-cunda-qa2"
-VM_NAME="vm-flow-cunda-qa2"
+RG_NAME="${AZURE_RG_NAME:?Set AZURE_RG_NAME environment variable}"
+VM_NAME="${AZURE_VM_NAME:?Set AZURE_VM_NAME environment variable}"
 LOCATION="eastus"
 
 echo "🌩️  Creating Azure VM for QA"
@@ -66,10 +66,10 @@ echo ""
 echo "VM IP: $VM_IP"
 echo ""
 echo "⚠️  Configure DNS records:"
-echo "   dashboard.flow.cunda.io -> $VM_IP"
-echo "   api.flow.cunda.io -> $VM_IP"
-echo "   traefik.flow.cunda.io -> $VM_IP"
-echo "   adminer.flow.cunda.io -> $VM_IP"
+echo "   dashboard.\$DOMAIN -> $VM_IP"
+echo "   api.\$DOMAIN -> $VM_IP"
+echo "   traefik.\$DOMAIN -> $VM_IP"
+echo "   adminer.\$DOMAIN -> $VM_IP"
 echo ""
 echo "Next step: Run ./scripts/deploy-qa.sh"
 echo ""

@@ -3,7 +3,7 @@
 
 **Date:** November 4, 2025
 **Reviewer:** Claude Code
-**Repository:** rocket-genai-base
+**Repository:** launch-with-ai
 **Stack:** FastAPI (Python) + React (TypeScript)
 **Architecture:** Backend API + Frontend SPA + PostgreSQL (TimescaleDB) + Redis + Celery
 
@@ -62,11 +62,11 @@ $ git ls-files | grep .env
 ```
 
 **Exposed Secrets:**
-- `SECRET_KEY`: `3c9c95a2b7c4b48782cd53d3be5e4d06d8c01cb43f7213b458375b3a0ce2b432`
-- `FIRST_SUPERUSER_PASSWORD`: `CXu4hjPbICiGtWMfSpZAVLWR`
-- `POSTGRES_PASSWORD`: `28Hm7yUsmPTMuxBW97wja9t2`
-- Domain: `flow.cunda.io`
-- Email addresses: `fran@cunda.io`, `javo@cunda.io`
+- `SECRET_KEY`: `<REDACTED - real secret was exposed here>`
+- `FIRST_SUPERUSER_PASSWORD`: `<REDACTED - real password was exposed here>`
+- `POSTGRES_PASSWORD`: `<REDACTED - real password was exposed here>`
+- Domain: `<REDACTED>`
+- Email addresses: `<REDACTED>`
 - Traefik admin password hash
 
 **Risk:**
@@ -226,9 +226,9 @@ app.add_middleware(
 No CSRF token validation in endpoints.
 
 **Attack Scenario:**
-1. User logs into `dashboard.flow.cunda.io`
-2. User visits malicious site `evil.com`
-3. `evil.com` sends POST request to `api.flow.cunda.io/api/v1/items/delete`
+1. User logs into `dashboard.example.com`
+2. User visits malicious site `malicious-site.example`
+3. `malicious-site.example` sends POST request to `api.example.com/api/v1/items/delete`
 4. Browser automatically includes authentication cookie
 5. Item deleted without user's knowledge
 
@@ -748,7 +748,7 @@ adminer:
 
 **Risk:**
 - Adminer is a database management tool
-- Exposed at `https://adminer.flow.cunda.io`
+- Exposed at `https://adminer.example.com`
 - No additional authentication beyond database credentials
 - Brute force attacks possible
 
