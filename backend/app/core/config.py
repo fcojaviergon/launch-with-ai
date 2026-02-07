@@ -36,7 +36,7 @@ class RedisSettings(BaseSettings):
 
 
 class ChatSettings(BaseSettings):
-    model: str = "gpt-4o"
+    model: str = ""  # Set dynamically based on LLM_PROVIDER
     max_tokens_per_message: int = 4000
     max_context_length: int = 128000
     max_documents_per_query: int = 15
@@ -46,9 +46,14 @@ class ChatSettings(BaseSettings):
 
 class OpenAISettings(BaseSettings):
     api_key: str
-    model: str = "gpt-4o"  
+    model: str = "gpt-4o"
     embedding_model: str = "text-embedding-3-large"
     embedding_dimensions: int = 1536
+
+
+class AnthropicSettings(BaseSettings):
+    api_key: str = ""
+    model: str = "claude-sonnet-4-20250514"
 
 
 class VectorStoreSettings(BaseSettings):
@@ -135,11 +140,18 @@ class Settings(BaseSettings):
             return self.CELERY_RESULT_BACKEND
         return self.redis.url
     
+    # LLM provider selection: "openai" or "anthropic"
+    LLM_PROVIDER: str = "openai"
+
     # OpenAI settings
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4o-mini"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
-    
+
+    # Anthropic settings
+    ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_MODEL: str = "claude-sonnet-4-20250514"
+
     @computed_field
     @property
     def openai(self) -> OpenAISettings:
@@ -147,6 +159,14 @@ class Settings(BaseSettings):
             api_key=self.OPENAI_API_KEY,
             model=self.OPENAI_MODEL,
             embedding_model=self.OPENAI_EMBEDDING_MODEL,
+        )
+
+    @computed_field
+    @property
+    def anthropic(self) -> AnthropicSettings:
+        return AnthropicSettings(
+            api_key=self.ANTHROPIC_API_KEY,
+            model=self.ANTHROPIC_MODEL,
         )
     
     @computed_field
@@ -156,10 +176,20 @@ class Settings(BaseSettings):
             embedding_dimensions=self.openai.embedding_dimensions,
         )
     
+    # Optional override for the chat model (defaults to provider's model)
+    CHAT_MODEL: str = ""
+
     @computed_field
     @property
     def chat(self) -> ChatSettings:
-        return ChatSettings()
+        # Use explicit CHAT_MODEL if set, otherwise derive from provider
+        if self.CHAT_MODEL:
+            model = self.CHAT_MODEL
+        elif self.LLM_PROVIDER.lower() == "anthropic":
+            model = self.ANTHROPIC_MODEL
+        else:
+            model = "gpt-4o"
+        return ChatSettings(model=model)
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
@@ -210,6 +240,17 @@ class Settings(BaseSettings):
                 warnings.warn("OPENAI_API_KEY is set to default value", stacklevel=1)
             else:
                 raise ValueError("OPENAI_API_KEY must be set for non-local environments")
+
+        if self.LLM_PROVIDER == "anthropic" and not self.ANTHROPIC_API_KEY:
+            if self.ENVIRONMENT == "local":
+                warnings.warn(
+                    "ANTHROPIC_API_KEY is not set but LLM_PROVIDER is 'anthropic'",
+                    stacklevel=1,
+                )
+            else:
+                raise ValueError(
+                    "ANTHROPIC_API_KEY must be set when LLM_PROVIDER is 'anthropic'"
+                )
 
         return self
 
