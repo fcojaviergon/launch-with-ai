@@ -1,4 +1,5 @@
 import { Box, EmptyState, Heading, Spinner, VStack } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 import { FiFile } from "react-icons/fi"
 import { useProjectDocuments } from "../api/projects.api"
 import { DocumentItem } from "./DocumentItem"
@@ -9,12 +10,13 @@ interface DocumentListProps {
 }
 
 export const DocumentList = ({ projectId }: DocumentListProps) => {
+  const { t } = useTranslation()
   const { data: documents, isLoading } = useProjectDocuments(projectId)
 
   return (
     <Box>
       <Heading size="md" mb={4}>
-        Documents
+        {t("projects:documents")}
       </Heading>
 
       <DocumentUploadZone projectId={projectId} />
@@ -32,9 +34,9 @@ export const DocumentList = ({ projectId }: DocumentListProps) => {
               <FiFile />
             </EmptyState.Indicator>
             <VStack textAlign="center">
-              <EmptyState.Title>No documents yet</EmptyState.Title>
+              <EmptyState.Title>{t("projects:noDocumentsYet")}</EmptyState.Title>
               <EmptyState.Description>
-                Upload documents to add them to your project context
+                {t("projects:uploadDocuments")}
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>

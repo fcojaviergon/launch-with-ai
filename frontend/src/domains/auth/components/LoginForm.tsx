@@ -15,11 +15,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FiLock, FiMail } from "react-icons/fi"
 import { useAuth } from "../hooks"
 import { type LoginFormData, loginSchema } from "../schemas/authSchemas"
 
 export const LoginForm = () => {
+  const { t } = useTranslation()
   const { login } = useAuth()
   const {
     register,
@@ -95,10 +97,10 @@ export const LoginForm = () => {
               </Text>
             </Box>
             <Heading size="2xl" fontWeight="bold">
-              Launch With AI
+              {t("auth:launchWithAi")}
             </Heading>
             <Text fontSize="lg" opacity={0.9}>
-              Build AI-powered SaaS applications faster than ever.
+              {t("auth:loginHeroText")}
             </Text>
           </VStack>
         </Center>
@@ -137,10 +139,10 @@ export const LoginForm = () => {
 
           <VStack gap={2} mb={8}>
             <Heading size="xl" fontWeight="bold">
-              Welcome back
+              {t("auth:welcomeBack")}
             </Heading>
             <Text color={mutedText} textAlign="center">
-              Sign in to continue to your dashboard
+              {t("auth:signInSubtitle")}
             </Text>
           </VStack>
 
@@ -153,7 +155,7 @@ export const LoginForm = () => {
                 <Input
                   id="username"
                   {...register("username")}
-                  placeholder="Email"
+                  placeholder={t("auth:email")}
                   type="email"
                   size="lg"
                 />
@@ -164,14 +166,14 @@ export const LoginForm = () => {
               type="password"
               startElement={<FiLock />}
               {...register("password")}
-              placeholder="Password"
+              placeholder={t("auth:password")}
               errors={errors}
               size="lg"
             />
 
             <Flex w="full" justify="flex-end">
               <RouterLink to="/recover-password" className="main-link">
-                <Text fontSize="sm">Forgot Password?</Text>
+                <Text fontSize="sm">{t("auth:forgotPassword")}</Text>
               </RouterLink>
             </Flex>
 
@@ -182,14 +184,14 @@ export const LoginForm = () => {
               size="lg"
               w="full"
             >
-              Sign In
+              {t("auth:signIn")}
             </Button>
           </VStack>
 
           <Text textAlign="center" mt={8} color={mutedText}>
-            Don't have an account?{" "}
+            {t("auth:noAccount")}{" "}
             <RouterLink to="/signup" className="main-link">
-              Create one
+              {t("auth:createOne")}
             </RouterLink>
           </Text>
         </Box>

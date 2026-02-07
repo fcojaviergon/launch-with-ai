@@ -21,10 +21,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FaPlus } from "react-icons/fa"
 import { useCreateItem } from "../api/items.api"
 
 export const AddItem = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast } = useCustomToast()
   const createItem = useCreateItem()
@@ -47,7 +49,7 @@ export const AddItem = () => {
   const onSubmit: SubmitHandler<ItemCreateFormData> = (data) => {
     createItem.mutate(data, {
       onSuccess: () => {
-        showSuccessToast("Item created successfully.")
+        showSuccessToast(t("items:itemCreatedSuccess"))
         reset()
         setIsOpen(false)
       },
@@ -64,27 +66,27 @@ export const AddItem = () => {
       <DialogTrigger asChild>
         <Button value="add-item" my={4}>
           <FaPlus fontSize="16px" />
-          Add Item
+          {t("items:addItem")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Add Item</DialogTitle>
+            <DialogTitle>{t("items:addItem")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Fill in the details to add a new item.</Text>
+            <Text mb={4}>{t("items:addItemDescription")}</Text>
             <VStack gap={4}>
               <Field
                 required
                 invalid={!!errors.title}
                 errorText={errors.title?.message}
-                label="Title"
+                label={t("items:title")}
               >
                 <Input
                   id="title"
                   {...register("title")}
-                  placeholder="Title"
+                  placeholder={t("items:title")}
                   type="text"
                 />
               </Field>
@@ -92,12 +94,12 @@ export const AddItem = () => {
               <Field
                 invalid={!!errors.description}
                 errorText={errors.description?.message}
-                label="Description"
+                label={t("items:description")}
               >
                 <Input
                   id="description"
                   {...register("description")}
-                  placeholder="Description"
+                  placeholder={t("items:description")}
                   type="text"
                 />
               </Field>
@@ -111,7 +113,7 @@ export const AddItem = () => {
                 colorPalette="gray"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -120,7 +122,7 @@ export const AddItem = () => {
               disabled={!isValid}
               loading={isSubmitting}
             >
-              Save
+              {t("common:save")}
             </Button>
           </DialogFooter>
         </form>

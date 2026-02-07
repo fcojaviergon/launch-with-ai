@@ -1,0 +1,21 @@
+{
+  "itemsManagement": "Gestión de elementos",
+  "searchPlaceholder": "Buscar por título o descripción...",
+  "noItemsSearch": "Ningún elemento coincide con tu búsqueda",
+  "noItemsYet": "Aún no tienes elementos",
+  "adjustSearch": "Intenta ajustar los términos de búsqueda",
+  "addItemHint": "Agrega un nuevo elemento para comenzar",
+  "id": "ID",
+  "title": "Título",
+  "description": "Descripción",
+  "addItem": "Agregar elemento",
+  "addItemDescription": "Completa los detalles para agregar un nuevo elemento.",
+  "editItem": "Editar elemento",
+  "editItemDescription": "Actualiza los detalles del elemento a continuación.",
+  "deleteItem": "Eliminar elemento",
+  "deleteItemConfirmation": "Este elemento será eliminado permanentemente. ¿Estás seguro? No podrás deshacer esta acción.",
+  "itemCreatedSuccess": "Elemento creado exitosamente.",
+  "itemUpdatedSuccess": "Elemento actualizado exitosamente.",
+  "itemDeletedSuccess": "El elemento fue eliminado exitosamente",
+  "itemDeletedError": "Ocurrió un error al eliminar el elemento"
+}

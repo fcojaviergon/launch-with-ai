@@ -3,6 +3,7 @@ import { useColorModeValue } from "@/components/ui/color-mode"
 import { Box, Button, HStack, Textarea } from "@chakra-ui/react"
 import { useState } from "react"
 import { FaPaperPlane } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 
 interface MessageInputProps {
   onSendMessage: (content: string, useDocuments: boolean) => void
@@ -14,14 +15,17 @@ interface MessageInputProps {
 export const MessageInput = ({
   onSendMessage,
   isLoading = false,
-  placeholder = "Type your message...",
+  placeholder,
   showUseDocuments = true,
 }: MessageInputProps) => {
+  const { t } = useTranslation()
   const [content, setContent] = useState("")
   const [useDocuments, setUseDocuments] = useState(true)
 
   // Theme-aware colors
   const borderColor = useColorModeValue("gray.200", "gray.600")
+
+  const resolvedPlaceholder = placeholder || t("chat:typeMessage")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +58,7 @@ export const MessageInput = ({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             disabled={isLoading}
             resize="none"
             rows={3}
@@ -68,7 +72,7 @@ export const MessageInput = ({
               disabled={isLoading}
               mt={2}
             >
-              Use documents for context
+              {t("chat:useDocumentsContext")}
             </Checkbox>
           )}
         </Box>

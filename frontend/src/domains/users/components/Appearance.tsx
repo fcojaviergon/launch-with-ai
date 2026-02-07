@@ -3,9 +3,11 @@ import { Radio, RadioGroup } from "@/components/ui/radio"
 import { useThemeColors } from "@/utils/theme-utils"
 import { Box, Container, Flex, Heading, Stack, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { FiMonitor, FiMoon, FiSun } from "react-icons/fi"
 
 export const Appearance = () => {
+  const { t } = useTranslation()
   const { colorMode, resolvedTheme, setColorMode } = useColorMode()
   const colors = useThemeColors()
   const [mounted, setMounted] = useState(false)
@@ -29,12 +31,11 @@ export const Appearance = () => {
   return (
     <Container maxW="full">
       <Heading size="sm" py={4}>
-        Appearance
+        {t("settings:appearance")}
       </Heading>
 
       <Text mb={4}>
-        Choose how you want the application to look. You can use your system
-        theme, or manually select between light and dark mode.
+        {t("settings:appearanceDescription")}
       </Text>
 
       <RadioGroup
@@ -56,10 +57,9 @@ export const Appearance = () => {
               <Flex align="center" gap={2}>
                 <FiMonitor />
                 <Box>
-                  <Text fontWeight="medium">Use system theme</Text>
+                  <Text fontWeight="medium">{t("settings:useSystemTheme")}</Text>
                   <Text fontSize="xs" color="gray.500">
-                    Current system theme:{" "}
-                    {resolvedTheme === "dark" ? "Dark" : "Light"}
+                    {t("settings:currentSystemTheme", { theme: resolvedTheme === "dark" ? t("settings:dark") : t("settings:light") })}
                   </Text>
                 </Box>
               </Flex>
@@ -76,7 +76,7 @@ export const Appearance = () => {
             <Radio value="light">
               <Flex align="center" gap={2}>
                 <FiSun />
-                <Text fontWeight="medium">Light Mode</Text>
+                <Text fontWeight="medium">{t("settings:lightMode")}</Text>
               </Flex>
             </Radio>
           </Box>
@@ -91,7 +91,7 @@ export const Appearance = () => {
             <Radio value="dark">
               <Flex align="center" gap={2}>
                 <FiMoon />
-                <Text fontWeight="medium">Dark Mode</Text>
+                <Text fontWeight="medium">{t("settings:darkMode")}</Text>
               </Flex>
             </Radio>
           </Box>

@@ -12,3 +12,6 @@ export { UserActionsMenu } from "./UserActionsMenu"
 // Loading States
 export { default as PendingItems } from "./PendingItems"
 export { default as PendingUsers } from "./PendingUsers"
+
+// i18n
+export { LanguageSwitcher } from "./LanguageSwitcher"

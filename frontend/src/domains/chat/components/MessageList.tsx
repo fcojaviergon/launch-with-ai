@@ -2,6 +2,7 @@ import { useColorModeValue } from "@/components/ui/color-mode"
 import { Badge, Box, HStack, Text, VStack } from "@chakra-ui/react"
 import { useEffect, useRef } from "react"
 import { FaFileAlt, FaRobot, FaUser } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import type { MessageChat } from "../types/chat.types"
 
 interface MessageListProps {
@@ -10,6 +11,7 @@ interface MessageListProps {
 }
 
 export const MessageList = ({ messages, isLoading }: MessageListProps) => {
+  const { t } = useTranslation()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Theme-aware colors
@@ -28,10 +30,10 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
     return (
       <VStack p={8} gap={2} justify="center" height="100%">
         <Text color={textMuted} textAlign="center">
-          No messages yet
+          {t("chat:noMessagesYet")}
         </Text>
         <Text fontSize="sm" color={textSubtle} textAlign="center">
-          Start the conversation by sending a message
+          {t("chat:startConversation")}
         </Text>
       </VStack>
     )
@@ -138,7 +140,7 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
           </Box>
           <Box bg={thinkingBg} px={4} py={3} borderRadius="lg">
             <HStack gap={2}>
-              <Text color={assistantText}>Thinking</Text>
+              <Text color={assistantText}>{t("chat:thinking")}</Text>
               <Box as="span" animation="pulse 1.5s ease-in-out infinite">
                 ...
               </Box>

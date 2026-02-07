@@ -3,6 +3,7 @@ import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { Badge, Box, Flex, IconButton, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { formatDistanceToNow } from "date-fns"
+import { useTranslation } from "react-i18next"
 import {
   FaCheckCircle,
   FaExclamationCircle,
@@ -22,6 +23,7 @@ interface DocumentItemProps {
 }
 
 export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
+  const { t } = useTranslation()
   const { showSuccessToast } = useCustomToast()
   const deleteDocument = useDeleteDocument()
   const retryDocument = useRetryDocument()
@@ -40,7 +42,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
       { documentId: document.id, projectId },
       {
         onSuccess: () => {
-          showSuccessToast("Document deleted successfully")
+          showSuccessToast(t("projects:documentDeletedSuccess"))
         },
       },
     )
@@ -49,7 +51,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
   const handleRetry = () => {
     retryDocument.mutate(document.id, {
       onSuccess: () => {
-        showSuccessToast("Document processing restarted")
+        showSuccessToast(t("projects:documentRetrySuccess"))
       },
     })
   }
@@ -59,25 +61,25 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
       case "completed":
         return (
           <Badge colorPalette="green" variant="subtle">
-            <FaCheckCircle /> Completed
+            <FaCheckCircle /> {t("projects:completed")}
           </Badge>
         )
       case "processing":
         return (
           <Badge colorPalette="blue" variant="subtle">
-            Processing
+            {t("projects:processing")}
           </Badge>
         )
       case "failed":
         return (
           <Badge colorPalette="red" variant="subtle">
-            <FaExclamationCircle /> Failed
+            <FaExclamationCircle /> {t("projects:failed")}
           </Badge>
         )
       case "pending":
         return (
           <Badge colorPalette="gray" variant="subtle">
-            Pending
+            {t("projects:pending")}
           </Badge>
         )
     }
@@ -113,7 +115,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
         <Flex gap={2}>
           {document.status === "failed" && (
             <IconButton
-              aria-label="Retry processing"
+              aria-label={t("projects:retryProcessing")}
               size="sm"
               variant="ghost"
               colorPalette="blue"
@@ -124,7 +126,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
             </IconButton>
           )}
           <IconButton
-            aria-label="Delete document"
+            aria-label={t("projects:deleteDocument")}
             size="sm"
             variant="ghost"
             colorPalette="red"
@@ -140,7 +142,7 @@ export const DocumentItem = ({ document, projectId }: DocumentItemProps) => {
         <Box mt={3}>
           <Flex justify="space-between" mb={1}>
             <Text fontSize="xs" color={processingText}>
-              Processing chunks...
+              {t("projects:processingChunks")}
             </Text>
             <Text fontSize="xs" fontWeight="semibold">
               {document.processed_chunks} / {document.total_chunks}

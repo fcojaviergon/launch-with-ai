@@ -1,0 +1,10 @@
+{
+  "greeting": "Hi, {{name}}",
+  "welcomeMessage": "Welcome back, nice to see you again!",
+  "quickOverview": "Quick Overview",
+  "quickOverviewText": "Access all your items and analytics from this dashboard.",
+  "manageItems": "Manage Items",
+  "manageItemsText": "Create, edit and manage all your items efficiently.",
+  "recentActivity": "Recent Activity",
+  "recentActivityText": "View and track your recent activities and changes."
+}

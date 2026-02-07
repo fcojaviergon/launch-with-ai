@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { FiSearch } from "react-icons/fi"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { InputGroup } from "@/components/ui/input-group"
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/_layout/admin")({
 })
 
 function UsersTable() {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const navigate = useNavigate({ from: Route.fullPath })
@@ -104,7 +106,7 @@ function UsersTable() {
         width={{ base: "100%", md: "sm" }}
       >
         <Input
-          placeholder="Search by email or name..."
+          placeholder={t("admin:searchPlaceholder")}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           size="sm"
@@ -114,30 +116,30 @@ function UsersTable() {
       <Table.Root size={{ base: "sm", md: "md" }}>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader w="20%">Full name</Table.ColumnHeader>
-            <Table.ColumnHeader w="25%">Email</Table.ColumnHeader>
-            <Table.ColumnHeader w="15%">Role</Table.ColumnHeader>
-            <Table.ColumnHeader w="20%">Status</Table.ColumnHeader>
-            <Table.ColumnHeader w="20%">Actions</Table.ColumnHeader>
+            <Table.ColumnHeader w="20%">{t("admin:fullName")}</Table.ColumnHeader>
+            <Table.ColumnHeader w="25%">{t("admin:email")}</Table.ColumnHeader>
+            <Table.ColumnHeader w="15%">{t("admin:role")}</Table.ColumnHeader>
+            <Table.ColumnHeader w="20%">{t("admin:status")}</Table.ColumnHeader>
+            <Table.ColumnHeader w="20%">{t("common:actions")}</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {users.map((user) => (
             <Table.Row key={user.id} opacity={isPlaceholderData ? 0.5 : 1}>
               <Table.Cell w="20%" color={!user.full_name ? "gray" : "inherit"}>
-                {user.full_name || "N/A"}
+                {user.full_name || t("common:na")}
                 {currentUser?.id === user.id && (
                   <Badge ml="1" colorScheme="teal">
-                    You
+                    {t("common:you")}
                   </Badge>
                 )}
               </Table.Cell>
               <Table.Cell w="25%">{user.email}</Table.Cell>
               <Table.Cell w="15%">
-                {user.is_superuser ? "Superuser" : "User"}
+                {user.is_superuser ? t("admin:superuser") : t("common:user")}
               </Table.Cell>
               <Table.Cell w="20%">
-                {user.is_active ? "Active" : "Inactive"}
+                {user.is_active ? t("admin:active") : t("admin:inactive")}
               </Table.Cell>
               <Table.Cell w="20%">
                 <UserActionsMenu
@@ -167,10 +169,11 @@ function UsersTable() {
 }
 
 function Admin() {
+  const { t } = useTranslation()
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
-        Users Management
+        {t("admin:usersManagement")}
       </Heading>
 
       <AddUser />

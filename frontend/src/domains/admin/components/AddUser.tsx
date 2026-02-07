@@ -26,10 +26,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FaPlus } from "react-icons/fa"
 import { useAdminCreateUser } from "../api/admin.api"
 
 export const AddUser = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast } = useCustomToast()
   const createUser = useAdminCreateUser()
@@ -57,7 +59,7 @@ export const AddUser = () => {
   const onSubmit = (data: AdminUserCreateFormData) => {
     createUser.mutate(data, {
       onSuccess: () => {
-        showSuccessToast("User created successfully.")
+        showSuccessToast(t("admin:userCreatedSuccess"))
         reset()
         setIsOpen(false)
       },
@@ -74,29 +76,29 @@ export const AddUser = () => {
       <DialogTrigger asChild>
         <Button value="add-user" my={4}>
           <FaPlus fontSize="16px" />
-          Add User
+          {t("admin:addUser")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Add User</DialogTitle>
+            <DialogTitle>{t("admin:addUser")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text mb={4}>
-              Fill in the form below to add a new user to the system.
+              {t("admin:addUserDescription")}
             </Text>
             <VStack gap={4}>
               <Field
                 required
                 invalid={!!errors.email}
                 errorText={errors.email?.message}
-                label="Email"
+                label={t("admin:email")}
               >
                 <Input
                   id="email"
                   {...register("email")}
-                  placeholder="Email"
+                  placeholder={t("admin:email")}
                   type="email"
                 />
               </Field>
@@ -104,12 +106,12 @@ export const AddUser = () => {
               <Field
                 invalid={!!errors.full_name}
                 errorText={errors.full_name?.message}
-                label="Full Name"
+                label={t("admin:fullName")}
               >
                 <Input
                   id="name"
                   {...register("full_name")}
-                  placeholder="Full name"
+                  placeholder={t("admin:fullName")}
                   type="text"
                 />
               </Field>
@@ -118,12 +120,12 @@ export const AddUser = () => {
                 required
                 invalid={!!errors.password}
                 errorText={errors.password?.message}
-                label="Set Password"
+                label={t("admin:setPassword")}
               >
                 <Input
                   id="password"
                   {...register("password")}
-                  placeholder="Password"
+                  placeholder={t("auth:password")}
                   type="password"
                 />
               </Field>
@@ -132,12 +134,12 @@ export const AddUser = () => {
                 required
                 invalid={!!errors.confirm_password}
                 errorText={errors.confirm_password?.message}
-                label="Confirm Password"
+                label={t("admin:confirmPassword")}
               >
                 <Input
                   id="confirm_password"
                   {...register("confirm_password")}
-                  placeholder="Password"
+                  placeholder={t("auth:password")}
                   type="password"
                 />
               </Field>
@@ -153,7 +155,7 @@ export const AddUser = () => {
                       checked={field.value}
                       onCheckedChange={({ checked }) => field.onChange(checked)}
                     >
-                      Is superuser?
+                      {t("admin:isSuperuser")}
                     </Checkbox>
                   </Field>
                 )}
@@ -167,7 +169,7 @@ export const AddUser = () => {
                       checked={field.value}
                       onCheckedChange={({ checked }) => field.onChange(checked)}
                     >
-                      Is active?
+                      {t("admin:isActive")}
                     </Checkbox>
                   </Field>
                 )}
@@ -182,7 +184,7 @@ export const AddUser = () => {
                 colorPalette="gray"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -191,7 +193,7 @@ export const AddUser = () => {
               disabled={!isValid}
               loading={isSubmitting}
             >
-              Save
+              {t("common:save")}
             </Button>
           </DialogFooter>
         </form>

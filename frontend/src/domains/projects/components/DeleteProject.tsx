@@ -17,6 +17,7 @@ import {
 import { useCustomToast } from "@shared/hooks"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { FaTrash } from "react-icons/fa"
 import { useDeleteProject } from "../api/projects.api"
 import type { Project } from "../types/projects.types"
@@ -26,6 +27,7 @@ interface DeleteProjectProps {
 }
 
 export const DeleteProject = ({ project }: DeleteProjectProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast } = useCustomToast()
   const deleteProject = useDeleteProject()
@@ -34,7 +36,7 @@ export const DeleteProject = ({ project }: DeleteProjectProps) => {
   const handleDelete = () => {
     deleteProject.mutate(project.id, {
       onSuccess: () => {
-        showSuccessToast("Project deleted successfully.")
+        showSuccessToast(t("projects:projectDeletedSuccess"))
         setIsOpen(false)
         navigate({ to: "/projects" })
       },
@@ -52,20 +54,19 @@ export const DeleteProject = ({ project }: DeleteProjectProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost" colorPalette="red" size="sm">
           <FaTrash fontSize="16px" />
-          Delete
+          {t("common:delete")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Project</DialogTitle>
+          <DialogTitle>{t("projects:deleteProject")}</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <Text>
-            Are you sure you want to delete the project "{project.name}"?
+            {t("projects:deleteProjectConfirmation", { name: project.name })}
           </Text>
           <Text mt={2} color="red.500" fontWeight="semibold">
-            This action cannot be undone. All documents and conversations will
-            be permanently deleted.
+            {t("projects:deleteProjectWarning")}
           </Text>
         </DialogBody>
         <DialogFooter gap={2}>
@@ -76,7 +77,7 @@ export const DeleteProject = ({ project }: DeleteProjectProps) => {
                 colorPalette="gray"
                 disabled={deleteProject.isPending}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -85,7 +86,7 @@ export const DeleteProject = ({ project }: DeleteProjectProps) => {
               onClick={handleDelete}
               loading={deleteProject.isPending}
             >
-              Delete
+              {t("common:delete")}
             </Button>
           </ButtonGroup>
         </DialogFooter>

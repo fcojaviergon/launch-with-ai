@@ -1,0 +1,21 @@
+{
+  "itemsManagement": "Items Management",
+  "searchPlaceholder": "Search by title or description...",
+  "noItemsSearch": "No items match your search",
+  "noItemsYet": "You don't have any items yet",
+  "adjustSearch": "Try adjusting your search terms",
+  "addItemHint": "Add a new item to get started",
+  "id": "ID",
+  "title": "Title",
+  "description": "Description",
+  "addItem": "Add Item",
+  "addItemDescription": "Fill in the details to add a new item.",
+  "editItem": "Edit Item",
+  "editItemDescription": "Update the item details below.",
+  "deleteItem": "Delete Item",
+  "deleteItemConfirmation": "This item will be permanently deleted. Are you sure? You will not be able to undo this action.",
+  "itemCreatedSuccess": "Item created successfully.",
+  "itemUpdatedSuccess": "Item updated successfully.",
+  "itemDeletedSuccess": "The item was deleted successfully",
+  "itemDeletedError": "An error occurred while deleting the item"
+}

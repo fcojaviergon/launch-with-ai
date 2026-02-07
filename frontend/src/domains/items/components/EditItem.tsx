@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FaExchangeAlt } from "react-icons/fa"
 import { useUpdateItem } from "../api/items.api"
 
@@ -31,6 +32,7 @@ interface EditItemProps {
 }
 
 export const EditItem = ({ item }: EditItemProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast } = useCustomToast()
   const updateItem = useUpdateItem()
@@ -55,7 +57,7 @@ export const EditItem = ({ item }: EditItemProps) => {
       { itemId: item.id, data },
       {
         onSuccess: () => {
-          showSuccessToast("Item updated successfully.")
+          showSuccessToast(t("items:itemUpdatedSuccess"))
           reset()
           setIsOpen(false)
         },
@@ -73,27 +75,27 @@ export const EditItem = ({ item }: EditItemProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost">
           <FaExchangeAlt fontSize="16px" />
-          Edit Item
+          {t("items:editItem")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Edit Item</DialogTitle>
+            <DialogTitle>{t("items:editItem")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Update the item details below.</Text>
+            <Text mb={4}>{t("items:editItemDescription")}</Text>
             <VStack gap={4}>
               <Field
                 required
                 invalid={!!errors.title}
                 errorText={errors.title?.message}
-                label="Title"
+                label={t("items:title")}
               >
                 <Input
                   id="title"
                   {...register("title")}
-                  placeholder="Title"
+                  placeholder={t("items:title")}
                   type="text"
                 />
               </Field>
@@ -101,12 +103,12 @@ export const EditItem = ({ item }: EditItemProps) => {
               <Field
                 invalid={!!errors.description}
                 errorText={errors.description?.message}
-                label="Description"
+                label={t("items:description")}
               >
                 <Input
                   id="description"
                   {...register("description")}
-                  placeholder="Description"
+                  placeholder={t("items:description")}
                   type="text"
                 />
               </Field>
@@ -121,11 +123,11 @@ export const EditItem = ({ item }: EditItemProps) => {
                   colorPalette="gray"
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {t("common:cancel")}
                 </Button>
               </DialogActionTrigger>
               <Button variant="solid" type="submit" loading={isSubmitting}>
-                Save
+                {t("common:save")}
               </Button>
             </ButtonGroup>
           </DialogFooter>

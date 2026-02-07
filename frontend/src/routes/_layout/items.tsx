@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { FiSearch } from "react-icons/fi"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { InputGroup } from "@/components/ui/input-group"
@@ -52,6 +53,7 @@ export const Route = createFileRoute("/_layout/items")({
 })
 
 function ItemsTable() {
+  const { t } = useTranslation()
   const navigate = useNavigate({ from: Route.fullPath })
   const { page, search } = Route.useSearch()
   const [searchInput, setSearchInput] = useState(search ?? "")
@@ -100,7 +102,7 @@ function ItemsTable() {
         width={{ base: "100%", md: "sm" }}
       >
         <Input
-          placeholder="Search by title or description..."
+          placeholder={t("items:searchPlaceholder")}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           size="sm"
@@ -116,13 +118,13 @@ function ItemsTable() {
             <VStack textAlign="center">
               <EmptyState.Title>
                 {search
-                  ? "No items match your search"
-                  : "You don't have any items yet"}
+                  ? t("items:noItemsSearch")
+                  : t("items:noItemsYet")}
               </EmptyState.Title>
               <EmptyState.Description>
                 {search
-                  ? "Try adjusting your search terms"
-                  : "Add a new item to get started"}
+                  ? t("items:adjustSearch")
+                  : t("items:addItemHint")}
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>
@@ -132,10 +134,10 @@ function ItemsTable() {
           <Table.Root size={{ base: "sm", md: "md" }}>
             <Table.Header>
               <Table.Row>
-                <Table.ColumnHeader w="30%">ID</Table.ColumnHeader>
-                <Table.ColumnHeader w="30%">Title</Table.ColumnHeader>
-                <Table.ColumnHeader w="30%">Description</Table.ColumnHeader>
-                <Table.ColumnHeader w="10%">Actions</Table.ColumnHeader>
+                <Table.ColumnHeader w="30%">{t("items:id")}</Table.ColumnHeader>
+                <Table.ColumnHeader w="30%">{t("items:title")}</Table.ColumnHeader>
+                <Table.ColumnHeader w="30%">{t("items:description")}</Table.ColumnHeader>
+                <Table.ColumnHeader w="10%">{t("common:actions")}</Table.ColumnHeader>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -152,7 +154,7 @@ function ItemsTable() {
                     truncate
                     maxW="30%"
                   >
-                    {item.description || "N/A"}
+                    {item.description || t("common:na")}
                   </Table.Cell>
                   <Table.Cell width="10%">
                     <ItemActionsMenu item={item} />
@@ -181,10 +183,11 @@ function ItemsTable() {
 }
 
 function Items() {
+  const { t } = useTranslation()
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
-        Items Management
+        {t("items:itemsManagement")}
       </Heading>
       <AddItem />
       <ItemsTable />

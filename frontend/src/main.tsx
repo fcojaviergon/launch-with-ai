@@ -6,6 +6,7 @@ import { routeTree } from "./routeTree.gen"
 
 import { OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/provider"
+import "./i18n"
 
 // TypeScript needs this declaration to understand Vite's import.meta.env
 declare global {

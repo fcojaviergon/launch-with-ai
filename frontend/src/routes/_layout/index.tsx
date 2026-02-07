@@ -1,6 +1,7 @@
 import { Box, Container, Flex, Heading, Icon, Text } from "@chakra-ui/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { FiCalendar, FiHome, FiPackage } from "react-icons/fi"
+import { useTranslation } from "react-i18next"
 
 import { useColorModeValue } from "@/components/ui/color-mode"
 import { useAuth } from "@domains/auth"
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/_layout/")({
 })
 
 function Dashboard() {
+  const { t } = useTranslation()
   const { user: currentUser } = useAuth()
 
   // Theme-aware colors
@@ -29,10 +31,10 @@ function Dashboard() {
             mb={6}
             color="ui.primary"
           >
-            Hi, {currentUser?.full_name || currentUser?.email} 👋🏼
+            {t("dashboard:greeting", { name: currentUser?.full_name || currentUser?.email })} 👋🏼
           </Heading>
           <Text fontSize="lg" mb={8} color={textMuted}>
-            Welcome back, nice to see you again!
+            {t("dashboard:welcomeMessage")}
           </Text>
 
           <Flex direction={{ base: "column", md: "row" }} gap={6} mt={6}>
@@ -52,11 +54,11 @@ function Dashboard() {
               <Flex alignItems="center" mb={3}>
                 <Icon as={FiHome} color="ui.primary" fontSize="xl" mr={2} />
                 <Heading size="md" color={headingColor}>
-                  Quick Overview
+                  {t("dashboard:quickOverview")}
                 </Heading>
               </Flex>
               <Text color={textMuted}>
-                Access all your items and analytics from this dashboard.
+                {t("dashboard:quickOverviewText")}
               </Text>
             </Box>
 
@@ -80,11 +82,11 @@ function Dashboard() {
                   mr={2}
                 />
                 <Heading size="md" color={headingColor}>
-                  Manage Items
+                  {t("dashboard:manageItems")}
                 </Heading>
               </Flex>
               <Text color={textMuted}>
-                Create, edit and manage all your items efficiently.
+                {t("dashboard:manageItemsText")}
               </Text>
             </Box>
 
@@ -103,11 +105,11 @@ function Dashboard() {
               <Flex alignItems="center" mb={3}>
                 <Icon as={FiCalendar} color="ui.accent" fontSize="xl" mr={2} />
                 <Heading size="md" color={headingColor}>
-                  Recent Activity
+                  {t("dashboard:recentActivity")}
                 </Heading>
               </Flex>
               <Text color={textMuted}>
-                View and track your recent activities and changes.
+                {t("dashboard:recentActivityText")}
               </Text>
             </Box>
           </Flex>
