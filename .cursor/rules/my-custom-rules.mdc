@@ -9,4 +9,4 @@ alwaysApply: true
 
 
 # Configuration files
-- Use the .env file located in the project root (rocket-genai-saas/.env)
+- Use the .env file located in the project root (.env)

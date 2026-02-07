@@ -164,7 +164,7 @@ El `.gitignore` está configurado para bloquear:
 - **`configure-env-prod.sh`** - Configura archivos para PRODUCCIÓN *(crear cuando se necesite)*
 - **`deploy-to-azure-prod.sh`** - Despliega la aplicación en PRODUCCIÓN *(crear cuando se necesite)*
 
-## 🚀 Deployment QA (flow.cunda.io)
+## 🚀 Deployment QA (your-domain.example.com)
 
 ### Paso 1: Login Azure CLI
 
@@ -179,8 +179,8 @@ az login
 ```
 
 **Crea:**
-- Resource Group: `rg-flow-cunda-qa`
-- VM: `vm-flow-cunda-qa` (Standard_B2s: 2 vCPUs, 4GB RAM)
+- Resource Group: `rg-your-project-qa`
+- VM: `vm-your-project-qa` (Standard_B2s: 2 vCPUs, 4GB RAM)
 - Puertos: 80, 443, 22
 - Guarda IP en: `.azure-vm-ip`
 
@@ -227,10 +227,10 @@ Tipo: A | Host: *.flow | Valor: [IP-DE-LA-VM] | TTL: 3600
 
 ### URLs QA
 
-- **Frontend**: https://dashboard.flow.cunda.io
-- **Backend**: https://api.flow.cunda.io/docs
-- **Traefik**: https://traefik.flow.cunda.io
-- **Adminer**: https://adminer.flow.cunda.io
+- **Frontend**: https://dashboard.your-domain.example.com
+- **Backend**: https://api.your-domain.example.com/docs
+- **Traefik**: https://traefik.your-domain.example.com
+- **Adminer**: https://adminer.your-domain.example.com
 
 ## 🏭 Deployment PRODUCCIÓN
 
@@ -238,11 +238,11 @@ Tipo: A | Host: *.flow | Valor: [IP-DE-LA-VM] | TTL: 3600
 
 | Aspecto | QA | Producción |
 |---------|-----|-----------|
-| Resource Group | `rg-flow-cunda-qa` | `rg-flow-cunda-prod` |
-| VM Name | `vm-flow-cunda-qa` | `vm-flow-cunda-prod` |
+| Resource Group | `rg-your-project-qa` | `rg-your-project-prod` |
+| VM Name | `vm-your-project-qa` | `vm-your-project-prod` |
 | VM Size | Standard_B2s (4GB) | Standard_B2ms (8GB) |
 | Environment | `development` | `production` |
-| Stack Name | `flow-cunda-qa` | `flow-cunda-prod` |
+| Stack Name | `your-project-qa` | `your-project-prod` |
 | Costos | ~$35/mes | ~$70/mes |
 
 ### Deployment Producción
@@ -264,32 +264,32 @@ Tipo: A | Host: *.flow | Valor: [IP-DE-LA-VM] | TTL: 3600
 
 ```bash
 # QA
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose ps"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose ps"
 
 # Producción
-ssh azureuser@$(cat .azure-vm-ip-prod) "cd ~/rocket-genai-v2 && docker compose ps"
+ssh azureuser@$(cat .azure-vm-ip-prod) "cd ~/launch-with-ai && docker compose ps"
 ```
 
 ### Ver logs
 
 ```bash
 # QA - Ver logs en tiempo real
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs -f"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose logs -f"
 
 # Ver logs específicos
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs backend"
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs frontend"
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs traefik"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose logs backend"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose logs frontend"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose logs traefik"
 ```
 
 ### Reiniciar servicios
 
 ```bash
 # Reiniciar todo
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose restart"
 
 # Reiniciar servicio específico
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart backend"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose restart backend"
 ```
 
 ### Actualizar código
@@ -299,10 +299,10 @@ ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restar
 ./scripts/deploy-to-azure.sh
 
 # Solo rebuild backend
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose up -d --no-deps --build backend"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose up -d --no-deps --build backend"
 
 # Solo rebuild frontend
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose up -d --no-deps --build frontend"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose up -d --no-deps --build frontend"
 ```
 
 ## 🔐 Seguridad
@@ -322,7 +322,7 @@ Los siguientes archivos están en `.gitignore`:
 
 ```bash
 # Hacer backup seguro
-cp .azure-secrets.txt ~/Backups/flow-cunda-secrets-$(date +%Y%m%d).txt
+cp .azure-secrets.txt ~/Backups/project-secrets-$(date +%Y%m%d).txt
 
 # O usar gestor de passwords (1Password, Bitwarden, etc.)
 ```
@@ -332,14 +332,14 @@ cp .azure-secrets.txt ~/Backups/flow-cunda-secrets-$(date +%Y%m%d).txt
 ### Eliminar recursos QA
 
 ```bash
-az group delete --name rg-flow-cunda-qa --yes --no-wait
+az group delete --name rg-your-project-qa --yes --no-wait
 ```
 
 ### Eliminar recursos Producción
 
 ```bash
 # ⚠️ PELIGROSO - Solo si estás SEGURO
-az group delete --name rg-flow-cunda-prod --yes --no-wait
+az group delete --name rg-your-project-prod --yes --no-wait
 ```
 
 ## 📊 Monitoreo de Costos
@@ -349,13 +349,13 @@ az group delete --name rg-flow-cunda-prod --yes --no-wait
 ```bash
 # QA
 az consumption usage list \
-  --resource-group rg-flow-cunda-qa \
+  --resource-group rg-your-project-qa \
   --start-date $(date -d "30 days ago" +%Y-%m-%d) \
   --end-date $(date +%Y-%m-%d)
 
 # Producción
 az consumption usage list \
-  --resource-group rg-flow-cunda-prod \
+  --resource-group rg-your-project-prod \
   --start-date $(date -d "30 days ago" +%Y-%m-%d) \
   --end-date $(date +%Y-%m-%d)
 ```
@@ -367,14 +367,14 @@ az consumption usage list \
 ```bash
 # Verificar IP
 az vm show -d \
-  --resource-group rg-flow-cunda-qa \
-  --name vm-flow-cunda-qa \
+  --resource-group rg-your-project-qa \
+  --name vm-your-project-qa \
   --query publicIps -o tsv
 
 # Verificar NSG (puertos)
 az network nsg rule list \
-  --resource-group rg-flow-cunda-qa \
-  --nsg-name vm-flow-cunda-qaNSG \
+  --resource-group rg-your-project-qa \
+  --nsg-name vm-your-project-qaNSG \
   --output table
 ```
 
@@ -385,7 +385,7 @@ az network nsg rule list \
 ssh azureuser@$(cat .azure-vm-ip)
 
 # Ver logs
-cd ~/rocket-genai-v2
+cd ~/launch-with-ai
 docker compose logs
 
 # Reiniciar todo
@@ -397,13 +397,13 @@ docker compose up -d --build
 
 ```bash
 # Verificar DNS apunta a IP correcta
-nslookup flow.cunda.io
+nslookup your-domain.example.com
 
 # Ver logs de Traefik
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs traefik"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose logs traefik"
 
 # Reiniciar Traefik
-ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart traefik"
+ssh azureuser@$(cat .azure-vm-ip) "cd ~/launch-with-ai && docker compose restart traefik"
 ```
 
 ## 📚 Recursos Adicionales

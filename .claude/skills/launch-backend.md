@@ -1,6 +1,6 @@
 # Rocket Backend Development Skill
 
-Backend development for rocket-genai-v2 using FastAPI with module-based architecture, SQLModel ORM, and permission-based RBAC.
+Backend development for launch-with-ai using FastAPI with module-based architecture, SQLModel ORM, and permission-based RBAC.
 
 **Trigger:** Use when creating new backend modules, models, schemas, repositories, services, or API endpoints. Triggers on tasks like "add a new module", "create an endpoint", "add a model", or any Python/FastAPI work in the `backend/` directory.
 

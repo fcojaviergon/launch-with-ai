@@ -1,6 +1,6 @@
 # Rocket Frontend Development Skill
 
-Frontend development for rocket-genai-v2 using Domain-Driven Design with React 18, TypeScript, Chakra UI, TanStack Router/Query, and React Hook Form.
+Frontend development for launch-with-ai using Domain-Driven Design with React 18, TypeScript, Chakra UI, TanStack Router/Query, and React Hook Form.
 
 **Trigger:** Use when creating new frontend domains, components, API hooks, forms, or services. Triggers on tasks like "add a new domain", "create a form", "add API hooks", or any React/TypeScript work in the `frontend/` directory.
 

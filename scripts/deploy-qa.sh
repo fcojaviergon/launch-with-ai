@@ -2,11 +2,11 @@
 # Deploy to Azure QA following docs/deployment.md approach
 set -e
 
-DOMAIN="flow.cunda.io"
-EMAIL="javo@cunda.io"
-RG_NAME="rg-flow-cunda-qa2"
-VM_NAME="vm-flow-cunda-qa2"
-ADMIN_USER="azureuser"
+DOMAIN="${DEPLOY_DOMAIN:?Set DEPLOY_DOMAIN environment variable}"
+EMAIL="${DEPLOY_EMAIL:?Set DEPLOY_EMAIL environment variable}"
+RG_NAME="${AZURE_RG_NAME:?Set AZURE_RG_NAME environment variable}"
+VM_NAME="${AZURE_VM_NAME:?Set AZURE_VM_NAME environment variable}"
+ADMIN_USER="${AZURE_ADMIN_USER:-azureuser}"
 
 # Get VM IP from Azure
 echo "🔍 Getting VM IP..."
@@ -88,7 +88,7 @@ Host github.com
     HostName github.com
     User git
     IdentityFile ~/.ssh/github_deploy_key
-    StrictHostKeyChecking no
+    StrictHostKeyChecking accept-new
 EOF
 
 chmod 600 ~/.ssh/config
@@ -98,7 +98,7 @@ ENDSSH
 # Get the public key to add to GitHub
 echo ""
 echo "📋 Copy this public key and add it as a Deploy Key in GitHub:"
-echo "   Go to: https://github.com/vaibes-dev/flow-seguros-la-camara/settings/keys/new"
+echo "   Go to your GitHub repository Settings > Deploy Keys > Add deploy key"
 echo "   Title: Azure QA Deploy Key"
 echo "   Key:"
 echo ""
@@ -120,12 +120,12 @@ echo "6️⃣  Cloning repository..."
 
 ssh $ADMIN_USER@$VM_IP "bash -s" << ENDSSH
 # Clone repository if it doesn't exist
-if [ ! -d ~/rocket-genai-v2 ]; then
-    git clone git@github.com:vaibes-dev/flow-seguros-la-camara.git ~/rocket-genai-v2
+if [ ! -d ~/launch-with-ai ]; then
+    git clone ${GIT_REPO_URL:?Set GIT_REPO_URL environment variable} ~/launch-with-ai
     echo "✅ Repository cloned"
 else
     echo "✅ Repository already exists"
-    cd ~/rocket-genai-v2
+    cd ~/launch-with-ai
     git pull origin main
 fi
 ENDSSH
@@ -133,7 +133,7 @@ ENDSSH
 # Create .env file on server
 echo "  Creating environment file..."
 ssh $ADMIN_USER@$VM_IP "bash -s" << EOF
-cat > ~/rocket-genai-v2/.env << 'ENVEOF'
+cat > ~/launch-with-ai/.env << 'ENVEOF'
 # Domain Configuration
 DOMAIN=$DOMAIN
 FRONTEND_HOST=https://dashboard.$DOMAIN
@@ -142,10 +142,10 @@ FRONTEND_HOST=https://dashboard.$DOMAIN
 ENVIRONMENT=staging
 
 # Project Configuration
-PROJECT_NAME='Flow Cunda QA'
-STACK_NAME=flow-cunda-qa
-DOCKER_IMAGE_BACKEND=flow-cunda-backend-qa
-DOCKER_IMAGE_FRONTEND=flow-cunda-frontend-qa
+PROJECT_NAME='Launch With AI QA'
+STACK_NAME=launch-with-ai-qa
+DOCKER_IMAGE_BACKEND=launch-with-ai-backend-qa
+DOCKER_IMAGE_FRONTEND=launch-with-ai-frontend-qa
 TAG=main
 
 # Backend Security
@@ -153,7 +153,7 @@ BACKEND_CORS_ORIGINS="https://$DOMAIN,https://dashboard.$DOMAIN,https://api.$DOM
 SECRET_KEY=$SECRET_KEY
 
 # Admin User
-FIRST_SUPERUSER=fran@cunda.io
+FIRST_SUPERUSER=${DEPLOY_ADMIN_EMAIL:?Set DEPLOY_ADMIN_EMAIL environment variable}
 FIRST_SUPERUSER_PASSWORD=$SUPERUSER_PASSWORD
 
 # Database
@@ -184,7 +184,7 @@ echo ""
 echo "7️⃣  Starting application..."
 
 ssh $ADMIN_USER@$VM_IP 'bash -s' << 'ENDSSH'
-cd ~/rocket-genai-v2
+cd ~/launch-with-ai
 
 # Build and start (only docker-compose.yml, NO override, NO traefik compose)
 docker compose -f docker-compose.yml build
@@ -206,7 +206,7 @@ echo "================================"
 echo "✅ Deployment Complete!"
 echo ""
 echo "🔐 CREDENTIALS:"
-echo "   Admin Email: fran@cunda.io"
+echo "   Admin Email: ${DEPLOY_ADMIN_EMAIL}"
 echo "   Admin Password: $SUPERUSER_PASSWORD"
 echo "   Traefik User: admin"
 echo "   Traefik Password: $TRAEFIK_PASSWORD"

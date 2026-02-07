@@ -4,11 +4,11 @@
 set -e
 
 # Configuration
-AZURE_VM_USER="azureuser"
+AZURE_VM_USER="${AZURE_ADMIN_USER:-azureuser}"
 
 # Get VM IP dynamically from Azure
-RG_NAME="rg-flow-cunda-qa2"
-VM_NAME="vm-flow-cunda-qa2"
+RG_NAME="${AZURE_RG_NAME:?Set AZURE_RG_NAME environment variable}"
+VM_NAME="${AZURE_VM_NAME:?Set AZURE_VM_NAME environment variable}"
 echo "🔍 Getting VM IP from Azure..."
 AZURE_VM_HOST=$(az vm show -d --resource-group "$RG_NAME" --name "$VM_NAME" --query publicIps -o tsv)
 
@@ -53,5 +53,5 @@ echo "================================"
 echo "✅ Deployment triggered successfully!"
 echo ""
 echo "🌐 Your application should be updated at:"
-echo "   https://dashboard.flow.cunda.io"
+echo "   https://dashboard.${DEPLOY_DOMAIN:-your-domain.com}"
 echo "================================"
