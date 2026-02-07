@@ -372,6 +372,7 @@ export type DocumentsRetryDocumentProcessingResponse = DocumentPublic
 export type ItemsReadItemsData = {
   limit?: number
   skip?: number
+  search?: string | null
 }
 
 export type ItemsReadItemsResponse = ItemsPublic
@@ -442,6 +443,7 @@ export type ProjectsCreateProjectResponse = ProjectPublic
 export type ProjectsGetProjectsData = {
   limit?: number
   skip?: number
+  search?: string | null
 }
 
 export type ProjectsGetProjectsResponse = ProjectsPublic
@@ -487,6 +489,7 @@ export type ProjectsUploadDocumentResponse = DocumentPublic
 export type UsersReadUsersData = {
   limit?: number
   skip?: number
+  search?: string | null
 }
 
 export type UsersReadUsersResponse = UsersPublic

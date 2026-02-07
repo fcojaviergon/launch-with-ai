@@ -1,8 +1,11 @@
-import { Badge, Container, Flex, Heading, Table } from "@chakra-ui/react"
+import { Badge, Container, Flex, Heading, Input, Table } from "@chakra-ui/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
+import { FiSearch } from "react-icons/fi"
 import { z } from "zod"
 
+import { InputGroup } from "@/components/ui/input-group"
 import {
   PaginationItems,
   PaginationNextTrigger,
@@ -16,17 +19,25 @@ import { PendingUsers, UserActionsMenu } from "@shared/components"
 
 const usersSearchSchema = z.object({
   page: z.number().catch(1),
+  search: z.string().optional().catch(undefined),
 })
 
 type UsersSearch = z.infer<typeof usersSearchSchema>
 
 const PER_PAGE = 5
 
-function getUsersQueryOptions({ page }: { page: number }) {
+function getUsersQueryOptions({
+  page,
+  search,
+}: { page: number; search?: string }) {
   return {
     queryFn: () =>
-      UsersService.readUsers({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
-    queryKey: ["users", { page }],
+      UsersService.readUsers({
+        skip: (page - 1) * PER_PAGE,
+        limit: PER_PAGE,
+        search: search || undefined,
+      }),
+    queryKey: ["users", { page, search }],
   }
 }
 
@@ -46,19 +57,40 @@ function UsersTable() {
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const navigate = useNavigate({ from: Route.fullPath })
-  const { page } = Route.useSearch() as UsersSearch
+  const { page, search } = Route.useSearch() as UsersSearch
+  const [searchInput, setSearchInput] = useState(search ?? "")
+
+  useEffect(() => {
+    setSearchInput(search ?? "")
+  }, [search])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const trimmed = searchInput.trim()
+      if (trimmed !== (search ?? "")) {
+        navigate({
+          search: (prev: Record<string, unknown>) => ({
+            ...prev,
+            page: 1,
+            search: trimmed || undefined,
+          }),
+        })
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchInput, search, navigate])
 
   const { data, isLoading, isPlaceholderData } = useQuery({
-    ...getUsersQueryOptions({ page }),
+    ...getUsersQueryOptions({ page, search }),
     placeholderData: (prevData) => prevData,
   })
 
   const setPage = (page: number) =>
     navigate({
-      search: (prev: { [key: string]: string }) => ({ ...prev, page }),
+      search: (prev: Record<string, unknown>) => ({ ...prev, page }),
     })
 
-  const users = data?.data.slice(0, PER_PAGE) ?? []
+  const users = data?.data ?? []
   const count = data?.count ?? 0
 
   if (isLoading) {
@@ -67,6 +99,18 @@ function UsersTable() {
 
   return (
     <>
+      <InputGroup
+        startElement={<FiSearch />}
+        width={{ base: "100%", md: "sm" }}
+      >
+        <Input
+          placeholder="Search by email or name..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          size="sm"
+        />
+      </InputGroup>
+
       <Table.Root size={{ base: "sm", md: "md" }}>
         <Table.Header>
           <Table.Row>
@@ -78,7 +122,7 @@ function UsersTable() {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {users?.map((user) => (
+          {users.map((user) => (
             <Table.Row key={user.id} opacity={isPlaceholderData ? 0.5 : 1}>
               <Table.Cell w="20%" color={!user.full_name ? "gray" : "inherit"}>
                 {user.full_name || "N/A"}

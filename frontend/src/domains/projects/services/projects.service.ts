@@ -20,10 +20,19 @@ export class ProjectsService {
   /**
    * Get all projects for the current user
    */
-  public static getProjects(): CancelablePromise<ProjectsResponse> {
+  public static getProjects(data?: {
+    skip?: number
+    limit?: number
+    search?: string | null
+  }): CancelablePromise<ProjectsResponse> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/projects",
+      query: {
+        skip: data?.skip,
+        limit: data?.limit,
+        search: data?.search,
+      },
     })
   }
 

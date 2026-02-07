@@ -1,9 +1,8 @@
 """Repository layer for projects and documents."""
 import uuid
 from datetime import datetime
-from typing import List, Optional, Union
 
-from sqlmodel import Session, select
+from sqlmodel import Session, func, or_, select
 
 from app.core.base_crud import BaseCRUD
 from app.modules.projects.models import Document, DocumentStatus, Project
@@ -31,7 +30,7 @@ class ProjectRepository(BaseCRUD[Project, ProjectCreate, ProjectUpdate]):
         session.refresh(db_obj)
         return db_obj
 
-    def get_by_user_id(self, session: Session, user_id: uuid.UUID) -> List[Project]:
+    def get_by_user_id(self, session: Session, user_id: uuid.UUID) -> list[Project]:
         """Get all projects for a user."""
         return session.exec(
             select(Project)
@@ -39,12 +38,39 @@ class ProjectRepository(BaseCRUD[Project, ProjectCreate, ProjectUpdate]):
             .order_by(Project.created_at.desc())
         ).all()
 
+    def search_projects(
+        self,
+        session: Session,
+        *,
+        user_id: uuid.UUID,
+        skip: int = 0,
+        limit: int = 100,
+        search: str | None = None,
+    ) -> tuple[list[Project], int]:
+        """Search projects with optional text filter. Returns (projects, total_count)."""
+        statement = select(Project).where(Project.user_id == user_id)
+        count_statement = select(func.count()).select_from(Project).where(Project.user_id == user_id)
+
+        if search:
+            search_filter = or_(
+                Project.name.icontains(search),
+                Project.description.icontains(search),
+            )
+            statement = statement.where(search_filter)
+            count_statement = count_statement.where(search_filter)
+
+        count = session.exec(count_statement).one()
+        projects = session.exec(
+            statement.order_by(Project.created_at.desc()).offset(skip).limit(limit)
+        ).all()
+        return projects, count
+
     def update(
         self,
         session: Session,
         *,
         db_obj: Project,
-        obj_in: Union[ProjectUpdate, dict]
+        obj_in: ProjectUpdate | dict
     ) -> Project:
         """Update a project with automatic updated_at timestamp."""
         if isinstance(obj_in, dict):
@@ -84,7 +110,7 @@ class DocumentRepository(BaseCRUD[Document, DocumentCreate, DocumentUpdate]):
 
     def get_by_project_id(
         self, session: Session, project_id: uuid.UUID
-    ) -> List[Document]:
+    ) -> list[Document]:
         """Get all documents for a project."""
         return session.exec(
             select(Document)
@@ -94,7 +120,7 @@ class DocumentRepository(BaseCRUD[Document, DocumentCreate, DocumentUpdate]):
 
     def get_completed_by_project_id(
         self, session: Session, project_id: uuid.UUID
-    ) -> List[Document]:
+    ) -> list[Document]:
         """Get all completed documents for a project."""
         return session.exec(
             select(Document)
@@ -108,7 +134,7 @@ class DocumentRepository(BaseCRUD[Document, DocumentCreate, DocumentUpdate]):
         *,
         document_id: uuid.UUID,
         status: DocumentStatus,
-        error_message: Optional[str] = None
+        error_message: str | None = None
     ) -> Document:
         """Update document status."""
         document = session.get(Document, document_id)
@@ -135,8 +161,8 @@ class DocumentRepository(BaseCRUD[Document, DocumentCreate, DocumentUpdate]):
         *,
         document_id: uuid.UUID,
         processed_chunks: int,
-        total_chunks: Optional[int] = None,
-        estimated_tokens: Optional[int] = None
+        total_chunks: int | None = None,
+        estimated_tokens: int | None = None
     ) -> Document:
         """Update document processing progress."""
         document = session.get(Document, document_id)

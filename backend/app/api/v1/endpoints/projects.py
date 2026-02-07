@@ -1,29 +1,24 @@
 """API endpoints for projects."""
 import logging
-import os
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
 
 from app.api.v1.dependencies import CurrentUser, SessionDep
 from app.common.schemas.message import Message
 from app.modules.projects.capacity_service import capacity_service
-from app.modules.projects.models import DocumentStatus
 from app.modules.projects.repository import document_repository, project_repository
 from app.modules.projects.schemas import (
-    DocumentProgress,
     DocumentPublic,
     DocumentsPublic,
-    DocumentUpdate,
     ProjectCapacity,
     ProjectCreate,
     ProjectPublic,
     ProjectsPublic,
     ProjectUpdate,
-    ProjectWithCapacity,
 )
 from app.modules.projects.tasks.document_tasks import (
     delete_project_embeddings_task,
@@ -60,17 +55,16 @@ def get_projects(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    search: str | None = Query(default=None, max_length=255, description="Search projects by name or description"),
 ) -> Any:
     """
-    Get all projects for the current user.
+    Get all projects for the current user with optional search filter.
     """
-    projects = project_repository.get_by_user_id(session, current_user.id)
-
-    # Apply pagination
-    paginated_projects = projects[skip : skip + limit]
-
-    return ProjectsPublic(data=paginated_projects, count=len(projects))
+    projects, count = project_repository.search_projects(
+        session, user_id=current_user.id, skip=skip, limit=limit, search=search
+    )
+    return ProjectsPublic(data=projects, count=count)
 
 
 @router.get("/{project_id}", response_model=ProjectPublic)
