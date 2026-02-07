@@ -2,6 +2,9 @@
 
 Production-ready full-stack template for building AI-powered SaaS applications. Clean architecture, secure by default, and ready to deploy.
 
+### Inspiration
+This project is inspired by the Fullstack FastAPI Framework.
+
 ## Technology Stack
 
 - **Backend**: [FastAPI](https://fastapi.tiangolo.com) with Python 3.10+
