@@ -185,7 +185,7 @@ def generate_conversation_title_task(self, conversation_id: str):
         dict: Generated title and status
     """
     from app.modules.chat.models import ChatConversation
-    from app.services.openai_service import openai_service
+    from app.services.llm_service import llm_service
 
     logger.info(f"Generating title for conversation {conversation_id}")
 
@@ -207,7 +207,7 @@ def generate_conversation_title_task(self, conversation_id: str):
                 [f"{msg.role}: {msg.content[:200]}" for msg in messages_to_analyze]
             )
 
-            # Generate title with OpenAI
+            # Generate title with LLM
             prompt = f"""Generate a concise, descriptive title (maximum 50 characters) for this conversation.
 The title should capture the main topic or question.
 Do not use quotes or special formatting.
@@ -217,8 +217,11 @@ Conversation:
 
 Title:"""
 
-            title = openai_service.create_completion_sync(
-                prompt=prompt, max_tokens=20, temperature=0.7
+            title = llm_service.create_completion_sync(
+                system_prompt="You generate concise conversation titles.",
+                user_prompt=prompt,
+                max_tokens=20,
+                temperature=0.7,
             ).strip()
 
             # Clean up title

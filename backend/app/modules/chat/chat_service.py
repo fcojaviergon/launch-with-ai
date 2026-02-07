@@ -17,7 +17,7 @@ from app.modules.chat.schemas import (
     ChatMessageCreate,
     DocumentReferenceCreate
 )
-from app.services.openai_service import openai_service
+from app.services.llm_service import llm_service
 from app.services.vector_store import vector_store
 
 logger = logging.getLogger(__name__)
@@ -235,7 +235,7 @@ class ChatService:
         chat_messages.append({"role": "user", "content": message.content})
 
         # Get assistant response
-        response = await openai_service.create_chat_completion(
+        response = await llm_service.create_chat_completion(
             messages=chat_messages,
             model=settings.chat.model,
             max_tokens=settings.chat.max_response_tokens,
