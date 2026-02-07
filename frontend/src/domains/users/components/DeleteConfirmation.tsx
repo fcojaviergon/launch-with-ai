@@ -18,8 +18,10 @@ import { handleError } from "@shared/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { Trans, useTranslation } from "react-i18next"
 
 export const DeleteConfirmation = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
@@ -32,7 +34,7 @@ export const DeleteConfirmation = () => {
   const mutation = useMutation({
     mutationFn: () => UsersService.deleteUserMe(),
     onSuccess: () => {
-      showSuccessToast("Your account has been successfully deleted")
+      showSuccessToast(t("settings:accountDeletedSuccess"))
       setIsOpen(false)
       logout()
     },
@@ -66,14 +68,11 @@ export const DeleteConfirmation = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogCloseTrigger />
           <DialogHeader>
-            <DialogTitle>Confirmation Required</DialogTitle>
+            <DialogTitle>{t("settings:confirmationRequired")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text mb={4}>
-              All your account data will be{" "}
-              <strong>permanently deleted.</strong> If you are sure, please
-              click <strong>"Confirm"</strong> to proceed. This action cannot be
-              undone.
+              <Trans i18nKey="settings:deleteAccountConfirmation" components={{ strong: <strong /> }} />
             </Text>
           </DialogBody>
 
@@ -85,7 +84,7 @@ export const DeleteConfirmation = () => {
                   colorPalette="gray"
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  {t("common:cancel")}
                 </Button>
               </DialogActionTrigger>
               <Button
@@ -94,7 +93,7 @@ export const DeleteConfirmation = () => {
                 type="submit"
                 loading={isSubmitting}
               >
-                Delete
+                {t("common:delete")}
               </Button>
             </ButtonGroup>
           </DialogFooter>

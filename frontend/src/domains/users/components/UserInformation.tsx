@@ -22,8 +22,10 @@ import { handleError } from "@shared/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 export const UserInformation = () => {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
   const [editMode, setEditMode] = useState(false)
@@ -53,7 +55,7 @@ export const UserInformation = () => {
     mutationFn: (data: UserUpdateMe) =>
       UsersService.updateUserMe({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("User updated successfully.")
+      showSuccessToast(t("settings:userUpdatedSuccess"))
     },
     onError: (err: ApiError) => {
       handleError(err)
@@ -75,14 +77,14 @@ export const UserInformation = () => {
   return (
     <Container maxW="full">
       <Heading size="sm" py={4}>
-        User Information
+        {t("settings:userInformation")}
       </Heading>
       <Box
         w={{ sm: "full", md: "50%" }}
         as="form"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Field label="Full name">
+        <Field label={t("settings:fullName")}>
           {editMode ? (
             <Input {...register("full_name")} type="text" size="md" w="auto" />
           ) : (
@@ -93,13 +95,13 @@ export const UserInformation = () => {
               truncate
               maxWidth="250px"
             >
-              {currentUser?.full_name || "N/A"}
+              {currentUser?.full_name || t("common:na")}
             </Text>
           )}
         </Field>
         <Field
           mt={4}
-          label="Email"
+          label={t("settings:email")}
           invalid={!!errors.email}
           errorText={errors.email?.message}
         >
@@ -119,7 +121,7 @@ export const UserInformation = () => {
             loading={editMode ? isSubmitting : false}
             disabled={editMode ? !isDirty || !getValues("email") : false}
           >
-            {editMode ? "Save" : "Edit"}
+            {editMode ? t("common:save") : t("common:edit")}
           </Button>
           {editMode && (
             <Button
@@ -128,7 +130,7 @@ export const UserInformation = () => {
               onClick={onCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("common:cancel")}
             </Button>
           )}
         </Flex>

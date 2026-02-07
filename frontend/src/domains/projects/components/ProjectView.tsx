@@ -8,6 +8,7 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 import { useProject, useProjectCapacity } from "../api/projects.api"
 import { CapacityIndicator } from "./CapacityIndicator"
 import { ConversationList } from "./ConversationList"
@@ -20,6 +21,7 @@ interface ProjectViewProps {
 }
 
 export const ProjectView = ({ projectId }: ProjectViewProps) => {
+  const { t } = useTranslation()
   const { data: project, isLoading: projectLoading } = useProject(projectId)
   const { data: capacity, isLoading: capacityLoading } =
     useProjectCapacity(projectId)
@@ -46,7 +48,7 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
     return (
       <Container maxW="full">
         <Heading size="lg" pt={12}>
-          Project not found
+          {t("projects:projectNotFound")}
         </Heading>
       </Container>
     )
@@ -100,7 +102,7 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
               mb={2}
               color={systemPromptTitle}
             >
-              System Prompt
+              {t("projects:systemPrompt")}
             </Text>
             <Text fontSize="sm" color={systemPromptText} whiteSpace="pre-wrap">
               {project.system_prompt}

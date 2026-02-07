@@ -12,6 +12,7 @@ import { Button, DialogTitle, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { Trans, useTranslation } from "react-i18next"
 import { FiTrash2 } from "react-icons/fi"
 import { useAdminDeleteUser } from "../api/admin.api"
 
@@ -20,6 +21,7 @@ interface DeleteUserProps {
 }
 
 export const DeleteUser = ({ id }: DeleteUserProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const deleteUser = useAdminDeleteUser()
@@ -32,11 +34,11 @@ export const DeleteUser = ({ id }: DeleteUserProps) => {
   const onSubmit = async () => {
     deleteUser.mutate(id, {
       onSuccess: () => {
-        showSuccessToast("The user was deleted successfully")
+        showSuccessToast(t("admin:userDeletedSuccess"))
         setIsOpen(false)
       },
       onError: () => {
-        showErrorToast("An error occurred while deleting the user")
+        showErrorToast(t("admin:userDeletedError"))
       },
     })
   }
@@ -52,19 +54,17 @@ export const DeleteUser = ({ id }: DeleteUserProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" colorPalette="red">
           <FiTrash2 fontSize="16px" />
-          Delete User
+          {t("admin:deleteUser")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
+            <DialogTitle>{t("admin:deleteUser")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text mb={4}>
-              All items associated with this user will also be{" "}
-              <strong>permanently deleted.</strong> Are you sure? You will not
-              be able to undo this action.
+              <Trans i18nKey="admin:deleteUserConfirmation" components={{ strong: <strong /> }} />
             </Text>
           </DialogBody>
 
@@ -75,7 +75,7 @@ export const DeleteUser = ({ id }: DeleteUserProps) => {
                 colorPalette="gray"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -84,7 +84,7 @@ export const DeleteUser = ({ id }: DeleteUserProps) => {
               type="submit"
               loading={isSubmitting}
             >
-              Delete
+              {t("common:delete")}
             </Button>
           </DialogFooter>
           <DialogCloseTrigger />

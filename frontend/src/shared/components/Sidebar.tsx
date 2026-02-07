@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { FaBars } from "react-icons/fa"
 import { FiChevronLeft, FiChevronRight, FiLogOut } from "react-icons/fi"
+import { useTranslation } from "react-i18next"
 
 import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode"
 import {
@@ -17,9 +18,11 @@ import {
 import { useAuth } from "@domains/auth"
 import type { UserPublic } from "@domains/users"
 import Logo from "/assets/images/launch-logo.svg"
+import { LanguageSwitcher } from "./LanguageSwitcher"
 import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
+  const { t } = useTranslation(["navigation", "common"])
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const { logout } = useAuth()
@@ -68,7 +71,7 @@ const Sidebar = () => {
             color="white"
             bg="linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)"
             display={{ base: "flex", md: "none" }}
-            aria-label="Open Menu"
+            aria-label={t("navigation:openMenu")}
             position="fixed"
             top={4}
             left={4}
@@ -112,11 +115,14 @@ const Sidebar = () => {
                       _hover={{ opacity: 0.8 }}
                     />
                   </Link>
-                  <ColorModeButton
-                    borderRadius="lg"
-                    color={mutedText}
-                    _hover={{ bg: hoverBg, color: textColor }}
-                  />
+                  <Flex gap={1}>
+                    <LanguageSwitcher />
+                    <ColorModeButton
+                      borderRadius="lg"
+                      color={mutedText}
+                      _hover={{ bg: hoverBg, color: textColor }}
+                    />
+                  </Flex>
                 </Flex>
 
                 <Box px={2} pt={4} flex={1} overflowY="auto">
@@ -154,7 +160,7 @@ const Sidebar = () => {
                   transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
                 >
                   <Icon as={FiLogOut} fontSize="lg" />
-                  <Text fontSize="sm">Log Out</Text>
+                  <Text fontSize="sm">{t("navigation:logOut")}</Text>
                 </Flex>
 
                 {currentUser && (
@@ -189,7 +195,7 @@ const Sidebar = () => {
                         color={textColor}
                         truncate
                       >
-                        {currentUser.full_name || "User"}
+                        {currentUser.full_name || t("common:user")}
                       </Text>
                       <Text fontSize="xs" color={mutedText} truncate>
                         {currentUser.email}
@@ -260,13 +266,14 @@ const Sidebar = () => {
 
             {!collapsed && (
               <Flex gap={1}>
+                <LanguageSwitcher />
                 <ColorModeButton
                   borderRadius="lg"
                   color={mutedText}
                   _hover={{ bg: hoverBg, color: textColor }}
                 />
                 <IconButton
-                  aria-label="Collapse sidebar"
+                  aria-label={t("navigation:collapseSidebar")}
                   size="sm"
                   variant="ghost"
                   onClick={toggleSidebar}
@@ -289,13 +296,14 @@ const Sidebar = () => {
               flexDir="column"
               align="center"
             >
+              <LanguageSwitcher />
               <ColorModeButton
                 borderRadius="lg"
                 color={mutedText}
                 _hover={{ bg: hoverBg, color: textColor }}
               />
               <IconButton
-                aria-label="Expand sidebar"
+                aria-label={t("navigation:expandSidebar")}
                 size="sm"
                 variant="ghost"
                 onClick={toggleSidebar}
@@ -344,10 +352,10 @@ const Sidebar = () => {
                 transform: "scale(0.98)",
               }}
               transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-              title={collapsed ? "Log Out" : ""}
+              title={collapsed ? t("navigation:logOut") : ""}
             >
               <Icon as={FiLogOut} fontSize={collapsed ? "xl" : "lg"} />
-              {!collapsed && <Text fontSize="sm">Log Out</Text>}
+              {!collapsed && <Text fontSize="sm">{t("navigation:logOut")}</Text>}
             </Flex>
 
             {/* User Info */}
@@ -385,7 +393,7 @@ const Sidebar = () => {
                     color={textColor}
                     truncate
                   >
-                    {currentUser.full_name || "User"}
+                    {currentUser.full_name || t("common:user")}
                   </Text>
                   <Text fontSize="xs" color={mutedText} truncate>
                     {currentUser.email}
@@ -398,7 +406,7 @@ const Sidebar = () => {
               <Flex
                 justify="center"
                 py={2}
-                title={`${currentUser.full_name || "User"}\n${
+                title={`${currentUser.full_name || t("common:user")}\n${
                   currentUser.email
                 }`}
               >

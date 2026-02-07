@@ -22,11 +22,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { type SubmitHandler, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FaPlus } from "react-icons/fa"
 import { useCreateProject } from "../api/projects.api"
 import { type ProjectCreateFormData, projectCreateSchema } from "../schemas"
 
 export const AddProject = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast } = useCustomToast()
   const createProject = useCreateProject()
@@ -51,7 +53,7 @@ export const AddProject = () => {
   const onSubmit: SubmitHandler<ProjectCreateFormData> = (data) => {
     createProject.mutate(data, {
       onSuccess: () => {
-        showSuccessToast("Project created successfully.")
+        showSuccessToast(t("projects:projectCreatedSuccess"))
         reset()
         setIsOpen(false)
       },
@@ -68,29 +70,29 @@ export const AddProject = () => {
       <DialogTrigger asChild>
         <Button value="add-project" my={4}>
           <FaPlus fontSize="16px" />
-          New Project
+          {t("projects:newProject")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
+            <DialogTitle>{t("projects:createNewProject")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text mb={4}>
-              Create a new project to organize your documents and conversations.
+              {t("projects:createProjectDescription")}
             </Text>
             <VStack gap={4}>
               <Field
                 required
                 invalid={!!errors.name}
                 errorText={errors.name?.message}
-                label="Project Name"
+                label={t("projects:projectName")}
               >
                 <Input
                   id="name"
                   {...register("name")}
-                  placeholder="My Project"
+                  placeholder={t("projects:projectNamePlaceholder")}
                   type="text"
                 />
               </Field>
@@ -98,12 +100,12 @@ export const AddProject = () => {
               <Field
                 invalid={!!errors.description}
                 errorText={errors.description?.message}
-                label="Description"
+                label={t("projects:description")}
               >
                 <Textarea
                   id="description"
                   {...register("description")}
-                  placeholder="Project description..."
+                  placeholder={t("projects:descriptionPlaceholder")}
                   rows={3}
                 />
               </Field>
@@ -111,13 +113,13 @@ export const AddProject = () => {
               <Field
                 invalid={!!errors.system_prompt}
                 errorText={errors.system_prompt?.message}
-                label="System Prompt"
-                helperText="Define the AI behavior for all conversations in this project"
+                label={t("projects:systemPrompt")}
+                helperText={t("projects:systemPromptHelper")}
               >
                 <Textarea
                   id="system_prompt"
                   {...register("system_prompt")}
-                  placeholder="You are a helpful assistant that..."
+                  placeholder={t("projects:systemPromptPlaceholder")}
                   rows={4}
                 />
               </Field>
@@ -125,8 +127,8 @@ export const AddProject = () => {
               <Field
                 invalid={!!errors.max_context_tokens}
                 errorText={errors.max_context_tokens?.message}
-                label="Max Context Tokens"
-                helperText="Maximum tokens for documents + conversations (1K - 1M)"
+                label={t("projects:maxContextTokens")}
+                helperText={t("projects:maxContextTokensHelper")}
               >
                 <NumberInputRoot
                   id="max_context_tokens"
@@ -150,7 +152,7 @@ export const AddProject = () => {
                 colorPalette="gray"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -159,7 +161,7 @@ export const AddProject = () => {
               disabled={!isValid}
               loading={isSubmitting}
             >
-              Create Project
+              {t("projects:createProject")}
             </Button>
           </DialogFooter>
         </form>

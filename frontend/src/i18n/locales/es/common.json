@@ -1,0 +1,17 @@
+{
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "confirm": "Confirmar",
+  "continue": "Continuar",
+  "actions": "Acciones",
+  "search": "Buscar",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Exitoso",
+  "na": "N/D",
+  "user": "Usuario",
+  "you": "Tú",
+  "goBack": "Volver"
+}

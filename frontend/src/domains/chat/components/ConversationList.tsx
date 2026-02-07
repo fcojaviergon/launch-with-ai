@@ -1,6 +1,7 @@
 import { useColorModeValue } from "@/components/ui/color-mode"
 import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
 import { FaComments, FaPlus } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import type { Conversation } from "../types/chat.types"
 
 interface ConversationListProps {
@@ -20,6 +21,8 @@ export const ConversationList = ({
   onSelectConversation,
   onCreateConversation,
 }: ConversationListProps) => {
+  const { t } = useTranslation()
+
   // Theme-aware colors
   const textMuted = useColorModeValue("gray.500", "gray.400")
   const textSubtle = useColorModeValue("gray.400", "gray.500")
@@ -35,7 +38,7 @@ export const ConversationList = ({
     return (
       <VStack p={4} gap={4}>
         <Spinner size="lg" />
-        <Text color={textMuted}>Loading conversations...</Text>
+        <Text color={textMuted}>{t("chat:loadingConversations")}</Text>
       </VStack>
     )
   }
@@ -43,7 +46,7 @@ export const ConversationList = ({
   if (error) {
     return (
       <VStack p={4} gap={4}>
-        <Text color="red.500">Error loading conversations</Text>
+        <Text color="red.500">{t("chat:errorLoadingConversations")}</Text>
         <Text fontSize="sm" color={textMuted}>
           {error.message}
         </Text>
@@ -60,7 +63,7 @@ export const ConversationList = ({
         width="100%"
       >
         <FaPlus />
-        New Conversation
+        {t("chat:newConversation")}
       </Button>
 
       {conversations && conversations.length > 0 ? (
@@ -109,10 +112,10 @@ export const ConversationList = ({
         <VStack p={8} gap={2}>
           <FaComments size={48} color={emptyIconColor} />
           <Text color={textMuted} textAlign="center">
-            No conversations yet
+            {t("chat:noConversationsYet")}
           </Text>
           <Text fontSize="sm" color={textSubtle} textAlign="center">
-            Click "New Conversation" to start
+            {t("chat:clickNewConversation")}
           </Text>
         </VStack>
       )}

@@ -1,0 +1,10 @@
+{
+  "greeting": "Hola, {{name}}",
+  "welcomeMessage": "Bienvenido de nuevo, ¡qué bueno verte otra vez!",
+  "quickOverview": "Vista rápida",
+  "quickOverviewText": "Accede a todos tus elementos y análisis desde este panel.",
+  "manageItems": "Gestionar elementos",
+  "manageItemsText": "Crea, edita y gestiona todos tus elementos eficientemente.",
+  "recentActivity": "Actividad reciente",
+  "recentActivityText": "Visualiza y rastrea tus actividades y cambios recientes."
+}

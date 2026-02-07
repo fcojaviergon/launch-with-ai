@@ -12,6 +12,7 @@ import { Button, DialogTitle, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FiTrash2 } from "react-icons/fi"
 import { useDeleteItem } from "../api/items.api"
 
@@ -20,6 +21,7 @@ interface DeleteItemProps {
 }
 
 export const DeleteItem = ({ id }: DeleteItemProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const deleteItem = useDeleteItem()
@@ -32,11 +34,11 @@ export const DeleteItem = ({ id }: DeleteItemProps) => {
   const onSubmit = async () => {
     deleteItem.mutate(id, {
       onSuccess: () => {
-        showSuccessToast("The item was deleted successfully")
+        showSuccessToast(t("items:itemDeletedSuccess"))
         setIsOpen(false)
       },
       onError: () => {
-        showErrorToast("An error occurred while deleting the item")
+        showErrorToast(t("items:itemDeletedError"))
       },
     })
   }
@@ -52,7 +54,7 @@ export const DeleteItem = ({ id }: DeleteItemProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" colorPalette="red">
           <FiTrash2 fontSize="16px" />
-          Delete Item
+          {t("items:deleteItem")}
         </Button>
       </DialogTrigger>
 
@@ -60,12 +62,11 @@ export const DeleteItem = ({ id }: DeleteItemProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogCloseTrigger />
           <DialogHeader>
-            <DialogTitle>Delete Item</DialogTitle>
+            <DialogTitle>{t("items:deleteItem")}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text mb={4}>
-              This item will be permanently deleted. Are you sure? You will not
-              be able to undo this action.
+              {t("items:deleteItemConfirmation")}
             </Text>
           </DialogBody>
 
@@ -76,7 +77,7 @@ export const DeleteItem = ({ id }: DeleteItemProps) => {
                 colorPalette="gray"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("common:cancel")}
               </Button>
             </DialogActionTrigger>
             <Button
@@ -85,7 +86,7 @@ export const DeleteItem = ({ id }: DeleteItemProps) => {
               type="submit"
               loading={isSubmitting}
             >
-              Delete
+              {t("common:delete")}
             </Button>
           </DialogFooter>
         </form>

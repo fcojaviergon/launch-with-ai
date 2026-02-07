@@ -1,0 +1,20 @@
+{
+  "chat": "Chat",
+  "backToProject": "Volver al proyecto",
+  "selectConversation": "Selecciona una conversación o crea una nueva para comenzar a chatear",
+  "loadingConversations": "Cargando conversaciones...",
+  "errorLoadingConversations": "Error al cargar conversaciones",
+  "newConversation": "Nueva conversación",
+  "noConversationsYet": "Aún no hay conversaciones",
+  "clickNewConversation": "Haz clic en \"Nueva conversación\" para comenzar",
+  "noMessagesYet": "Aún no hay mensajes",
+  "startConversation": "Comienza la conversación enviando un mensaje",
+  "thinking": "Pensando",
+  "typeMessage": "Escribe tu mensaje...",
+  "useDocumentsContext": "Usar documentos como contexto",
+  "conversationCreatedSuccess": "Conversación creada exitosamente",
+  "failedCreateConversation": "Error al crear conversación: {{error}}",
+  "failedSendMessage": "Error al enviar mensaje: {{error}}",
+  "conversationTitleUpdated": "Título de conversación actualizado",
+  "conversationCreated": "Conversación creada"
+}

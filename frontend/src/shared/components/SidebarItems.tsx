@@ -10,16 +10,17 @@ import {
   FiUsers,
 } from "react-icons/fi"
 import type { IconType } from "react-icons/lib"
+import { useTranslation } from "react-i18next"
 
 import { useColorModeValue } from "@/components/ui/color-mode"
 import type { UserPublic } from "@domains/users"
 
 const items = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
-  { icon: FiFolder, title: "Projects", path: "/projects" },
-  { icon: FiMessageSquare, title: "Chat", path: "/chat" },
-  { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiSettings, title: "Settings", path: "/settings" },
+  { icon: FiHome, titleKey: "dashboard", path: "/" },
+  { icon: FiFolder, titleKey: "projects", path: "/projects" },
+  { icon: FiMessageSquare, titleKey: "chat", path: "/chat" },
+  { icon: FiBriefcase, titleKey: "items", path: "/items" },
+  { icon: FiSettings, titleKey: "settings", path: "/settings" },
 ]
 
 interface SidebarItemsProps {
@@ -29,11 +30,12 @@ interface SidebarItemsProps {
 
 interface Item {
   icon: IconType
-  title: string
+  titleKey: string
   path: string
 }
 
 const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
+  const { t } = useTranslation("navigation")
   const queryClient = useQueryClient()
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"])
   const routerState = useRouterState()
@@ -47,10 +49,10 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
   const labelColor = useColorModeValue("gray.400", "gray.500")
 
   const finalItems: Item[] = currentUser?.is_superuser
-    ? [...items, { icon: FiUsers, title: "Admin", path: "/admin" }]
+    ? [...items, { icon: FiUsers, titleKey: "admin", path: "/admin" }]
     : items
 
-  const listItems = finalItems.map(({ icon, title, path }) => {
+  const listItems = finalItems.map(({ icon, titleKey, path }) => {
     let isActive = false
 
     if (path === "/") {
@@ -59,8 +61,10 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
       isActive = currentPath === path || currentPath.startsWith(`${path}/`)
     }
 
+    const title = t(titleKey)
+
     return (
-      <RouterLink key={title} to={path} onClick={onClose}>
+      <RouterLink key={titleKey} to={path} onClick={onClose}>
         <Flex
           gap={collapsed ? 0 : 3}
           px={collapsed ? 0 : 4}
@@ -117,7 +121,7 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
           letterSpacing="0.1em"
           textTransform="uppercase"
         >
-          Navigation
+          {t("navigation")}
         </Text>
       )}
       <Box>{listItems}</Box>

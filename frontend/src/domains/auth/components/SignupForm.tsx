@@ -15,11 +15,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { FiLock, FiMail, FiUser } from "react-icons/fi"
 import { useAuth } from "../hooks"
 import { type SignupFormData, signupSchema } from "../schemas/authSchemas"
 
 export const SignupForm = () => {
+  const { t } = useTranslation()
   const { signup } = useAuth()
   const {
     register,
@@ -96,10 +98,10 @@ export const SignupForm = () => {
               </Text>
             </Box>
             <Heading size="2xl" fontWeight="bold">
-              Launch With AI
+              {t("auth:launchWithAi")}
             </Heading>
             <Text fontSize="lg" opacity={0.9}>
-              Join thousands of developers building the future with AI.
+              {t("auth:signupHeroText")}
             </Text>
           </VStack>
         </Center>
@@ -138,10 +140,10 @@ export const SignupForm = () => {
 
           <VStack gap={2} mb={8}>
             <Heading size="xl" fontWeight="bold">
-              Create account
+              {t("auth:createAccount")}
             </Heading>
             <Text color={mutedText} textAlign="center">
-              Get started with your AI-powered dashboard
+              {t("auth:signupSubtitle")}
             </Text>
           </VStack>
 
@@ -154,7 +156,7 @@ export const SignupForm = () => {
                 <Input
                   id="full_name"
                   {...register("full_name")}
-                  placeholder="Full Name"
+                  placeholder={t("auth:fullName")}
                   type="text"
                   size="lg"
                 />
@@ -166,7 +168,7 @@ export const SignupForm = () => {
                 <Input
                   id="email"
                   {...register("email")}
-                  placeholder="Email"
+                  placeholder={t("auth:email")}
                   type="email"
                   size="lg"
                 />
@@ -177,7 +179,7 @@ export const SignupForm = () => {
               type="password"
               startElement={<FiLock />}
               {...register("password")}
-              placeholder="Password"
+              placeholder={t("auth:password")}
               errors={errors}
               size="lg"
             />
@@ -189,14 +191,14 @@ export const SignupForm = () => {
               size="lg"
               w="full"
             >
-              Create Account
+              {t("auth:createAccount")}
             </Button>
           </VStack>
 
           <Text textAlign="center" mt={8} color={mutedText}>
-            Already have an account?{" "}
+            {t("auth:hasAccount")}{" "}
             <RouterLink to="/login" className="main-link">
-              Sign in
+              {t("auth:signInLink")}
             </RouterLink>
           </Text>
         </Box>

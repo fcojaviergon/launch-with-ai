@@ -2,6 +2,7 @@ import { useColorModeValue } from "@/components/ui/color-mode"
 import { Badge, Box, Card, Flex, Heading, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
+import { useTranslation } from "react-i18next"
 import { useProjectCapacity } from "../api/projects.api"
 import type { Project } from "../types/projects.types"
 import { CapacityIndicator } from "./CapacityIndicator"
@@ -11,6 +12,7 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
+  const { t } = useTranslation()
   const { data: capacity } = useProjectCapacity(project.id)
 
   // Theme-aware colors
@@ -62,7 +64,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
           <Flex gap={2} flexWrap="wrap">
             <Badge colorPalette="blue" variant="subtle">
-              {project.documents?.length || 0} documents
+              {t("projects:nDocuments", { count: project.documents?.length || 0 })}
             </Badge>
           </Flex>
         </Card.Body>

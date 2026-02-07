@@ -13,6 +13,7 @@ import { useCustomToast } from "@shared/hooks"
 import { Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { FaArrowLeft, FaComments } from "react-icons/fa"
+import { useTranslation } from "react-i18next"
 import {
   useConversations,
   useCreateConversation,
@@ -39,6 +40,7 @@ export const ChatInterface = ({
   projectName,
   selectedConversationId,
 }: ChatInterfaceProps) => {
+  const { t } = useTranslation()
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null)
 
@@ -111,10 +113,10 @@ export const ChatInterface = ({
       {
         onSuccess: (newConversation) => {
           setSelectedConversation(newConversation)
-          showSuccessToast("Conversation created successfully")
+          showSuccessToast(t("chat:conversationCreatedSuccess"))
         },
         onError: (error) => {
-          showErrorToast(`Failed to create conversation: ${error.message}`)
+          showErrorToast(t("chat:failedCreateConversation", { error: error.message }))
         },
       },
     )
@@ -137,7 +139,7 @@ export const ChatInterface = ({
           // Messages will be refreshed by query invalidation
         },
         onError: (error) => {
-          showErrorToast(`Failed to send message: ${error.message}`)
+          showErrorToast(t("chat:failedSendMessage", { error: error.message }))
         },
       },
     )
@@ -163,7 +165,7 @@ export const ChatInterface = ({
           {projectId && (
             <Link to="/projects/$projectId" params={{ projectId }}>
               <IconButton
-                aria-label="Back to project"
+                aria-label={t("chat:backToProject")}
                 variant="ghost"
                 size="sm"
                 _hover={{ bg: backButtonHoverBg }}
@@ -194,7 +196,7 @@ export const ChatInterface = ({
                   </Text>
                 </>
               )}
-              <Heading size="md">Chat</Heading>
+              <Heading size="md">{t("chat:chat")}</Heading>
             </Flex>
             {analysisTitle && (
               <Text fontSize="sm" color={textMuted} mt={1}>
@@ -258,7 +260,7 @@ export const ChatInterface = ({
             <VStack justify="center" height="100%" gap={4} p={8}>
               <FaComments size={64} color={emptyIconColor} />
               <Text fontSize="lg" color={textMuted} textAlign="center">
-                Select a conversation or create a new one to start chatting
+                {t("chat:selectConversation")}
               </Text>
             </VStack>
           )}

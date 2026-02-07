@@ -1,6 +1,7 @@
 import { useColorModeValue } from "@/components/ui/color-mode"
 import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { Box, Flex, Text } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 import type { ProjectCapacity } from "../types/projects.types"
 
 interface CapacityIndicatorProps {
@@ -14,6 +15,7 @@ export const CapacityIndicator = ({
   size = "md",
   showDetails = true,
 }: CapacityIndicatorProps) => {
+  const { t } = useTranslation()
   // Theme-aware colors
   const textMuted = useColorModeValue("gray.600", "gray.400")
 
@@ -36,7 +38,7 @@ export const CapacityIndicator = ({
     <Box>
       <Flex justify="space-between" mb={1}>
         <Text fontSize={size === "sm" ? "xs" : "sm"} fontWeight="medium">
-          Capacity Usage
+          {t("projects:capacityUsage")}
         </Text>
         <Text
           fontSize={size === "sm" ? "xs" : "sm"}
@@ -55,17 +57,17 @@ export const CapacityIndicator = ({
         <Flex justify="space-between" mt={2} fontSize="xs" color={textMuted}>
           <Text>
             {formatTokens(capacity.total_tokens)} /{" "}
-            {formatTokens(capacity.max_tokens)} tokens
+            {formatTokens(capacity.max_tokens)} {t("projects:tokens")}
           </Text>
-          <Text>{formatTokens(capacity.remaining_tokens)} remaining</Text>
+          <Text>{formatTokens(capacity.remaining_tokens)} {t("projects:remaining")}</Text>
         </Flex>
       )}
 
       {showDetails && (
         <Flex mt={2} gap={4} fontSize="xs" color={textMuted}>
-          <Text>Documents: {formatTokens(capacity.documents_tokens)}</Text>
+          <Text>{t("projects:documents")}: {formatTokens(capacity.documents_tokens)}</Text>
           <Text>
-            Conversations: {formatTokens(capacity.conversations_tokens)}
+            {t("projects:conversations")}: {formatTokens(capacity.conversations_tokens)}
           </Text>
         </Flex>
       )}

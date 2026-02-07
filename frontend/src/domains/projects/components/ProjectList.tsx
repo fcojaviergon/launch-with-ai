@@ -10,12 +10,14 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { FiFolder, FiSearch } from "react-icons/fi"
 import { useProjects } from "../api/projects.api"
 import { AddProject } from "./AddProject"
 import { ProjectCard } from "./ProjectCard"
 
 export const ProjectList = () => {
+  const { t } = useTranslation()
   const [searchInput, setSearchInput] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
 
@@ -36,7 +38,7 @@ export const ProjectList = () => {
     return (
       <Container maxW="full">
         <Heading size="lg" pt={12}>
-          Projects
+          {t("projects:projects")}
         </Heading>
         <AddProject />
         <Flex justify="center" align="center" h="300px">
@@ -50,15 +52,15 @@ export const ProjectList = () => {
     return (
       <Container maxW="full">
         <Heading size="lg" pt={12}>
-          Projects
+          {t("projects:projects")}
         </Heading>
         <AddProject />
         <EmptyState.Root>
           <EmptyState.Content>
             <VStack textAlign="center">
-              <EmptyState.Title>Error loading projects</EmptyState.Title>
+              <EmptyState.Title>{t("projects:errorLoadingProjects")}</EmptyState.Title>
               <EmptyState.Description>
-                {error.message || "Something went wrong"}
+                {error.message || t("projects:somethingWentWrong")}
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>
@@ -70,7 +72,7 @@ export const ProjectList = () => {
   return (
     <Container maxW="full">
       <Heading size="lg" pt={12}>
-        Projects
+        {t("projects:projects")}
       </Heading>
       <AddProject />
       <InputGroup
@@ -78,7 +80,7 @@ export const ProjectList = () => {
         width={{ base: "100%", md: "sm" }}
       >
         <Input
-          placeholder="Search by name or description..."
+          placeholder={t("projects:searchPlaceholder")}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           size="sm"
@@ -94,13 +96,13 @@ export const ProjectList = () => {
             <VStack textAlign="center">
               <EmptyState.Title>
                 {debouncedSearch
-                  ? "No projects match your search"
-                  : "No projects yet"}
+                  ? t("projects:noProjectsSearch")
+                  : t("projects:noProjectsYet")}
               </EmptyState.Title>
               <EmptyState.Description>
                 {debouncedSearch
-                  ? "Try adjusting your search terms"
-                  : "Create your first project to organize documents and conversations"}
+                  ? t("projects:adjustSearch")
+                  : t("projects:createFirstProject")}
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>

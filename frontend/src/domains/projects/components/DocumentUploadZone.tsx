@@ -2,6 +2,7 @@ import { useColorModeValue } from "@/components/ui/color-mode"
 import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { FaCloudUploadAlt } from "react-icons/fa"
 import { useUploadDocument } from "../api/projects.api"
 
@@ -10,6 +11,7 @@ interface DocumentUploadZoneProps {
 }
 
 export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
+  const { t } = useTranslation()
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -61,7 +63,7 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
 
       if (!validExtensions.includes(fileExtension)) {
         showErrorToast(
-          `File ${file.name} has unsupported format. Supported: PDF, DOCX, TXT`,
+          t("projects:unsupportedFormat", { name: file.name }),
         )
         continue
       }
@@ -71,10 +73,10 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
         { projectId, file },
         {
           onSuccess: () => {
-            showSuccessToast(`${file.name} uploaded successfully`)
+            showSuccessToast(t("projects:uploadedSuccess", { name: file.name }))
           },
           onError: (error) => {
-            showErrorToast(`Failed to upload ${file.name}: ${error.message}`)
+            showErrorToast(t("projects:uploadFailed", { name: file.name, error: error.message }))
           },
         },
       )
@@ -127,11 +129,11 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
           <VStack gap={1}>
             <Text fontWeight="semibold" fontSize="lg">
               {isDragging
-                ? "Drop files here"
-                : "Drag & drop files or click to browse"}
+                ? t("projects:dropFilesHere")
+                : t("projects:dragDropOrBrowse")}
             </Text>
             <Text fontSize="sm" color={textMuted}>
-              Supported formats: PDF, DOCX, TXT
+              {t("projects:supportedFormats")}
             </Text>
           </VStack>
 
@@ -145,7 +147,7 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
             }}
             disabled={uploadDocument.isPending}
           >
-            Select Files
+            {t("projects:selectFiles")}
           </Button>
         </VStack>
 

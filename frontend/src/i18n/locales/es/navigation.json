@@ -1,0 +1,13 @@
+{
+  "navigation": "Navegación",
+  "dashboard": "Panel",
+  "projects": "Proyectos",
+  "chat": "Chat",
+  "items": "Elementos",
+  "settings": "Configuración",
+  "admin": "Administración",
+  "logOut": "Cerrar sesión",
+  "openMenu": "Abrir menú",
+  "collapseSidebar": "Contraer barra lateral",
+  "expandSidebar": "Expandir barra lateral"
+}

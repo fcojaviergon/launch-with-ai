@@ -1,0 +1,13 @@
+{
+  "navigation": "Navigation",
+  "dashboard": "Dashboard",
+  "projects": "Projects",
+  "chat": "Chat",
+  "items": "Items",
+  "settings": "Settings",
+  "admin": "Admin",
+  "logOut": "Log Out",
+  "openMenu": "Open Menu",
+  "collapseSidebar": "Collapse sidebar",
+  "expandSidebar": "Expand sidebar"
+}

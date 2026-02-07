@@ -21,6 +21,7 @@ import { useCustomToast } from "@shared/hooks"
 import { Link } from "@tanstack/react-router"
 import { formatDistanceToNow } from "date-fns"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { FaCheck, FaEdit, FaPlus, FaTimes } from "react-icons/fa"
 import { FiMessageSquare } from "react-icons/fi"
 
@@ -33,6 +34,7 @@ interface ConversationItemProps {
 }
 
 const ConversationItem = ({ conversation }: ConversationItemProps) => {
+  const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(conversation.title || "")
   const { showSuccessToast } = useCustomToast()
@@ -47,7 +49,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
       { conversationId: conversation.id, title: editedTitle },
       {
         onSuccess: () => {
-          showSuccessToast("Conversation title updated")
+          showSuccessToast(t("chat:conversationTitleUpdated"))
           setIsEditing(false)
         },
       },
@@ -82,7 +84,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
               }}
             />
             <IconButton
-              aria-label="Save title"
+              aria-label={t("projects:saveTitle")}
               size="sm"
               colorPalette="green"
               variant="ghost"
@@ -92,7 +94,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
               <FaCheck />
             </IconButton>
             <IconButton
-              aria-label="Cancel edit"
+              aria-label={t("projects:cancelEdit")}
               size="sm"
               variant="ghost"
               onClick={handleCancelEdit}
@@ -112,7 +114,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
             >
               <Box>
                 <Text fontWeight="semibold" fontSize="sm" mb={1}>
-                  {conversation.title || "New Conversation"}
+                  {conversation.title || t("projects:newConversationTitle")}
                 </Text>
                 <Text fontSize="xs" color={textMuted}>
                   {formatDistanceToNow(new Date(conversation.updated_at), {
@@ -122,7 +124,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
               </Box>
             </Link>
             <IconButton
-              aria-label="Edit title"
+              aria-label={t("projects:editTitle")}
               size="sm"
               variant="ghost"
               onClick={() => setIsEditing(true)}
@@ -137,6 +139,7 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
 }
 
 export const ConversationList = ({ projectId }: ConversationListProps) => {
+  const { t } = useTranslation()
   const { data: conversations, isLoading } = useConversations(projectId)
   const createConversation = useCreateConversation()
   const { showSuccessToast } = useCustomToast()
@@ -146,7 +149,7 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
       { project_id: projectId, title: "New Conversation", use_documents: true },
       {
         onSuccess: () => {
-          showSuccessToast("Conversation created")
+          showSuccessToast(t("chat:conversationCreated"))
         },
       },
     )
@@ -155,13 +158,13 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={4}>
-        <Heading size="md">Conversations</Heading>
+        <Heading size="md">{t("projects:conversations")}</Heading>
         <Button
           size="sm"
           onClick={handleCreateConversation}
           disabled={createConversation.isPending}
         >
-          <FaPlus /> New Chat
+          <FaPlus /> {t("projects:newChat")}
         </Button>
       </Flex>
 
@@ -178,9 +181,9 @@ export const ConversationList = ({ projectId }: ConversationListProps) => {
               <FiMessageSquare />
             </EmptyState.Indicator>
             <VStack textAlign="center">
-              <EmptyState.Title>No conversations yet</EmptyState.Title>
+              <EmptyState.Title>{t("projects:noConversationsYet")}</EmptyState.Title>
               <EmptyState.Description>
-                Start a new conversation to chat with AI about your documents
+                {t("projects:startNewConversation")}
               </EmptyState.Description>
             </VStack>
           </EmptyState.Content>
