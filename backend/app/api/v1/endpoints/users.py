@@ -1,7 +1,9 @@
 import uuid
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlmodel import col, delete, func, select
 
 from app.api.v1.dependencies import (
@@ -19,6 +21,7 @@ from app.modules.users.schemas import (
 from app.common.schemas.message import Message
 from app.common.utils.email import generate_new_account_email, send_email
 
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/users", tags=["users"])
 
 
@@ -53,7 +56,7 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     user = user_service.create_user(session=session, user_create=user_in)
     if settings.emails_enabled and user_in.email:
         email_data = generate_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
+            email_to=user_in.email, username=user_in.email
         )
         send_email(
             email_to=user_in.email,
@@ -117,7 +120,8 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 
 
 @router.post("/signup", response_model=UserPublic, status_code=201)
-def register_user(session: SessionDep, user_in: UserRegister) -> Any:
+@limiter.limit("3/minute")
+def register_user(request: Request, session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
     """
