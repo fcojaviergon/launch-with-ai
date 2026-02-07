@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react"
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { useRef, useState } from "react"
 import { FaCloudUploadAlt } from "react-icons/fa"
@@ -126,7 +126,9 @@ export const DocumentUploadZone = ({ projectId }: DocumentUploadZoneProps) => {
 
           <VStack gap={1}>
             <Text fontWeight="semibold" fontSize="lg">
-              {isDragging ? "Drop files here" : "Drag & drop files or click to browse"}
+              {isDragging
+                ? "Drop files here"
+                : "Drag & drop files or click to browse"}
             </Text>
             <Text fontSize="sm" color={textMuted}>
               Supported formats: PDF, DOCX, TXT

@@ -1,3 +1,4 @@
+import { useColorModeValue } from "@/components/ui/color-mode"
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui/color-mode"
 import {
   useConversations,
   useCreateConversation,

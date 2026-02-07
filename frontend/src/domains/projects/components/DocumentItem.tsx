@@ -1,5 +1,5 @@
-import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { Badge, Box, Flex, IconButton, Text } from "@chakra-ui/react"
 import { useCustomToast } from "@shared/hooks"
 import { formatDistanceToNow } from "date-fns"

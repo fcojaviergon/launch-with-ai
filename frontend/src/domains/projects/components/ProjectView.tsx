@@ -1,3 +1,4 @@
+import { useColorModeValue } from "@/components/ui/color-mode"
 import {
   Box,
   Container,
@@ -7,7 +8,6 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui/color-mode"
 import { useProject, useProjectCapacity } from "../api/projects.api"
 import { CapacityIndicator } from "./CapacityIndicator"
 import { ConversationList } from "./ConversationList"
@@ -94,7 +94,12 @@ export const ProjectView = ({ projectId }: ProjectViewProps) => {
             borderColor={systemPromptBorder}
             mb={6}
           >
-            <Text fontSize="sm" fontWeight="semibold" mb={2} color={systemPromptTitle}>
+            <Text
+              fontSize="sm"
+              fontWeight="semibold"
+              mb={2}
+              color={systemPromptTitle}
+            >
               System Prompt
             </Text>
             <Text fontSize="sm" color={systemPromptText} whiteSpace="pre-wrap">

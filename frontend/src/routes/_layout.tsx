@@ -2,8 +2,8 @@ import { Box, Flex } from "@chakra-ui/react"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 import { useColorModeValue } from "@/components/ui/color-mode"
-import { Sidebar } from "@shared/components"
 import { UsersService } from "@domains/users"
+import { Sidebar } from "@shared/components"
 
 export const Route = createFileRoute("/_layout")({
   // Auth guard - runs BEFORE component renders (no loading spinner)
@@ -39,7 +39,7 @@ function Layout() {
   const cardBg = useColorModeValue("white", "gray.900")
   const cardShadow = useColorModeValue(
     "0 1px 3px rgba(0,0,0,0.05)",
-    "0 1px 3px rgba(0,0,0,0.3)"
+    "0 1px 3px rgba(0,0,0,0.3)",
   )
 
   // User is guaranteed to be authenticated at this point (beforeLoad ensures it)

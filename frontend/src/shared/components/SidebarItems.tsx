@@ -68,7 +68,11 @@ const SidebarItems = ({ onClose, collapsed = false }: SidebarItemsProps) => {
           my={1}
           mx={collapsed ? 1 : 0}
           borderRadius="xl"
-          bg={isActive ? "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)" : "transparent"}
+          bg={
+            isActive
+              ? "linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)"
+              : "transparent"
+          }
           color={isActive ? "white" : textColor}
           fontWeight={isActive ? "semibold" : "medium"}
           _hover={{

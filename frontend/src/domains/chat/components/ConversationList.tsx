@@ -1,5 +1,5 @@
-import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react"
 import { FaComments, FaPlus } from "react-icons/fa"
 import type { Conversation } from "../types/chat.types"
 
