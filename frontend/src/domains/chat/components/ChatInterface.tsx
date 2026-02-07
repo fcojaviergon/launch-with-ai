@@ -1,3 +1,4 @@
+import { useColorModeValue } from "@/components/ui/color-mode"
 import {
   Box,
   Flex,
@@ -8,7 +9,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { useColorModeValue } from "@/components/ui/color-mode"
 import { useCustomToast } from "@shared/hooks"
 import { Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
@@ -180,7 +180,10 @@ export const ChatInterface = ({
                     <Text
                       fontSize="sm"
                       color={textMuted}
-                      _hover={{ textDecoration: "underline", color: "blue.500" }}
+                      _hover={{
+                        textDecoration: "underline",
+                        color: "blue.500",
+                      }}
                       cursor="pointer"
                     >
                       {projectName}

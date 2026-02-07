@@ -1,5 +1,5 @@
-import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { ProgressBar, ProgressRoot } from "@/components/ui/progress"
 import { Box, Flex, Text } from "@chakra-ui/react"
 import type { ProjectCapacity } from "../types/projects.types"
 

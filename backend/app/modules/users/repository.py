@@ -1,6 +1,5 @@
-from typing import Optional
-from sqlmodel import Session, select
-from uuid import UUID
+
+from sqlmodel import Session, func, or_, select
 
 from app.core.base_crud import BaseCRUD
 from app.core.security import get_password_hash, verify_password
@@ -11,7 +10,26 @@ from app.modules.users.schemas import UserCreate, UserUpdate
 class UserRepository(BaseCRUD[User, UserCreate, UserUpdate]):
     def __init__(self):
         super().__init__(User)
-    
+
+    def search_users(
+        self, session: Session, *, skip: int = 0, limit: int = 100, search: str | None = None
+    ) -> tuple[list[User], int]:
+        """Search users with optional text filter. Returns (users, total_count)."""
+        statement = select(User)
+        count_statement = select(func.count()).select_from(User)
+
+        if search:
+            search_filter = or_(
+                User.email.icontains(search),
+                User.full_name.icontains(search),
+            )
+            statement = statement.where(search_filter)
+            count_statement = count_statement.where(search_filter)
+
+        count = session.exec(count_statement).one()
+        users = session.exec(statement.offset(skip).limit(limit)).all()
+        return users, count
+
     def create_user(self, session: Session, *, user_create: UserCreate) -> User:
         db_obj = User.model_validate(
             user_create, update={"hashed_password": get_password_hash(user_create.password)}
@@ -20,7 +38,7 @@ class UserRepository(BaseCRUD[User, UserCreate, UserUpdate]):
         session.commit()
         session.refresh(db_obj)
         return db_obj
-    
+
     def update_user(self, session: Session, *, db_user: User, user_in: UserUpdate) -> User:
         user_data = user_in.model_dump(exclude_unset=True)
         extra_data = {}
@@ -33,13 +51,13 @@ class UserRepository(BaseCRUD[User, UserCreate, UserUpdate]):
         session.commit()
         session.refresh(db_user)
         return db_user
-    
-    def get_user_by_email(self, session: Session, *, email: str) -> Optional[User]:
+
+    def get_user_by_email(self, session: Session, *, email: str) -> User | None:
         statement = select(User).where(User.email == email)
         session_user = session.exec(statement).first()
         return session_user
-    
-    def authenticate(self, session: Session, *, email: str, password: str) -> Optional[User]:
+
+    def authenticate(self, session: Session, *, email: str, password: str) -> User | None:
         db_user = self.get_user_by_email(session=session, email=email)
         if not db_user:
             return None

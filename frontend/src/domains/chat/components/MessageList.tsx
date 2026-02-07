@@ -1,5 +1,5 @@
-import { Badge, Box, HStack, Text, VStack } from "@chakra-ui/react"
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { Badge, Box, HStack, Text, VStack } from "@chakra-ui/react"
 import { useEffect, useRef } from "react"
 import { FaFileAlt, FaRobot, FaUser } from "react-icons/fa"
 import type { MessageChat } from "../types/chat.types"

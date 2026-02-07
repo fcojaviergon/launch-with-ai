@@ -1,10 +1,11 @@
 import { Box, Flex, Icon, IconButton, Image, Text } from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { FaBars } from "react-icons/fa"
 import { FiChevronLeft, FiChevronRight, FiLogOut } from "react-icons/fi"
 
+import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode"
 import {
   DrawerBackdrop,
   DrawerBody,
@@ -13,14 +14,10 @@ import {
   DrawerRoot,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import {
-  ColorModeButton,
-  useColorModeValue,
-} from "@/components/ui/color-mode"
 import { useAuth } from "@domains/auth"
 import type { UserPublic } from "@domains/users"
-import SidebarItems from "./SidebarItems"
 import Logo from "/assets/images/launch-logo.svg"
+import SidebarItems from "./SidebarItems"
 
 const Sidebar = () => {
   const queryClient = useQueryClient()
@@ -128,7 +125,12 @@ const Sidebar = () => {
               </Box>
 
               {/* Footer - Mobile */}
-              <Box px={3} pb={4} borderTop="1px solid" borderColor={borderColor}>
+              <Box
+                px={3}
+                pb={4}
+                borderTop="1px solid"
+                borderColor={borderColor}
+              >
                 <Flex
                   as="button"
                   onClick={handleLogout}
@@ -177,9 +179,8 @@ const Sidebar = () => {
                       fontWeight="bold"
                       flexShrink={0}
                     >
-                      {(
-                        currentUser.full_name || currentUser.email
-                      )[0].toUpperCase()}
+                      {(currentUser.full_name ||
+                        currentUser.email)[0].toUpperCase()}
                     </Box>
                     <Box overflow="hidden">
                       <Text
@@ -281,7 +282,13 @@ const Sidebar = () => {
 
           {/* Expand button when collapsed */}
           {collapsed && (
-            <Flex justify="center" gap={1} py={3} flexDir="column" align="center">
+            <Flex
+              justify="center"
+              gap={1}
+              py={3}
+              flexDir="column"
+              align="center"
+            >
               <ColorModeButton
                 borderRadius="lg"
                 color={mutedText}
@@ -368,9 +375,8 @@ const Sidebar = () => {
                   fontWeight="bold"
                   flexShrink={0}
                 >
-                  {(
-                    currentUser.full_name || currentUser.email
-                  )[0].toUpperCase()}
+                  {(currentUser.full_name ||
+                    currentUser.email)[0].toUpperCase()}
                 </Box>
                 <Box overflow="hidden">
                   <Text
@@ -392,7 +398,9 @@ const Sidebar = () => {
               <Flex
                 justify="center"
                 py={2}
-                title={`${currentUser.full_name || "User"}\n${currentUser.email}`}
+                title={`${currentUser.full_name || "User"}\n${
+                  currentUser.email
+                }`}
               >
                 <Box
                   w={10}
@@ -412,9 +420,8 @@ const Sidebar = () => {
                     boxShadow: "0 4px 14px rgba(79, 70, 229, 0.3)",
                   }}
                 >
-                  {(
-                    currentUser.full_name || currentUser.email
-                  )[0].toUpperCase()}
+                  {(currentUser.full_name ||
+                    currentUser.email)[0].toUpperCase()}
                 </Box>
               </Flex>
             )}

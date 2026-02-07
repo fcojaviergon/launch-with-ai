@@ -43,12 +43,17 @@ function Dashboard() {
               bg={cardBg}
               boxShadow="md"
               borderRadius="xl"
-              _hover={{ transform: "translateY(-4px)", boxShadow: cardHoverShadow }}
+              _hover={{
+                transform: "translateY(-4px)",
+                boxShadow: cardHoverShadow,
+              }}
               transition="all 0.3s ease"
             >
               <Flex alignItems="center" mb={3}>
                 <Icon as={FiHome} color="ui.primary" fontSize="xl" mr={2} />
-                <Heading size="md" color={headingColor}>Quick Overview</Heading>
+                <Heading size="md" color={headingColor}>
+                  Quick Overview
+                </Heading>
               </Flex>
               <Text color={textMuted}>
                 Access all your items and analytics from this dashboard.
@@ -61,7 +66,10 @@ function Dashboard() {
               bg={cardBg}
               boxShadow="md"
               borderRadius="xl"
-              _hover={{ transform: "translateY(-4px)", boxShadow: cardHoverShadow }}
+              _hover={{
+                transform: "translateY(-4px)",
+                boxShadow: cardHoverShadow,
+              }}
               transition="all 0.3s ease"
             >
               <Flex alignItems="center" mb={3}>
@@ -71,7 +79,9 @@ function Dashboard() {
                   fontSize="xl"
                   mr={2}
                 />
-                <Heading size="md" color={headingColor}>Manage Items</Heading>
+                <Heading size="md" color={headingColor}>
+                  Manage Items
+                </Heading>
               </Flex>
               <Text color={textMuted}>
                 Create, edit and manage all your items efficiently.
@@ -84,12 +94,17 @@ function Dashboard() {
               bg={cardBg}
               boxShadow="md"
               borderRadius="xl"
-              _hover={{ transform: "translateY(-4px)", boxShadow: cardHoverShadow }}
+              _hover={{
+                transform: "translateY(-4px)",
+                boxShadow: cardHoverShadow,
+              }}
               transition="all 0.3s ease"
             >
               <Flex alignItems="center" mb={3}>
                 <Icon as={FiCalendar} color="ui.accent" fontSize="xl" mr={2} />
-                <Heading size="md" color={headingColor}>Recent Activity</Heading>
+                <Heading size="md" color={headingColor}>
+                  Recent Activity
+                </Heading>
               </Flex>
               <Text color={textMuted}>
                 View and track your recent activities and changes.

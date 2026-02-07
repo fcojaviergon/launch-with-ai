@@ -12,13 +12,15 @@ import type {
 } from "../types/projects.types"
 
 /**
- * Hook to fetch all projects
+ * Hook to fetch all projects with optional search filter
  */
-export const useProjects = () => {
+export const useProjects = (search?: string) => {
   return useQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", { search }],
     queryFn: async () => {
-      const response = await ProjectsService.getProjects()
+      const response = await ProjectsService.getProjects({
+        search: search || undefined,
+      })
       return response.data
     },
   })

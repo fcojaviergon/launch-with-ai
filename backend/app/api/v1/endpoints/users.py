@@ -1,25 +1,29 @@
 import uuid
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlmodel import col, delete, func, select
 
 from app.api.v1.dependencies import (
     CurrentUser,
     SessionDep,
     get_current_active_superuser,
 )
-from app.core.config import settings
-from app.modules.users.service import user_service
-from app.modules.items.service import item_service
-from app.modules.users.schemas import (
-    UserCreate, UserUpdate, UserUpdateMe, UserPublic, UsersPublic, 
-    UserRegister, UpdatePassword
-)
 from app.common.schemas.message import Message
 from app.common.utils.email import generate_new_account_email, send_email
+from app.core.config import settings
+from app.modules.items.service import item_service
+from app.modules.users.schemas import (
+    UpdatePassword,
+    UserCreate,
+    UserPublic,
+    UserRegister,
+    UsersPublic,
+    UserUpdate,
+    UserUpdateMe,
+)
+from app.modules.users.service import user_service
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/users", tags=["users"])
@@ -30,12 +34,16 @@ router = APIRouter(prefix="/users", tags=["users"])
     dependencies=[Depends(get_current_active_superuser)],
     response_model=UsersPublic,
 )
-def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
+def read_users(
+    session: SessionDep,
+    skip: int = 0,
+    limit: int = 100,
+    search: str | None = Query(default=None, max_length=255, description="Search users by email or full name"),
+) -> Any:
     """
-    Retrieve users.
+    Retrieve users with optional search filter.
     """
-    users = user_service.get_users(session, skip=skip, limit=limit)
-    count = len(users)  # Simplificado para la migración, idealmente usar count query
+    users, count = user_service.search_users(session, skip=skip, limit=limit, search=search)
     return UsersPublic(data=users, count=count)
 
 
@@ -79,7 +87,7 @@ def update_user_me(
             raise HTTPException(
                 status_code=409, detail="User with this email already exists"
             )
-    
+
     return user_service.update_user_me(session=session, current_user=current_user, user_in=user_in)
 
 
@@ -93,7 +101,7 @@ def update_password_me(
     success = user_service.update_password(session=session, current_user=current_user, password_data=body)
     if not success:
         raise HTTPException(status_code=400, detail="Incorrect password")
-    
+
     return Message(message="Password updated successfully")
 
 
@@ -114,7 +122,7 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
         raise HTTPException(
             status_code=403, detail="Super users are not allowed to delete themselves"
         )
-    
+
     user_service.delete_user(session=session, user_id=current_user.id)
     return Message(message="User deleted successfully")
 
@@ -131,7 +139,7 @@ def register_user(request: Request, session: SessionDep, user_in: UserRegister) 
             status_code=400,
             detail="The user with this email already exists in the system",
         )
-    
+
     user_create = UserCreate.model_validate(user_in)
     user = user_service.create_user(session=session, user_create=user_create)
     return user
@@ -147,16 +155,16 @@ def read_user_by_id(
     user = user_service.get_user_by_id(session=session, user_id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     if user.id == current_user.id:
         return user
-    
+
     if not current_user.is_superuser:
         raise HTTPException(
             status_code=403,
             detail="The user doesn't have enough privileges",
         )
-    
+
     return user
 
 
@@ -180,7 +188,7 @@ def update_user(
             status_code=404,
             detail="The user with this id does not exist in the system",
         )
-    
+
     if user_in.email:
         existing_user = user_service.get_user_by_email(session=session, email=user_in.email)
         if existing_user and existing_user.id != user_id:
@@ -202,12 +210,12 @@ def delete_user(
     user = user_service.get_user_by_id(session=session, user_id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     if user.id == current_user.id:
         raise HTTPException(
             status_code=403, detail="Super users are not allowed to delete themselves"
         )
-    
+
     item_service.delete_items_by_owner(session=session, owner_id=user_id)
     user_service.delete_user(session=session, user_id=user_id)
     return Message(message="User deleted successfully")

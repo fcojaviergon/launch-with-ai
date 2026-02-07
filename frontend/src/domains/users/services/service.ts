@@ -42,6 +42,7 @@ export class UsersService {
       query: {
         skip: data.skip,
         limit: data.limit,
+        search: data.search,
       },
       errors: {
         422: "Validation Error",

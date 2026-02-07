@@ -3,7 +3,15 @@ import { useColorModeValue } from "@/components/ui/color-mode"
 import { Field } from "@/components/ui/field"
 import { InputGroup } from "@/components/ui/input-group"
 import { PasswordInput } from "@/components/ui/password-input"
-import { Box, Center, Flex, Heading, Input, Text, VStack } from "@chakra-ui/react"
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link as RouterLink } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
@@ -83,7 +91,9 @@ export const SignupForm = () => {
               justifyContent="center"
               backdropFilter="blur(10px)"
             >
-              <Text fontSize="3xl" fontWeight="bold">L</Text>
+              <Text fontSize="3xl" fontWeight="bold">
+                L
+              </Text>
             </Box>
             <Heading size="2xl" fontWeight="bold">
               Launch With AI
@@ -120,7 +130,9 @@ export const SignupForm = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <Text color="white" fontSize="2xl" fontWeight="bold">L</Text>
+              <Text color="white" fontSize="2xl" fontWeight="bold">
+                L
+              </Text>
             </Box>
           </Center>
 
@@ -134,7 +146,10 @@ export const SignupForm = () => {
           </VStack>
 
           <VStack gap={4}>
-            <Field invalid={!!errors.full_name} errorText={errors.full_name?.message}>
+            <Field
+              invalid={!!errors.full_name}
+              errorText={errors.full_name?.message}
+            >
               <InputGroup w="100%" startElement={<FiUser />}>
                 <Input
                   id="full_name"

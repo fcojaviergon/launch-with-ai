@@ -25,7 +25,11 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         bg={cardBg}
         borderWidth="1px"
         borderColor={borderColor}
-        _hover={{ shadow: "lg", transform: "translateY(-2px)", borderColor: "blue.400" }}
+        _hover={{
+          shadow: "lg",
+          transform: "translateY(-2px)",
+          borderColor: "blue.400",
+        }}
         transition="all 0.2s"
         cursor="pointer"
         h="100%"
