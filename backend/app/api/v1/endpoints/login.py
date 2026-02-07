@@ -1,9 +1,11 @@
 from datetime import timedelta
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.api.v1.dependencies import CurrentUser, SessionDep, get_current_active_superuser
 from app.core import security
@@ -20,6 +22,7 @@ from app.common.utils.email import (
     verify_password_reset_token,
 )
 
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(tags=["login"])
 
 # Cookie configuration
@@ -28,7 +31,9 @@ COOKIE_MAX_AGE = settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60  # Convert to seconds
 
 
 @router.post("/login/access-token", response_model=Token)
+@limiter.limit("5/minute")
 def login_access_token(
+    request: Request,
     response: Response,
     session: SessionDep,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -90,31 +95,30 @@ def logout(response: Response) -> Message:
 
 
 @router.post("/password-recovery/{email}", response_model=Message)
-def recover_password(email: str, session: SessionDep) -> Message:
+@limiter.limit("3/minute")
+def recover_password(request: Request, email: str, session: SessionDep) -> Message:
     """
     Password Recovery
     """
     user = user_service.get_user_by_email(session=session, email=email)
 
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this email does not exist in the system.",
+    # Always return success to prevent email enumeration
+    if user:
+        password_reset_token = generate_password_reset_token(email=email)
+        email_data = generate_reset_password_email(
+            email_to=user.email, email=email, token=password_reset_token
         )
-    password_reset_token = generate_password_reset_token(email=email)
-    email_data = generate_reset_password_email(
-        email_to=user.email, email=email, token=password_reset_token
-    )
-    send_email(
-        email_to=user.email,
-        subject=email_data.subject,
-        html_content=email_data.html_content,
-    )
-    return Message(message="Password recovery email sent")
+        send_email(
+            email_to=user.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+    return Message(message="If this email exists, a recovery link has been sent")
 
 
 @router.post("/reset-password/", response_model=Message)
-def reset_password(session: SessionDep, body: NewPassword) -> Message:
+@limiter.limit("5/minute")
+def reset_password(request: Request, session: SessionDep, body: NewPassword) -> Message:
     """
     Reset password
     """

@@ -31,7 +31,8 @@ dependencies = [
     "pymupdf >= 1.23.7",
     "tiktoken >= 0.5.1",
     "langchain-text-splitters >= 0.0.1",
-    "structlog>=24.1.0"
+    "structlog>=24.1.0",
+    "slowapi>=0.1.9",
 ]
 
 [tool.uv]
