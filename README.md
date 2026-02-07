@@ -30,7 +30,7 @@ This project is inspired by the Fullstack FastAPI Framework.
 ## Key Features
 
 - **Secure Authentication**: JWT with httpOnly cookies (XSS-immune)
-- **AI Integration Ready**: OpenAI client configured, vector store support
+- **AI Integration Ready**: OpenAI and Anthropic Claude support, vector store
 - **Modular Architecture**: Domain-based frontend, module-based backend
 - **Auto-generated API Client**: TypeScript types from OpenAPI spec
 - **Production Security**: CORS, CSRF protection, secure defaults
@@ -51,7 +51,7 @@ This project is inspired by the Fullstack FastAPI Framework.
 git clone https://github.com/yourusername/launch-with-ai.git
 cd launch-with-ai
 cp .env.example .env
-# Edit .env with your configuration (especially OPENAI_API_KEY)
+# Edit .env with your configuration (OPENAI_API_KEY required; optionally set LLM_PROVIDER=anthropic)
 ```
 
 2. **Start all services**:
@@ -79,7 +79,7 @@ launch-with-ai/
 │   │   ├── api/v1/         # API endpoints
 │   │   ├── core/           # Config, DB, security
 │   │   ├── modules/        # Domain modules (users, items, chat)
-│   │   └── services/       # External integrations (OpenAI)
+│   │   └── services/       # External integrations (OpenAI, Anthropic)
 │   └── scripts/            # Utility scripts
 ├── frontend/               # React frontend
 │   └── src/
@@ -100,14 +100,31 @@ launch-with-ai/
 | `SECRET_KEY` | JWT signing key (generate with command above) |
 | `POSTGRES_PASSWORD` | Database password |
 | `FIRST_SUPERUSER_PASSWORD` | Initial admin password |
-| `OPENAI_API_KEY` | OpenAI API key for AI features |
+| `OPENAI_API_KEY` | OpenAI API key (always required for embeddings) |
 
-### Optional Variables
+### LLM Provider Configuration
+
+The application supports **OpenAI** (default) and **Anthropic Claude** as LLM providers. Embeddings always use OpenAI regardless of the selected provider.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `OPENAI_MODEL` | Chat model | `gpt-4o-mini` |
-| `OPENAI_EMBEDDING_MODEL` | Embedding model | `text-embedding-3-small` |
+| `LLM_PROVIDER` | LLM provider: `openai` or `anthropic` | `openai` |
+| `OPENAI_MODEL` | OpenAI model for completions | `gpt-4o-mini` |
+| `OPENAI_EMBEDDING_MODEL` | OpenAI embedding model | `text-embedding-3-small` |
+| `ANTHROPIC_API_KEY` | Anthropic API key (required when provider is `anthropic`) | - |
+| `ANTHROPIC_MODEL` | Anthropic model for completions | `claude-sonnet-4-20250514` |
+| `CHAT_MODEL` | Override chat model (auto-detected from provider if empty) | - |
+
+To switch to Anthropic Claude:
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+### Other Optional Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
 | `SENTRY_DSN` | Error tracking | - |
 | `SMTP_HOST` | Email server | - |
 
