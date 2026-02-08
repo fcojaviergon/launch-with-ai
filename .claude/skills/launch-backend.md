@@ -25,13 +25,13 @@ Backend development for Launch With AI using FastAPI with module-based architect
 | **Migrations** | Alembic |
 | **Task Queue** | Celery + Redis |
 | **Linting** | Ruff + MyPy |
-| **Vector Search** | TimescaleDB + pgvector (ya configurado) |
+| **Vector Search** | TimescaleDB + pgvector (already configured) |
 
-## IMPORTANTE - No Reinventar
+## IMPORTANT - Don't Reinvent the Wheel
 
-- **NO crear tablas de embeddings propias** — usar TimescaleDB con pgvector que ya está configurado
-- **NO implementar buscadores vectoriales custom** — usar `app/services/vector_store/`
-- Antes de crear funcionalidad de búsqueda/embeddings, revisar qué ya existe en el proyecto
+- **DO NOT create custom embedding tables** — use TimescaleDB with pgvector which is already configured
+- **DO NOT implement custom vector search** — use `app/services/vector_store/`
+- Before creating search/embeddings functionality, review what already exists in the project
 
 ## Module Structure
 

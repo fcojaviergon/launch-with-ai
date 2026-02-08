@@ -25,18 +25,18 @@ Frontend development for Launch With AI using Domain-Driven Design with React 18
 | **Linting** | Biome |
 | **Architecture** | Domain-Driven Design (DDD) |
 
-## IMPORTANTE - Reglas de UI/UX
+## IMPORTANT - UI/UX Rules
 
-### Navegación y Layout
-- **SIEMPRE agregar nuevas rutas al Sidebar** — cada página nueva debe tener entrada en navegación
-- **SIEMPRE usar light/dark mode** — tokens de Chakra UI, nunca colores hardcodeados
-- UI intuitiva: breadcrumbs, estados vacíos claros, feedback visual en acciones
+### Navigation and Layout
+- **ALWAYS add new routes to the Sidebar** — every new page must have a navigation entry
+- **ALWAYS use light/dark mode** — Chakra UI tokens, never hardcoded colors
+- Intuitive UI: breadcrumbs, clear empty states, visual feedback on actions
 
 ### Data Fetching
-- **Paginación por defecto: 20 registros** — no usar límites arbitrarios
-- **NO hacer mocks de consultas** — coordinar con backend para datos reales desde el inicio
-- **Autocomplete seguro**: debounce 300ms, sanitizar input, manejar loading/error/empty
-- `useInfiniteQuery` para listas largas, `useQuery` con paginación para tablas
+- **Default pagination: 20 records** — do not use arbitrary limits
+- **DO NOT mock queries** — coordinate with backend for real data from the start
+- **Safe autocomplete**: debounce 300ms, sanitize input, handle loading/error/empty
+- `useInfiniteQuery` for long lists, `useQuery` with pagination for tables
 
 ## Domain Structure
 
