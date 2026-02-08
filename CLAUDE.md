@@ -195,15 +195,16 @@ Ver [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) para setup inicial.
 ## Reglas Aprendidas
 
 <!--
-Agregar reglas aquí cada vez que Claude cometa un error repetido.
-Formato: "- NO hacer X, SIEMPRE hacer Y"
-Ejemplo: "- No usar fetch directo, siempre usar el service del dominio"
+Agregar reglas GENERALES aquí. Reglas específicas van en los skills:
+- Backend: .claude/skills/launch-backend.md
+- Frontend: .claude/skills/launch-frontend.md
 -->
 
 - No usar Prettier, siempre usar Biome para frontend
 - No modificar .env en producción, solo en local
 - Siempre generar tipos con `./scripts/generate-types.sh` después de cambios en API
 - No commitear archivos .env ni credentials
+- Revisar qué existe antes de implementar funcionalidad nueva
 
 ---
 
