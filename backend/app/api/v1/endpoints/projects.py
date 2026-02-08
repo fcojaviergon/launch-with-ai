@@ -236,20 +236,33 @@ async def upload_document(
     doc_dir.mkdir(parents=True, exist_ok=True)
 
     # Save file
-    file_path = doc_dir / file.filename
+    # Sanitize filename to prevent path traversal
+    safe_filename = Path(file.filename).name
+    file_path = doc_dir / safe_filename
+
+    # Enforce file size limit (50MB)
+    max_file_size = 50 * 1024 * 1024
     try:
+        content = await file.read()
+        if len(content) > max_file_size:
+            raise HTTPException(
+                status_code=400,
+                detail=f"File too large. Maximum size is 50MB."
+            )
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            buffer.write(content)
         file_size = file_path.stat().st_size
 
-        logger.info(f"Saved file {file.filename} ({file_size} bytes) to {file_path}")
+        logger.info(f"Saved file {safe_filename} ({file_size} bytes) to {file_path}")
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error saving file: {e}")
         # Cleanup
         if doc_dir.exists():
             shutil.rmtree(doc_dir)
-        raise HTTPException(status_code=500, detail=f"Error saving file: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error saving file")
 
     # Quick estimate of tokens before processing
     try:
@@ -273,7 +286,7 @@ async def upload_document(
     from app.modules.projects.schemas import DocumentCreate
 
     document_in = DocumentCreate(
-        filename=file.filename,
+        filename=safe_filename,
         file_path=str(file_path),
         file_size=file_size,
         file_type=file_ext.replace(".", ""),

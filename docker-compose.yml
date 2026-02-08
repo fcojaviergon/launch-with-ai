@@ -36,7 +36,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
     networks:
       - default
-      - traefik-public
 
   adminer:
     image: adminer
@@ -200,7 +199,6 @@ services:
     restart: always
     container_name: ${STACK_NAME?Variable not set}-redis
     networks:
-      - traefik-public
       - default
     volumes:
       - redis-data:/data
@@ -221,7 +219,6 @@ services:
       prestart:
         condition: service_completed_successfully
     networks:
-      - traefik-public
       - default
     env_file:
       - .env
@@ -263,7 +260,6 @@ services:
       prestart:
         condition: service_completed_successfully
     networks:
-      - traefik-public
       - default
     env_file:
       - .env

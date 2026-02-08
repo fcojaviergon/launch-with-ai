@@ -40,4 +40,9 @@ COPY ./app /app/app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
+# Create non-root user and set ownership
+RUN adduser --disabled-password --gecos "" --uid 1001 appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
 CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
