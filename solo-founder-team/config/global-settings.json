@@ -1,0 +1,54 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json,sys;d=json.load(sys.stdin);p=d.get('tool_input',{}).get('file_path','');sys.exit(2 if any(x in p for x in ['.env','.git/','node_modules/','.next/','dist/']) else 0)\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read fp; [ -z \"$fp\" ] && exit 0; case \"$fp\" in *.ts|*.tsx|*.js|*.jsx|*.json|*.css) npx @biomejs/biome check --write \"$fp\" 2>/dev/null || true;; esac; exit 0; }"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '( npx @biomejs/biome check ./src --no-errors-on-unmatched > /tmp/biome-report.txt 2>&1; npm run build --if-present > /tmp/build-report.txt 2>&1 || true; echo \"$(date +%Y-%m-%dT%H:%M:%S) STOP\" >> ~/.claude/session-log.txt ) &'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude terminó\" with title \"Claude Code\"' 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude necesita tu atención\" with title \"Claude Code\"' 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
