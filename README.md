@@ -2,8 +2,9 @@
 
 Production-ready full-stack template for building AI-powered SaaS applications. Clean architecture, secure by default, and ready to deploy.
 
-### Inspiration
-This project is inspired by the Fullstack FastAPI Framework.
+### Based On
+
+This project is built on top of the [Full Stack FastAPI Template](https://github.com/fastapi/full-stack-fastapi-template) — a production-ready starter with FastAPI, React, SQLModel, PostgreSQL, Docker Compose, Traefik, and CI/CD via GitHub Actions. We extended it to be AI-native: replacing PostgreSQL with TimescaleDB for vector operations, adding RAG (Retrieval-Augmented Generation) pipelines, embedding generation, document analysis workflows, and multi-provider LLM support (OpenAI and Anthropic).
 
 ## Technology Stack
 
@@ -35,6 +36,48 @@ This project is inspired by the Fullstack FastAPI Framework.
 - **Auto-generated API Client**: TypeScript types from OpenAPI spec
 - **Production Security**: CORS, CSRF protection, secure defaults
 - **Dark Mode**: System theme detection with manual override
+
+## Why TimescaleDB
+
+This project uses [TimescaleDB](https://www.timescale.com/) (specifically the `timescale/timescaledb-ha:pg16` image) instead of plain PostgreSQL. TimescaleDB is a PostgreSQL extension that adds time-series capabilities and, critically for this project, integrates well with the [`pgvector`](https://github.com/pgvector/pgvector) extension and the [`timescale-vector`](https://github.com/timescale/python-vector) Python client for RAG workloads.
+
+### Why not standard PostgreSQL?
+
+- **Vector search + time partitioning**: Document embeddings are stored in a [hypertable](https://docs.timescale.com/use-timescale/hypertables/) partitioned by `created_at`. This enables efficient time-based filtering combined with vector similarity search — useful for RAG pipelines where recent documents should be prioritized.
+- **StreamingDiskANN indexing**: TimescaleDB's vector client supports [DiskANN](https://docs.timescale.com/ai/python-interface-for-pgvector-and-timescale-vector/#create-a-streaming-diskann-index), a high-performance approximate nearest neighbor index that outperforms IVFFlat on large datasets.
+- **Drop-in PostgreSQL replacement**: TimescaleDB is a superset of PostgreSQL — all standard SQL, extensions, and tools (Alembic, SQLModel, psql) work without changes.
+
+### Hypertable creation outside Alembic
+
+The `document_embeddings` table is created via raw SQL in [`backend/app/core/db.py`](backend/app/core/db.py), **not** through Alembic migrations. This is intentional:
+
+1. **Alembic + SQLModel cannot represent hypertables**: Alembic's autogenerate works by diffing SQLModel metadata against the database schema. TimescaleDB hypertables require a `SELECT create_hypertable(...)` call after table creation — there is no way to express this in SQLModel's declarative model or in Alembic's migration operations natively.
+2. **The `pgvector` column type is not natively supported by SQLModel**: The `vector(1536)` column type comes from the `pgvector` extension and does not have a built-in SQLAlchemy/SQLModel type mapping that Alembic's autogenerate can detect and diff reliably.
+3. **Composite primary key for partitioning**: Hypertables require the partition column (`created_at`) to be part of the primary key. This constraint, combined with the above limitations, makes it simpler to manage this table outside the standard migration flow.
+
+The raw SQL runs during application startup (via `init_db()` in [`backend/app/initial_data.py`](backend/app/initial_data.py)), **after** Alembic migrations have been applied. All statements use `IF NOT EXISTS` / `if_not_exists => TRUE` to be safely idempotent.
+
+```sql
+-- Extensions
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+
+-- Embeddings table as a hypertable
+CREATE TABLE IF NOT EXISTS document_embeddings (
+    id UUID,
+    metadata JSONB,
+    contents TEXT,
+    embedding vector(1536),
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    PRIMARY KEY (id, created_at)
+);
+
+SELECT create_hypertable('document_embeddings', 'created_at',
+                         if_not_exists => TRUE,
+                         create_default_indexes => FALSE);
+```
+
+All other tables (users, items, projects, chat conversations) are managed normally through Alembic and SQLModel.
 
 ## Quick Start
 
