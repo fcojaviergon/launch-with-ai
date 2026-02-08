@@ -1,80 +1,80 @@
 # CLAUDE.md — Launch With AI
 
-## Proyecto
+## Project
 **Launch With AI** — Production-ready full-stack template for AI-powered SaaS applications.
 
-| Aspecto | Stack |
-|---------|-------|
+| Aspect | Stack |
+|--------|-------|
 | **Backend** | FastAPI, SQLModel, PostgreSQL, Celery, Redis |
 | **Frontend** | React 18, TypeScript, Chakra UI, TanStack Router/Query |
 | **Linting** | Ruff + MyPy (backend), Biome (frontend) |
 | **Deploy** | Docker Compose, Traefik, GitHub Actions → Azure |
 
-Solo founder mode: optimizar para velocidad de shipping con calidad mínima viable.
+Solo founder mode: optimize for shipping speed with minimum viable quality.
 
-## Principios
-- **Ship small, ship often.** PRs < 300 líneas.
-- **Tests para lógica crítica.** No 100% coverage.
-- **Conventional commits siempre** (feat/fix/chore/docs/refactor).
-- **Si puede fallar en producción**, necesita error handling.
-- **Cada error de Claude** se convierte en una regla abajo.
-
----
-
-## Skills Disponibles
-
-### Skills del Proyecto (específicos de este repo)
-| Skill | Cuándo usar |
-|-------|-------------|
-| `/launch-frontend` | Crear dominios, componentes, forms, hooks en frontend/ (DDD + TanStack) |
-| `/launch-backend` | Crear módulos, modelos, endpoints en backend/ (FastAPI + SQLModel) |
-
-### Skills Globales (SDLC completo)
-| Skill | Cuándo usar |
-|-------|-------------|
-| `/plan-feature` | Planificar nueva feature → genera docs/active-plan.md |
-| `/implement` | Implementar tareas del plan activo |
-| `/test-verify` | Testear + verificar build + lint |
-| `/review-code` | Code review antes de merge |
-| `/commit-ship` | Git commit + PR con pre-flight checks |
-| `/triage-bug` | Diagnosticar y clasificar un bug |
-| `/write-spec` | Spec formal (solo features 10+ archivos) |
-| `/write-docs` | Documentación |
-
-### Skills de Negocio
-| Skill | Cuándo usar |
-|-------|-------------|
-| `/pdp-generator` | Cotización: WBS + estimación HH + Excel |
-| `/bootstrap-repo` | Onboarding rápido a un repo |
-| `/log-decision` | Registrar ADR (decisión técnica) |
-| `/sprint-retro` | Retrospectiva + mejora continua |
-| `/time-track` | Registrar horas trabajadas |
-
-### Subagents Automáticos
-| Agent | Rol | Se invoca cuando... |
-|-------|-----|---------------------|
-| `qa-tester` | QA aislado (tests + build + lint) | Verificación completa |
-| `security-reviewer` | Auditoría de seguridad (read-only) | Review de seguridad |
+## Principles
+- **Ship small, ship often.** PRs < 300 lines.
+- **Tests for critical logic.** No 100% coverage.
+- **Conventional commits always** (feat/fix/chore/docs/refactor).
+- **If it can fail in production**, it needs error handling.
+- **Every Claude mistake** becomes a rule below.
 
 ---
 
-## Workflow de Desarrollo
+## Available Skills
+
+### Project Skills (specific to this repo)
+| Skill | When to use |
+|-------|-------------|
+| `/launch-frontend` | Create domains, components, forms, hooks in frontend/ (DDD + TanStack) |
+| `/launch-backend` | Create modules, models, endpoints in backend/ (FastAPI + SQLModel) |
+
+### Global Skills (full SDLC)
+| Skill | When to use |
+|-------|-------------|
+| `/plan-feature` | Plan a new feature → generates docs/active-plan.md |
+| `/implement` | Implement tasks from the active plan |
+| `/test-verify` | Test + verify build + lint |
+| `/review-code` | Code review before merge |
+| `/commit-ship` | Git commit + PR with pre-flight checks |
+| `/triage-bug` | Diagnose and classify a bug |
+| `/write-spec` | Formal spec (only for features with 10+ files) |
+| `/write-docs` | Documentation |
+
+### Business Skills
+| Skill | When to use |
+|-------|-------------|
+| `/pdp-generator` | Quote: WBS + hour estimation + Excel |
+| `/bootstrap-repo` | Quick onboarding to a repo |
+| `/log-decision` | Record ADR (technical decision) |
+| `/sprint-retro` | Retrospective + continuous improvement |
+| `/time-track` | Log hours worked |
+
+### Automatic Subagents
+| Agent | Role | Invoked when... |
+|-------|------|-----------------|
+| `qa-tester` | Isolated QA (tests + build + lint) | Full verification |
+| `security-reviewer` | Security audit (read-only) | Security review |
+
+---
+
+## Development Workflow
 
 ```
-Feature simple (< 10 archivos):
+Simple feature (< 10 files):
 /plan-feature → /implement → /test-verify → /commit-ship
 
-Feature compleja (10+ archivos, integraciones):
+Complex feature (10+ files, integrations):
 /write-spec → /plan-feature @specs/... → /implement → /test-verify → /review-code → /commit-ship
 ```
 
-### Ciclo Diario
-1. **Ver plan actual**: Lee `docs/active-plan.md`
-2. **Implementar tarea**: `/implement` o implementar directamente
-3. **Verificar**: `/test-verify` (o manualmente: tests + build + lint)
-4. **Shippear**: `/commit-ship` (o commit manual con conventional commits)
+### Daily Cycle
+1. **Check current plan**: Read `docs/active-plan.md`
+2. **Implement task**: `/implement` or implement directly
+3. **Verify**: `/test-verify` (or manually: tests + build + lint)
+4. **Ship**: `/commit-ship` (or manual commit with conventional commits)
 
-### Comandos Rápidos
+### Quick Commands
 
 **Backend:**
 ```bash
@@ -95,48 +95,48 @@ npm run lint                          # Biome lint
 
 **Full Stack:**
 ```bash
-docker compose watch                  # Todo el stack
-./scripts/generate-types.sh          # Regenerar tipos del backend
+docker compose watch                  # Full stack
+./scripts/generate-types.sh          # Regenerate types from backend
 ```
 
 ---
 
-## Arquitectura
+## Architecture
 
 ### Backend (FastAPI)
 ```
 backend/app/
 ├── api/v1/           # Endpoints
 ├── core/             # Config, DB, security
-├── modules/          # Dominios
+├── modules/          # Domains
 │   └── [module]/
 │       ├── models.py      # SQLModel
 │       ├── schemas.py     # Pydantic
 │       ├── repository.py  # CRUD
 │       └── service.py     # Business logic
-└── services/         # Integraciones externas
+└── services/         # External integrations
 ```
 
 ### Frontend (React DDD)
 ```
 frontend/src/
-├── domains/          # Dominios auto-contenidos
+├── domains/          # Self-contained domains
 │   └── [domain]/
 │       ├── api/           # React Query hooks
 │       ├── services/      # API client manual
 │       ├── components/    # UI
 │       ├── types/         # TypeScript types
 │       └── schemas/       # Zod validation
-├── shared/           # Componentes compartidos
+├── shared/           # Shared components
 ├── routes/           # TanStack Router
-└── client/           # Tipos generados (OpenAPI)
+└── client/           # Generated types (OpenAPI)
 ```
 
 **Path Aliases:** `@domains/*`, `@shared/*`, `@/*`
 
 ---
 
-## Patrones Clave
+## Key Patterns
 
 ### Database (SQLModel)
 ```python
@@ -145,69 +145,69 @@ owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
 ```
 
 ### Schemas (Pydantic)
-- `Base` → propiedades compartidas
-- `Create` → creación
-- `Update` → campos opcionales
-- `Public` → respuesta API
+- `Base` → shared properties
+- `Create` → creation
+- `Update` → optional fields
+- `Public` → API response
 
 ### API Client (Frontend)
 ```
-Backend cambia → ./scripts/generate-types.sh → TypeScript alerta → Actualizar services/
+Backend changes → ./scripts/generate-types.sh → TypeScript flags mismatches → Update services/
 ```
 
 ---
 
 ## Deployment
 
-### Git Push = Deploy Automático
+### Git Push = Automatic Deploy
 ```bash
 git push origin main  # GitHub Actions → Azure VM
 ```
 
-### URLs en Producción
+### Production URLs
 - Frontend: `https://dashboard.{DOMAIN}`
 - API: `https://api.{DOMAIN}`
 - Docs: `https://api.{DOMAIN}/docs`
 
-### SSH al Servidor
+### SSH to Server
 ```bash
 ssh azureuser@<VM_IP>
 cd ~/launch-with-ai
-docker compose logs -f backend       # Ver logs
-docker compose restart backend       # Reiniciar
+docker compose logs -f backend       # View logs
+docker compose restart backend       # Restart
 ```
 
-Ver [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) para setup inicial.
+See [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) for initial setup.
 
 ---
 
-## Contexto Actual
+## Current Context
 
-| Archivo | Propósito |
-|---------|-----------|
-| `docs/active-plan.md` | Plan de trabajo actual |
-| `docs/bugs-encontrados.md` | Bugs pendientes |
-| `docs/timesheet.csv` | Horas trabajadas vs estimadas |
-| `docs/decisions/` | ADRs (decisiones técnicas) |
+| File | Purpose |
+|------|---------|
+| `docs/active-plan.md` | Current work plan |
+| `docs/bugs-found.md` | Pending bugs |
+| `docs/timesheet.csv` | Hours worked vs estimated |
+| `docs/decisions/` | ADRs (technical decisions) |
 
 ---
 
-## Reglas Aprendidas
+## Learned Rules
 
 <!--
-Agregar reglas GENERALES aquí. Reglas específicas van en los skills:
+Add GENERAL rules here. Specific rules go in the skills:
 - Backend: .claude/skills/launch-backend.md
 - Frontend: .claude/skills/launch-frontend.md
 -->
 
-- No usar Prettier, siempre usar Biome para frontend
-- No modificar .env en producción, solo en local
-- Siempre generar tipos con `./scripts/generate-types.sh` después de cambios en API
-- No commitear archivos .env ni credentials
-- Revisar qué existe antes de implementar funcionalidad nueva
+- Do not use Prettier, always use Biome for frontend
+- Do not modify .env in production, only locally
+- Always generate types with `./scripts/generate-types.sh` after API changes
+- Do not commit .env files or credentials
+- Review what exists before implementing new functionality
 
 ---
 
-## Información Adicional
+## Additional Information
 
-Para documentación detallada de skills del proyecto: `.claude/skills/launch-*.md`
+For detailed project skills documentation: `.claude/skills/launch-*.md`

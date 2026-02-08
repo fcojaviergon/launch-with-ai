@@ -1,102 +1,102 @@
 # Scripts Documentation
 
-Esta carpeta contiene scripts útiles para gestión y deployment de Rocket GenAI.
+This folder contains useful scripts for management and deployment of Launch With AI.
 
-## 📋 Tabla de Contenidos
+## Table of Contents
 
-- [Generación de Archivos .env](#-generación-de-archivos-env)
-- [Deployment Azure](#-scripts-de-deployment-azure)
+- [Environment File Generation](#-environment-file-generation)
+- [Azure Deployment](#-azure-deployment-scripts)
 
 ---
 
-## 🔐 Generación de Archivos .env
+## Environment File Generation
 
-Dos scripts para generar archivos `.env` con valores seguros automáticamente:
+Two scripts to generate `.env` files with secure values automatically:
 
-### Script Python (Recomendado) - `generate-env.py`
+### Python Script (Recommended) - `generate-env.py`
 
-**Características:**
-- ✅ Validación interactiva de emails y dominios
-- ✅ Generación segura de secrets (32 caracteres)
-- ✅ Templates para local, staging y production
-- ✅ Permisos automáticos (600)
-- ✅ Crea archivos .example para documentación
+**Features:**
+- Interactive email and domain validation
+- Secure secret generation (32 characters)
+- Templates for local, staging and production
+- Automatic permissions (600)
+- Creates .example files for documentation
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-# Desarrollo local
+# Local development
 python scripts/generate-env.py --env local
 
-# Producción (interactivo)
+# Production (interactive)
 python scripts/generate-env.py --env production --domain example.com
 
 # Staging/QA
 python scripts/generate-env.py --env staging --domain qa.example.com
 
-# Sobrescribir archivo existente
+# Overwrite existing file
 python scripts/generate-env.py --env production --domain example.com --force
 ```
 
-**Salida de ejemplo:**
+**Example output:**
 ```
-🚀 Generating .env file for production environment...
+Generating .env file for production environment...
 
 Admin email: admin@example.com
 OpenAI API key: sk-...
 
-✅ Created .env.production (permissions: 600)
+Created .env.production (permissions: 600)
 
 ================================================================
-🔐 GENERATED SECRETS FOR PRODUCTION ENVIRONMENT
+GENERATED SECRETS FOR PRODUCTION ENVIRONMENT
 ================================================================
 
-🔑 SECRET_KEY: AbCdEf123456...
-👤 Admin User: admin@example.com
-🔒 Admin Password: xYz789AbC...
-🗄️  Postgres User: postgres
-🔒 Postgres Password: pQr456XyZ...
+SECRET_KEY: AbCdEf123456...
+Admin User: admin@example.com
+Admin Password: xYz789AbC...
+Postgres User: postgres
+Postgres Password: pQr456XyZ...
 
 ================================================================
-⚠️  IMPORTANT: Save these credentials securely!
+IMPORTANT: Save these credentials securely!
 ================================================================
 ```
 
-### Script Bash (Rápido) - `generate-env.sh`
+### Bash Script (Quick) - `generate-env.sh`
 
-**Características:**
-- ✅ Interfaz simple de línea de comandos
-- ✅ Generación segura usando OpenSSL
-- ✅ Sin dependencias de Python
+**Features:**
+- Simple command-line interface
+- Secure generation using OpenSSL
+- No Python dependencies
 
-**Uso:**
+**Usage:**
 
 ```bash
-# Desarrollo local
+# Local development
 ./scripts/generate-env.sh local
 
-# Producción
+# Production
 ./scripts/generate-env.sh production example.com
 
 # Staging
 ./scripts/generate-env.sh staging qa.example.com
 ```
 
-**Requiere:** `openssl` (pre-instalado en Linux/macOS)
+**Requires:** `openssl` (pre-installed on Linux/macOS)
 
-### Valores Generados Automáticamente
+### Automatically Generated Values
 
-| Variable | Método | Longitud | Ejemplo |
-|----------|--------|----------|---------|
+| Variable | Method | Length | Example |
+|----------|--------|--------|---------|
 | `SECRET_KEY` | `secrets.token_urlsafe()` | 32 chars | `xK9pL2mN5qR8sT1vW4yZ...` |
 | `FIRST_SUPERUSER_PASSWORD` | `secrets.choice()` | 24 chars | `AbC123XyZ789PqR456...` |
 | `POSTGRES_PASSWORD` | `secrets.choice()` | 24 chars | `MnO789StU012VwX345...` |
 
-### Seguridad
+### Security
 
-⚠️ **NUNCA commitear archivos .env a git**
+**NEVER commit .env files to git**
 
-El `.gitignore` está configurado para bloquear:
+The `.gitignore` is configured to block:
 ```gitignore
 .env
 .env.*
@@ -104,247 +104,245 @@ El `.gitignore` está configurado para bloquear:
 !.env.*.example
 ```
 
-✅ **Permisos automáticos:**
+**Automatic permissions:**
 ```bash
 -rw------- 1 user user 1234 Nov 5 12:00 .env.production  # 600
 ```
 
-✅ **Rotar secrets regularmente:**
-- Después de incidentes de seguridad
-- Cuando miembros del equipo se van
-- Cada 90 días en producción
+**Rotate secrets regularly:**
+- After security incidents
+- When team members leave
+- Every 90 days in production
 
-### Deployment con .env Generado
+### Deployment with Generated .env
 
-1. **Generar archivo:**
+1. **Generate file:**
    ```bash
    python scripts/generate-env.py --env production --domain example.com
    ```
 
-2. **Guardar credenciales:**
+2. **Save credentials:**
    - Password manager (1Password, Bitwarden)
-   - Compartir de forma segura (nunca por email/Slack)
+   - Share securely (never via email/Slack)
 
-3. **Copiar a servidor:**
+3. **Copy to server:**
    ```bash
    scp .env.production user@server:/path/to/app/.env
    ```
 
-4. **Aplicar en servidor:**
+4. **Apply on server:**
    ```bash
    ssh user@server "cd /path/to/app && docker compose restart"
    ```
 
-### Variables de Entorno - Referencia Rápida
+### Environment Variables - Quick Reference
 
-| Variable | Requerido | Default | Descripción |
-|----------|-----------|---------|-------------|
-| `SECRET_KEY` | ✅ | auto | Firma JWT (32 chars) |
-| `FIRST_SUPERUSER` | ✅ | - | Email del admin |
-| `FIRST_SUPERUSER_PASSWORD` | ✅ | auto | Password admin |
-| `POSTGRES_PASSWORD` | ✅ | auto | Password DB |
-| `OPENAI_API_KEY` | ✅ | - | API key de OpenAI |
-| `OPENAI_MODEL` | ❌ | `gpt-4o-mini` | Modelo a usar |
-| `DOMAIN` | ✅* | `localhost` | Dominio (*prod/staging) |
-| `SENTRY_DSN` | ❌ | - | Error tracking |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `SECRET_KEY` | Yes | auto | JWT signing key (32 chars) |
+| `FIRST_SUPERUSER` | Yes | - | Admin email |
+| `FIRST_SUPERUSER_PASSWORD` | Yes | auto | Admin password |
+| `POSTGRES_PASSWORD` | Yes | auto | DB password |
+| `OPENAI_API_KEY` | Yes | - | OpenAI API key |
+| `OPENAI_MODEL` | No | `gpt-4o-mini` | Model to use |
+| `DOMAIN` | Yes* | `localhost` | Domain (*prod/staging) |
+| `SENTRY_DSN` | No | - | Error tracking |
 
 ---
 
-## 📁 Scripts de Deployment Azure
+## Azure Deployment Scripts
 
 ### QA/Staging Environment
 
-- **`azure-setup.sh`** - Crea infraestructura Azure para QA
-- **`configure-env.sh`** - Configura archivos `.env.azure` y `.env.traefik` para QA
-- **`deploy-to-azure.sh`** - Despliega la aplicación en QA
+- **`azure-setup.sh`** - Creates Azure infrastructure for QA
+- **`configure-env.sh`** - Configures `.env.azure` and `.env.traefik` files for QA
+- **`deploy-to-azure.sh`** - Deploys the application to QA
 
 ### Production Environment
 
-- **`azure-setup-prod.sh`** - Crea infraestructura Azure para PRODUCCIÓN
-- **`configure-env-prod.sh`** - Configura archivos para PRODUCCIÓN *(crear cuando se necesite)*
-- **`deploy-to-azure-prod.sh`** - Despliega la aplicación en PRODUCCIÓN *(crear cuando se necesite)*
+- **`azure-setup-prod.sh`** - Creates Azure infrastructure for PRODUCTION
+- **`configure-env-prod.sh`** - Configures files for PRODUCTION *(create when needed)*
+- **`deploy-to-azure-prod.sh`** - Deploys the application to PRODUCTION *(create when needed)*
 
-## 🚀 Deployment QA (flow.cunda.io)
+## QA Deployment (flow.cunda.io)
 
-### Paso 1: Login Azure CLI
+### Step 1: Azure CLI Login
 
 ```bash
 az login
 ```
 
-### Paso 2: Crear VM de QA
+### Step 2: Create QA VM
 
 ```bash
 ./scripts/azure-setup.sh
 ```
 
-**Crea:**
+**Creates:**
 - Resource Group: `rg-flow-cunda-qa`
 - VM: `vm-flow-cunda-qa` (Standard_B2s: 2 vCPUs, 4GB RAM)
-- Puertos: 80, 443, 22
-- Guarda IP en: `.azure-vm-ip`
+- Ports: 80, 443, 22
+- Saves IP to: `.azure-vm-ip`
 
-### Paso 3: Configurar DNS
+### Step 3: Configure DNS
 
-Con la IP que te dio el script, configura en tu DNS:
+With the IP provided by the script, configure in your DNS:
 
 ```
-Tipo: A | Host: flow | Valor: [IP-DE-LA-VM] | TTL: 3600
-Tipo: A | Host: *.flow | Valor: [IP-DE-LA-VM] | TTL: 3600
+Type: A | Host: flow | Value: [VM-IP] | TTL: 3600
+Type: A | Host: *.flow | Value: [VM-IP] | TTL: 3600
 ```
 
-### Paso 4: Configurar Environment
+### Step 4: Configure Environment
 
 ```bash
 ./scripts/configure-env.sh
 ```
 
-**Te pregunta:**
-- Email para SSL
-- Email superusuario
+**Prompts for:**
+- SSL email
+- Superuser email
 - Passwords
 - OpenAI API Key
 
-**Genera:**
-- `.env.azure` - Configuración de Azure
-- `.env.traefik` - Configuración de Traefik
-- `.azure-secrets.txt` - ⚠️ **GUARDAR DE FORMA SEGURA**
+**Generates:**
+- `.env.azure` - Azure configuration
+- `.env.traefik` - Traefik configuration
+- `.azure-secrets.txt` - **SAVE SECURELY**
 
-### Paso 5: Deploy
+### Step 5: Deploy
 
 ```bash
 ./scripts/deploy-to-azure.sh
 ```
 
-**Hace:**
-- Instala Docker en VM
-- Transfiere código
-- Configura servicios
-- Levanta toda la stack
-- Genera certificados SSL automáticamente
+**Actions:**
+- Installs Docker on VM
+- Transfers code
+- Configures services
+- Brings up the entire stack
+- Generates SSL certificates automatically
 
-**Tiempo:** ~5-10 minutos
-
-### URLs QA
+### QA URLs
 
 - **Frontend**: https://dashboard.flow.cunda.io
 - **Backend**: https://api.flow.cunda.io/docs
 - **Traefik**: https://traefik.flow.cunda.io
 - **Adminer**: https://adminer.flow.cunda.io
 
-## 🏭 Deployment PRODUCCIÓN
+## Production Deployment
 
-### Diferencias QA vs Producción
+### QA vs Production Differences
 
-| Aspecto | QA | Producción |
-|---------|-----|-----------|
+| Aspect | QA | Production |
+|--------|-----|-----------|
 | Resource Group | `rg-flow-cunda-qa` | `rg-flow-cunda-prod` |
 | VM Name | `vm-flow-cunda-qa` | `vm-flow-cunda-prod` |
 | VM Size | Standard_B2s (4GB) | Standard_B2ms (8GB) |
 | Environment | `development` | `production` |
 | Stack Name | `flow-cunda-qa` | `flow-cunda-prod` |
-| Costos | ~$35/mes | ~$70/mes |
+| Cost | ~$35/month | ~$70/month |
 
-### Deployment Producción
+### Production Deployment
 
 ```bash
-# 1. Crear VM de producción
+# 1. Create production VM
 ./scripts/azure-setup-prod.sh
 
-# 2. Configurar environment (crear script cuando sea necesario)
+# 2. Configure environment (create script when needed)
 ./scripts/configure-env-prod.sh
 
-# 3. Deploy a producción (crear script cuando sea necesario)
+# 3. Deploy to production (create script when needed)
 ./scripts/deploy-to-azure-prod.sh
 ```
 
-## 📋 Comandos Útiles Post-Deployment
+## Useful Post-Deployment Commands
 
-### Verificar status
+### Check Status
 
 ```bash
 # QA
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose ps"
 
-# Producción
+# Production
 ssh azureuser@$(cat .azure-vm-ip-prod) "cd ~/rocket-genai-v2 && docker compose ps"
 ```
 
-### Ver logs
+### View Logs
 
 ```bash
-# QA - Ver logs en tiempo real
+# QA - View real-time logs
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs -f"
 
-# Ver logs específicos
+# View specific logs
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs backend"
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs frontend"
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs traefik"
 ```
 
-### Reiniciar servicios
+### Restart Services
 
 ```bash
-# Reiniciar todo
+# Restart all
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart"
 
-# Reiniciar servicio específico
+# Restart specific service
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart backend"
 ```
 
-### Actualizar código
+### Update Code
 
 ```bash
-# Redeploy completo
+# Full redeploy
 ./scripts/deploy-to-azure.sh
 
-# Solo rebuild backend
+# Rebuild backend only
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose up -d --no-deps --build backend"
 
-# Solo rebuild frontend
+# Rebuild frontend only
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose up -d --no-deps --build frontend"
 ```
 
-## 🔐 Seguridad
+## Security
 
-### Archivos sensibles (NO COMMITEAR)
+### Sensitive Files (DO NOT COMMIT)
 
-Los siguientes archivos están en `.gitignore`:
+The following files are in `.gitignore`:
 
-- `.env.azure` - Variables de entorno Azure
-- `.env.traefik` - Configuración Traefik
-- `.azure-vm-ip` - IP de VM QA
-- `.azure-vm-ip-prod` - IP de VM Producción
-- `.azure-secrets.txt` - ⚠️ **CRÍTICO: Passwords y secrets**
-- `.azure-deployment-info.txt` - Info de deployment
+- `.env.azure` - Azure environment variables
+- `.env.traefik` - Traefik configuration
+- `.azure-vm-ip` - QA VM IP
+- `.azure-vm-ip-prod` - Production VM IP
+- `.azure-secrets.txt` - **CRITICAL: Passwords and secrets**
+- `.azure-deployment-info.txt` - Deployment info
 
-### Backup de secrets
+### Secrets Backup
 
 ```bash
-# Hacer backup seguro
+# Secure backup
 cp .azure-secrets.txt ~/Backups/flow-cunda-secrets-$(date +%Y%m%d).txt
 
-# O usar gestor de passwords (1Password, Bitwarden, etc.)
+# Or use a password manager (1Password, Bitwarden, etc.)
 ```
 
-## 🧹 Limpieza de Recursos
+## Resource Cleanup
 
-### Eliminar recursos QA
+### Delete QA Resources
 
 ```bash
 az group delete --name rg-flow-cunda-qa --yes --no-wait
 ```
 
-### Eliminar recursos Producción
+### Delete Production Resources
 
 ```bash
-# ⚠️ PELIGROSO - Solo si estás SEGURO
+# DANGEROUS - Only if you are SURE
 az group delete --name rg-flow-cunda-prod --yes --no-wait
 ```
 
-## 📊 Monitoreo de Costos
+## Cost Monitoring
 
-### Ver costos estimados
+### View Estimated Costs
 
 ```bash
 # QA
@@ -353,66 +351,66 @@ az consumption usage list \
   --start-date $(date -d "30 days ago" +%Y-%m-%d) \
   --end-date $(date +%Y-%m-%d)
 
-# Producción
+# Production
 az consumption usage list \
   --resource-group rg-flow-cunda-prod \
   --start-date $(date -d "30 days ago" +%Y-%m-%d) \
   --end-date $(date +%Y-%m-%d)
 ```
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
-### No se puede conectar por SSH
+### Cannot Connect via SSH
 
 ```bash
-# Verificar IP
+# Check IP
 az vm show -d \
   --resource-group rg-flow-cunda-qa \
   --name vm-flow-cunda-qa \
   --query publicIps -o tsv
 
-# Verificar NSG (puertos)
+# Check NSG (ports)
 az network nsg rule list \
   --resource-group rg-flow-cunda-qa \
   --nsg-name vm-flow-cunda-qaNSG \
   --output table
 ```
 
-### Servicios no inician
+### Services Won't Start
 
 ```bash
-# Conectar a VM
+# Connect to VM
 ssh azureuser@$(cat .azure-vm-ip)
 
-# Ver logs
+# View logs
 cd ~/rocket-genai-v2
 docker compose logs
 
-# Reiniciar todo
+# Restart everything
 docker compose down
 docker compose up -d --build
 ```
 
-### SSL no funciona
+### SSL Not Working
 
 ```bash
-# Verificar DNS apunta a IP correcta
+# Verify DNS points to correct IP
 nslookup flow.cunda.io
 
-# Ver logs de Traefik
+# View Traefik logs
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose logs traefik"
 
-# Reiniciar Traefik
+# Restart Traefik
 ssh azureuser@$(cat .azure-vm-ip) "cd ~/rocket-genai-v2 && docker compose restart traefik"
 ```
 
-## 📚 Recursos Adicionales
+## Additional Resources
 
-- [Documentación Azure CLI](https://docs.microsoft.com/en-us/cli/azure/)
+- [Azure CLI Documentation](https://docs.microsoft.com/en-us/cli/azure/)
 - [Traefik Documentation](https://doc.traefik.io/traefik/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Let's Encrypt](https://letsencrypt.org/)
 
 ---
 
-**Última actualización**: Octubre 2025
+**Last updated**: October 2025

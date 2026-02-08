@@ -106,7 +106,7 @@ def test_authenticate_success(mock_repository, mock_session):
         hashed_password="hashed_password",
         is_active=True,
     )
-    # Configuramos el mock para authenticate directamente
+    # Configure the mock for authenticate directly
     mock_repository.authenticate.return_value = mock_user
     
     # Act
@@ -123,7 +123,7 @@ def test_authenticate_failure(mock_repository, mock_session):
     email = "test@example.com"
     password = "wrong_password"
     
-    # Configuramos el mock para authenticate para que devuelva None (fallo de autenticación)
+    # Configure the mock for authenticate to return None (authentication failure)
     mock_repository.authenticate.return_value = None
     
     # Act

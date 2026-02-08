@@ -32,7 +32,7 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     Retrieve users.
     """
     users = user_service.get_users(session, skip=skip, limit=limit)
-    count = len(users)  # Simplificado para la migración, idealmente usar count query
+    count = len(users)  # Simplified for migration, ideally use count query
     return UsersPublic(data=users, count=count)
 
 

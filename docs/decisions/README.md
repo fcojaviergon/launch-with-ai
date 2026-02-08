@@ -1,1 +1,1 @@
-# Decisiones Técnicas (ADRs)\n\n| Fecha | Decisión | Estado |\n|-------|----------|--------|\n| | | |
+# Technical Decisions (ADRs)\n\n| Date | Decision | Status |\n|------|----------|--------|\n| | | |

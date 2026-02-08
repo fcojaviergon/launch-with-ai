@@ -10,9 +10,9 @@ from app.tests.utils.utils import random_email, random_lower_string
 
 def test_user_registration_login_update_workflow(client: TestClient, db: Session):
     """
-    Prueba el flujo completo de registro, inicio de sesión y actualización de usuario.
+    Tests the complete workflow of registration, login, and user update.
     """
-    # 1. Registrar un nuevo usuario
+    # 1. Register a new user
     email = random_email()
     password = random_lower_string()
     
@@ -34,7 +34,7 @@ def test_user_registration_login_update_workflow(client: TestClient, db: Session
     assert "id" in user_data
     user_id = user_data["id"]
     
-    # 2. Iniciar sesión con el usuario registrado
+    # 2. Log in with the registered user
     login_data = {
         "username": email,
         "password": password
@@ -50,7 +50,7 @@ def test_user_registration_login_update_workflow(client: TestClient, db: Session
     assert "access_token" in token_data
     access_token = token_data["access_token"]
     
-    # 3. Obtener datos del usuario con el token
+    # 3. Get user data with the token
     headers = {"Authorization": f"Bearer {access_token}"}
     
     response = client.get(
@@ -63,7 +63,7 @@ def test_user_registration_login_update_workflow(client: TestClient, db: Session
     assert user_data["email"] == email
     assert user_data["full_name"] == "Test User"
     
-    # 4. Actualizar datos del usuario
+    # 4. Update user data
     update_data = {
         "full_name": "Updated User Name"
     }
@@ -78,7 +78,7 @@ def test_user_registration_login_update_workflow(client: TestClient, db: Session
     updated_user = response.json()
     assert updated_user["full_name"] == "Updated User Name"
     
-    # 5. Verificar que los cambios se guardaron en la base de datos
+    # 5. Verify that changes were saved to the database
     db_user = user_service.get_user_by_id(db, user_id)
     assert db_user is not None
     assert db_user.full_name == "Updated User Name"
@@ -86,16 +86,16 @@ def test_user_registration_login_update_workflow(client: TestClient, db: Session
 
 def test_user_item_workflow(client: TestClient, db: Session):
     """
-    Prueba el flujo completo de un usuario creando, actualizando y eliminando items.
+    Tests the complete workflow of a user creating, updating, and deleting items.
     """
-    # 1. Crear un usuario
+    # 1. Create a user
     email = random_email()
     password = random_lower_string()
     
     user_in = UserCreate(email=email, password=password)
     user = user_service.create_user(db, user_in)
     
-    # 2. Iniciar sesión
+    # 2. Log in
     login_data = {
         "username": email,
         "password": password
@@ -110,7 +110,7 @@ def test_user_item_workflow(client: TestClient, db: Session):
     access_token = token_data["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     
-    # 3. Crear un item
+    # 3. Create an item
     item_data = {
         "title": "Test Item",
         "description": "This is a test item"
@@ -129,7 +129,7 @@ def test_user_item_workflow(client: TestClient, db: Session):
     assert item["owner_id"] == str(user.id)
     item_id = item["id"]
     
-    # 4. Obtener el item creado
+    # 4. Get the created item
     response = client.get(
         f"{settings.API_V1_STR}/items/{item_id}",
         headers=headers
@@ -139,7 +139,7 @@ def test_user_item_workflow(client: TestClient, db: Session):
     item = response.json()
     assert item["title"] == "Test Item"
     
-    # 5. Actualizar el item
+    # 5. Update the item
     update_data = {
         "title": "Updated Item Title"
     }
@@ -153,9 +153,9 @@ def test_user_item_workflow(client: TestClient, db: Session):
     assert response.status_code == 200
     updated_item = response.json()
     assert updated_item["title"] == "Updated Item Title"
-    assert updated_item["description"] == "This is a test item"  # No debería cambiar
+    assert updated_item["description"] == "This is a test item"  # Should not change
     
-    # 6. Eliminar el item
+    # 6. Delete the item
     response = client.delete(
         f"{settings.API_V1_STR}/items/{item_id}",
         headers=headers
@@ -163,7 +163,7 @@ def test_user_item_workflow(client: TestClient, db: Session):
     
     assert response.status_code == 200
     
-    # 7. Verificar que el item fue eliminado
+    # 7. Verify that the item was deleted
     response = client.get(
         f"{settings.API_V1_STR}/items/{item_id}",
         headers=headers

@@ -8,14 +8,14 @@ from sqlmodel.sql.expression import Select
 from app.core.base_crud import BaseCRUD
 
 
-# Modelo de prueba
+# Test model
 class TestModel(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     description: str | None = None
 
 
-# Esquemas de prueba
+# Test schemas
 class TestModelCreate(SQLModel):
     name: str
     description: str | None = None
@@ -71,7 +71,7 @@ def test_get_multi(test_crud, mock_session):
     # Assert
     assert result == mock_items
     mock_session.exec.assert_called_once()
-    # Verificar que se llamó a select con los parámetros correctos
+    # Verify that select was called with correct parameters
     statement_call = mock_session.exec.call_args[0][0]
     assert statement_call is not None
 
@@ -81,7 +81,7 @@ def test_create(test_crud, mock_session):
     item_create = TestModelCreate(name="New Item", description="Description")
     mock_item = TestModel(id=uuid.uuid4(), name="New Item", description="Description")
     
-    # Simular comportamiento de add y refresh
+    # Simulate add and refresh behavior
     def side_effect(obj):
         obj.id = uuid.uuid4()
         return None
@@ -111,7 +111,7 @@ def test_update(test_crud, mock_session):
     
     # Assert
     assert result.name == "Updated Name"
-    assert result.description == "Original Description"  # No debería cambiar
+    assert result.description == "Original Description"  # Should not change
     mock_session.add.assert_called_once_with(db_obj)
     mock_session.commit.assert_called_once()
     mock_session.refresh.assert_called_once()
@@ -128,7 +128,7 @@ def test_update_with_dict(test_crud, mock_session):
     
     # Assert
     assert result.name == "Updated Name"
-    assert result.description == "Original Description"  # No debería cambiar
+    assert result.description == "Original Description"  # Should not change
     mock_session.add.assert_called_once_with(db_obj)
     mock_session.commit.assert_called_once()
     mock_session.refresh.assert_called_once()

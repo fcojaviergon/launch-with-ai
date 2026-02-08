@@ -10,7 +10,7 @@ type ColorType =
   | "highlight"
 
 /**
- * Hook que devuelve colores del tema basados en el modo de color actual
+ * Hook that returns theme colors based on the current color mode
  */
 export const useThemeColors = () => {
   const { colorMode } = useColorMode()
@@ -21,18 +21,18 @@ export const useThemeColors = () => {
   }
 
   return {
-    // Colores básicos
+    // Basic colors
     primary: "ui.primary",
     secondary: "ui.secondary",
     accent: "ui.accent",
 
-    // Colores de estado
+    // State colors
     success: "ui.success",
     warning: "ui.warning",
     error: "ui.error",
     info: "ui.info",
 
-    // Colores dependientes del modo
+    // Mode-dependent colors
     background: getColor("background"),
     card: getColor("card"),
     text: getColor("text"),
@@ -41,13 +41,13 @@ export const useThemeColors = () => {
     shadow: getColor("shadow"),
     highlight: getColor("highlight"),
 
-    // Colores para componentes específicos
+    // Component-specific colors
     alertInfo: isDark ? "blue.900" : "blue.50",
     alertSuccess: isDark ? "green.900" : "green.50",
     alertWarning: isDark ? "orange.900" : "orange.50",
     alertError: isDark ? "red.900" : "red.50",
 
-    // Método para obtener variaciones de colores específicas para componentes
+    // Method to get component-specific color variations
     getComponentColor: (component: string, variant = "default") => {
       const componentColors: Record<string, Record<string, string>> = {
         stepper: {

@@ -20,7 +20,7 @@ fileConfig(config.config_file_name)
 
 from sqlmodel import SQLModel  # noqa
 
-# Importar todos los modelos para que Alembic los detecte correctamente
+# Import all models so Alembic detects them correctly
 from app.modules.users.models import User
 from app.modules.items.models import Item
 
@@ -44,7 +44,7 @@ def get_url():
 
 
 def include_object(object, name, type_, reflected, compare_to):
-    # Excluir la tabla de las migraciones automáticas
+    # Exclude the table from automatic migrations
     if type_ == "table" and name == "document_embeddings":
         return False
     return True
