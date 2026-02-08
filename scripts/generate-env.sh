@@ -96,7 +96,7 @@ cat > "$OUTPUT_FILE" << EOF
 # WARNING: Keep this file secure and never commit to git!
 
 ENVIRONMENT=$ENV_TYPE
-PROJECT_NAME="Rocket GenAI $ENV_TYPE_CAP"
+PROJECT_NAME="Launch With AI"
 STACK_NAME=$(echo "$DOMAIN" | tr '.' '-')-$ENV_TYPE
 TAG=latest
 
@@ -110,14 +110,24 @@ POSTGRES_DB=app
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+
 # OpenAI
 OPENAI_MODEL=gpt-4o-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+
+# Anthropic (optional - for Claude models)
+ANTHROPIC_API_KEY=
 
 # Email (optional)
 SMTP_HOST=
 SMTP_USER=
 SMTP_PASSWORD=
+SMTP_PORT=587
+SMTP_TLS=true
 EMAILS_FROM_EMAIL=
 
 # Monitoring (optional)
@@ -132,8 +142,8 @@ if [ "$ENV_TYPE" == "local" ]; then
 DOMAIN=localhost
 FRONTEND_HOST=http://localhost:5173
 BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-DOCKER_IMAGE_BACKEND=rocket-genai-backend-local
-DOCKER_IMAGE_FRONTEND=rocket-genai-frontend-local
+DOCKER_IMAGE_BACKEND=launch-with-ai-backend
+DOCKER_IMAGE_FRONTEND=launch-with-ai-frontend
 
 # Admin User
 FIRST_SUPERUSER=admin@example.com
@@ -141,6 +151,10 @@ FIRST_SUPERUSER_PASSWORD=$ADMIN_PASSWORD
 
 # OpenAI (add your key)
 OPENAI_API_KEY=sk-your-key-here
+
+# Adminer Basic Auth (generate with: htpasswd -nb admin yourpassword | sed -e s/\\$/\\$\\$/g)
+# Default local: admin / localadmin123
+ADMINER_AUTH=admin:\$\$apr1\$\$hSUUr7uQ\$\$Jy0v.gb2I2JN9WruUqqdl1
 EOF
 else
     # Production/Staging
@@ -156,8 +170,9 @@ else
         fi
     done
 
-    # Prompt for OpenAI key
+    # Prompt for API keys
     read -p "OpenAI API key: " OPENAI_KEY
+    read -p "Anthropic API key (optional, press Enter to skip): " ANTHROPIC_KEY
 
     cat >> "$OUTPUT_FILE" << EOF
 # $ENV_TYPE_CAP Deployment
@@ -173,13 +188,47 @@ FIRST_SUPERUSER_PASSWORD=$ADMIN_PASSWORD
 
 # OpenAI
 OPENAI_API_KEY=$OPENAI_KEY
+
+# Anthropic (optional)
+ANTHROPIC_API_KEY=$ANTHROPIC_KEY
 EOF
 fi
 
 # Set restrictive permissions
 chmod 600 "$OUTPUT_FILE"
 
-echo -e "${GREEN}✅ Created $OUTPUT_FILE (permissions: 600)${NC}\n"
+echo -e "${GREEN}✅ Created $OUTPUT_FILE (permissions: 600)${NC}"
+
+# Generate frontend/.env if it doesn't exist or user wants to overwrite
+FRONTEND_ENV="frontend/.env"
+if [ -d "frontend" ]; then
+    GENERATE_FRONTEND=true
+    if [ -f "$FRONTEND_ENV" ]; then
+        echo -e "${YELLOW}⚠️  $FRONTEND_ENV already exists.${NC}"
+        read -p "Overwrite frontend/.env? [y/N]: " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            GENERATE_FRONTEND=false
+        fi
+    fi
+
+    if [ "$GENERATE_FRONTEND" = true ]; then
+        if [ "$ENV_TYPE" == "local" ]; then
+            cat > "$FRONTEND_ENV" << EOF
+VITE_API_URL=http://localhost:8000
+MAILCATCHER_HOST=http://localhost:1080
+EOF
+        else
+            cat > "$FRONTEND_ENV" << EOF
+VITE_API_URL=https://api.$DOMAIN
+EOF
+        fi
+        chmod 600 "$FRONTEND_ENV"
+        echo -e "${GREEN}✅ Created $FRONTEND_ENV${NC}"
+    fi
+fi
+
+echo ""
 
 # Print summary
 echo "================================================================"
@@ -205,9 +254,10 @@ echo ""
 echo "📋 NEXT STEPS:"
 echo "----------------------------------------------------------------"
 if [ "$ENV_TYPE" == "local" ]; then
-    echo "1. Review and update .env.local with your OpenAI API key"
-    echo "2. Start services: docker compose up -d"
-    echo "3. Access at: http://localhost:5173"
+    echo "1. Review and update .env.local with your OPENAI_API_KEY"
+    echo "2. Copy to root: cp .env.local .env"
+    echo "3. Start services: docker compose up -d"
+    echo "4. Access at: http://localhost:5173"
 else
     echo "1. Copy $OUTPUT_FILE to your server"
     echo "2. Rename to .env on the server"

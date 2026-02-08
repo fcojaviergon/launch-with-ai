@@ -33,6 +33,25 @@ Production-ready full-stack template for building AI-powered SaaS applications. 
 - **Production Security**: CORS, CSRF protection, secure defaults
 - **Dark Mode**: System theme detection with manual override
 
+## Differences from FastAPI Full-Stack Template
+
+This project is based on [tiangolo/full-stack-fastapi-template](https://github.com/tiangolo/full-stack-fastapi-template) with significant enhancements for AI-powered applications:
+
+| Aspect | Original Template | Launch With AI |
+|--------|------------------|----------------|
+| **Architecture** | Flat structure | Module-based backend + DDD frontend |
+| **Database** | PostgreSQL | PostgreSQL + TimescaleDB vector extensions |
+| **Background Tasks** | None | Celery + Redis for AI pipeline processing |
+| **AI Integration** | None | OpenAI client, embeddings, vector search |
+| **Frontend State** | Basic React | TanStack Query + Router (file-based) |
+
+### Key Architectural Changes
+
+1. **Module-Based Backend**: Each domain (users, items, chat) is self-contained with its own models, schemas, repository, and service layers
+2. **Vector Database**: TimescaleDB with pgvector for semantic search and RAG pipelines
+3. **Async AI Pipelines**: Celery workers process long-running AI tasks (embeddings, document processing) without blocking the API
+4. **Domain-Driven Frontend**: React domains mirror backend modules with their own API hooks, types, and components
+
 ## Quick Start
 
 ### Prerequisites
@@ -47,8 +66,9 @@ Production-ready full-stack template for building AI-powered SaaS applications. 
 ```bash
 git clone https://github.com/yourusername/launch-with-ai.git
 cd launch-with-ai
-cp .env.example .env
-# Edit .env with your configuration (especially OPENAI_API_KEY)
+./scripts/generate-env.sh local
+# Edit .env.local with your OPENAI_API_KEY
+cp .env.local .env
 ```
 
 2. **Start all services**:
@@ -105,6 +125,9 @@ launch-with-ai/
 |----------|-------------|---------|
 | `OPENAI_MODEL` | Chat model | `gpt-4o-mini` |
 | `OPENAI_EMBEDDING_MODEL` | Embedding model | `text-embedding-3-small` |
+| `ANTHROPIC_API_KEY` | Anthropic API key (Claude models) | - |
+| `REDIS_HOST` | Redis server for Celery | `redis` |
+| `REDIS_PORT` | Redis port | `6379` |
 | `SENTRY_DSN` | Error tracking | - |
 | `SMTP_HOST` | Email server | - |
 
