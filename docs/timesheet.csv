@@ -1,0 +1,4 @@
+fecha,modulo,tarea,horas_estimadas,horas_reales,notas
+# Registro de tiempo para tracking de horas reales vs estimadas
+# Usar /time-track para agregar entradas
+# Formato: YYYY-MM-DD,modulo,descripcion_tarea,HH,HH,notas_opcionales

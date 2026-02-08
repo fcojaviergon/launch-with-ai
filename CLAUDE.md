@@ -1,517 +1,212 @@
-# CLAUDE.md
+# CLAUDE.md — Launch With AI
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Proyecto
+**Launch With AI** — Production-ready full-stack template for AI-powered SaaS applications.
 
-## Project: Launch With AI
+| Aspecto | Stack |
+|---------|-------|
+| **Backend** | FastAPI, SQLModel, PostgreSQL, Celery, Redis |
+| **Frontend** | React 18, TypeScript, Chakra UI, TanStack Router/Query |
+| **Linting** | Ruff + MyPy (backend), Biome (frontend) |
+| **Deploy** | Docker Compose, Traefik, GitHub Actions → Azure |
 
-Production-ready full-stack template for building AI-powered SaaS applications.
+Solo founder mode: optimizar para velocidad de shipping con calidad mínima viable.
 
-## Development Commands
+## Principios
+- **Ship small, ship often.** PRs < 300 líneas.
+- **Tests para lógica crítica.** No 100% coverage.
+- **Conventional commits siempre** (feat/fix/chore/docs/refactor).
+- **Si puede fallar en producción**, necesita error handling.
+- **Cada error de Claude** se convierte en una regla abajo.
 
-### Backend (Python FastAPI)
+---
+
+## Skills Disponibles
+
+### Skills del Proyecto (específicos de este repo)
+| Skill | Cuándo usar |
+|-------|-------------|
+| `/launch-frontend` | Crear dominios, componentes, forms, hooks en frontend/ (DDD + TanStack) |
+| `/launch-backend` | Crear módulos, modelos, endpoints en backend/ (FastAPI + SQLModel) |
+
+### Skills Globales (SDLC completo)
+| Skill | Cuándo usar |
+|-------|-------------|
+| `/plan-feature` | Planificar nueva feature → genera docs/active-plan.md |
+| `/implement` | Implementar tareas del plan activo |
+| `/test-verify` | Testear + verificar build + lint |
+| `/review-code` | Code review antes de merge |
+| `/commit-ship` | Git commit + PR con pre-flight checks |
+| `/triage-bug` | Diagnosticar y clasificar un bug |
+| `/write-spec` | Spec formal (solo features 10+ archivos) |
+| `/write-docs` | Documentación |
+
+### Skills de Negocio
+| Skill | Cuándo usar |
+|-------|-------------|
+| `/pdp-generator` | Cotización: WBS + estimación HH + Excel |
+| `/bootstrap-repo` | Onboarding rápido a un repo |
+| `/log-decision` | Registrar ADR (decisión técnica) |
+| `/sprint-retro` | Retrospectiva + mejora continua |
+| `/time-track` | Registrar horas trabajadas |
+
+### Subagents Automáticos
+| Agent | Rol | Se invoca cuando... |
+|-------|-----|---------------------|
+| `qa-tester` | QA aislado (tests + build + lint) | Verificación completa |
+| `security-reviewer` | Auditoría de seguridad (read-only) | Review de seguridad |
+
+---
+
+## Workflow de Desarrollo
+
+```
+Feature simple (< 10 archivos):
+/plan-feature → /implement → /test-verify → /commit-ship
+
+Feature compleja (10+ archivos, integraciones):
+/write-spec → /plan-feature @specs/... → /implement → /test-verify → /review-code → /commit-ship
+```
+
+### Ciclo Diario
+1. **Ver plan actual**: Lee `docs/active-plan.md`
+2. **Implementar tarea**: `/implement` o implementar directamente
+3. **Verificar**: `/test-verify` (o manualmente: tests + build + lint)
+4. **Shippear**: `/commit-ship` (o commit manual con conventional commits)
+
+### Comandos Rápidos
+
+**Backend:**
 ```bash
-# From backend/ directory
 cd backend
-
-# Development server
-fastapi dev app/main.py
-
-# Run tests with coverage
-./scripts/test.sh
-
-# Lint and format
-./scripts/lint.sh
-# Or individually:
-mypy app
-ruff check app
-ruff format app --check
-
-# Format code
-ruff format app
+fastapi dev app/main.py              # Dev server
+./scripts/test.sh                     # Tests
+./scripts/lint.sh                     # Lint (mypy + ruff)
+alembic revision --autogenerate -m "msg"  # Migration
 ```
 
-### Frontend (React TypeScript)
+**Frontend:**
 ```bash
-# From frontend/ directory
 cd frontend
-
-# Development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Lint and format (Biome)
-npm run lint
-
-# Type check
-npm run build  # Runs tsc + vite build
+npm run dev                           # Dev server
+npm run build                         # Build + type check
+npm run lint                          # Biome lint
 ```
 
-### Full Stack Development
+**Full Stack:**
 ```bash
-# Start entire stack with Docker Compose
-docker compose watch
-
-# Individual services
-docker compose stop frontend  # Stop frontend to run locally
-docker compose stop backend   # Stop backend to run locally
+docker compose watch                  # Todo el stack
+./scripts/generate-types.sh          # Regenerar tipos del backend
 ```
 
-## Project Architecture
+---
 
-Launch With AI is a full-stack GenAI SaaS template built with FastAPI backend and React frontend.
+## Arquitectura
 
-### Backend Architecture
-- **FastAPI** with Python 3.10+ using modern async/await patterns
-- **SQLModel** for database ORM with PostgreSQL
-- **Pydantic** for data validation and settings
-- **JWT** authentication with secure password hashing
-- **Alembic** for database migrations
-- **Module-based architecture** with clear separation of concerns
-
-Backend follows a structured module pattern:
+### Backend (FastAPI)
 ```
-app/
-├── api/v1/           # API endpoints and dependencies
-├── core/             # Configuration, database, security
-├── modules/          # Domain modules (users, items, analysis, chat)
+backend/app/
+├── api/v1/           # Endpoints
+├── core/             # Config, DB, security
+├── modules/          # Dominios
 │   └── [module]/
-│       ├── models.py     # SQLModel database models
-│       ├── schemas.py    # Pydantic API schemas
-│       ├── repository.py # Database operations
-│       └── service.py    # Business logic
-├── services/         # External service integrations (OpenAI, vector store)
-└── tests/           # Unit and integration tests
+│       ├── models.py      # SQLModel
+│       ├── schemas.py     # Pydantic
+│       ├── repository.py  # CRUD
+│       └── service.py     # Business logic
+└── services/         # Integraciones externas
 ```
 
-### Frontend Architecture
-- **React 18** with TypeScript and modern hooks
-- **Chakra UI** for component library
-- **TanStack Router** for file-based routing
-- **TanStack Query** for data fetching and caching
-- **React Hook Form** for form management
-- **Domain-Driven Design (DDD)** architecture organizing code by business domains
-- **Hybrid API client strategy**: Types auto-generated from OpenAPI, services manual per domain
-
-Frontend follows a **domain-based structure** where each domain is self-contained:
+### Frontend (React DDD)
 ```
 frontend/src/
-├── domains/          # Business domains (self-contained)
-│   ├── auth/        # Authentication & authorization
-│   │   ├── api/         # React Query hooks
-│   │   ├── components/  # Domain UI components
-│   │   ├── services/    # API client (manually created, domain-specific)
-│   │   ├── types/       # TypeScript types
-│   │   ├── schemas/     # Zod validation
-│   │   ├── hooks/       # Domain hooks
-│   │   └── index.ts     # Public API
-│   ├── users/       # User profile management
-│   ├── items/       # Items CRUD
-│   ├── chat/        # Chat & conversations
-│   └── admin/       # Admin user management
-├── shared/          # Shared across domains
-│   ├── components/  # Reusable UI components
-│   ├── hooks/       # Global hooks
-│   └── utils/       # Utilities (validation, errors)
-├── routes/          # TanStack Router routes
-├── client/          # OpenAPI generated types & infrastructure
-└── theme/           # Chakra UI theme
+├── domains/          # Dominios auto-contenidos
+│   └── [domain]/
+│       ├── api/           # React Query hooks
+│       ├── services/      # API client manual
+│       ├── components/    # UI
+│       ├── types/         # TypeScript types
+│       └── schemas/       # Zod validation
+├── shared/           # Componentes compartidos
+├── routes/           # TanStack Router
+└── client/           # Tipos generados (OpenAPI)
 ```
 
-**Path Aliases:**
-- `@/*` → `src/*`
-- `@domains/*` → `src/domains/*`
-- `@shared/*` → `src/shared/*`
+**Path Aliases:** `@domains/*`, `@shared/*`, `@/*`
 
-### Key Features
-- **Analysis Module**: Document analysis with OpenAI integration, embedding tasks, and evaluation workflows
-- **Chat Module**: Real-time chat functionality with AI integration
-- **User Management**: JWT-based authentication with role-based access
-- **Vector Store**: Document embeddings and similarity search
-- **Async Task Processing**: Celery with Redis for background tasks
+---
 
-## Database Patterns
+## Patrones Clave
 
-### Model Definition
+### Database (SQLModel)
 ```python
-# Use UUIDs for primary keys
 id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-
-# Foreign keys with CASCADE delete
 owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
-
-# Relationships
-owner: "User" = Relationship(back_populates="items")
 ```
 
-### Schema Pattern
-- `Base` schemas for shared properties
-- `Create` schemas for creation
-- `Update` schemas with optional fields
-- `Public` schemas for API responses
+### Schemas (Pydantic)
+- `Base` → propiedades compartidas
+- `Create` → creación
+- `Update` → campos opcionales
+- `Public` → respuesta API
 
-## Testing
+### API Client (Frontend)
+```
+Backend cambia → ./scripts/generate-types.sh → TypeScript alerta → Actualizar services/
+```
 
-### Backend Tests
+---
+
+## Deployment
+
+### Git Push = Deploy Automático
 ```bash
-cd backend
-./scripts/test.sh  # Runs pytest with coverage
+git push origin main  # GitHub Actions → Azure VM
 ```
 
-### Frontend Tests
-```bash
-cd frontend
-npx playwright test  # E2E tests
-```
-
-## Environment Setup
-
-The project uses `.env` files for configuration. Key variables to set:
-- `SECRET_KEY` - Application secret key
-- `FIRST_SUPERUSER_PASSWORD` - Initial admin password
-- `POSTGRES_PASSWORD` - Database password
-- `OPENAI_API_KEY` - OpenAI API key for AI features
-
-## AI/ML Features
-
-This application includes several AI-powered features:
-- **Document Analysis**: Extract and analyze document content
-- **Embedding Generation**: Create vector embeddings for documents
-- **Evaluation Tasks**: Automated evaluation of content quality
-- **Chat Integration**: AI-powered chat functionality
-- **Workflow Management**: Orchestrate complex AI analysis workflows
-
-## Development Workflow
-
-### Local Development
-
-1. **Start Development Environment**
-```bash
-# Full stack with hot-reload
-docker compose watch
-```
-
-2. **Backend Development**: Use `fastapi dev` for hot reload
-3. **Frontend Development**: Use `npm run dev` for development server with Vite
-4. **Database Changes**: Create migrations with Alembic
-```bash
-cd backend
-alembic revision --autogenerate -m "description of changes"
-# Review the generated migration file in backend/app/alembic/versions/
-git add backend/app/alembic/versions/
-git commit -m "chore: add migration for X"
-```
-
-5. **API Changes**: Run `./scripts/generate-types.sh` to regenerate TypeScript types from the backend OpenAPI spec. Then update domain services if method signatures changed. TypeScript will flag any mismatches.
-6. **Testing**: Run both backend and frontend tests before commits
-7. **Linting**: Code is automatically formatted with ruff (backend) and Biome (frontend)
-
-### API Client Strategy (Hybrid Approach)
-
-We use a **hybrid** strategy for frontend-backend communication:
-
-1. **Types are auto-generated** from OpenAPI spec:
-   - Run `./scripts/generate-types.sh` after backend API changes
-   - Generates TypeScript types in `src/client/`
-   - Ensures type safety and sync with backend
-
-2. **Services are manual** per domain:
-   - Located in `domains/[domain]/services/service.ts`
-   - Import types from `@/client` or domain types
-   - Allows custom logic (retry, transformations, caching)
-
-**Workflow:**
-```
-Backend changes endpoint/schema
-       ↓
-Run: ./scripts/generate-types.sh
-       ↓
-Types updated in frontend/src/client/
-       ↓
-TypeScript flags if services need updates
-       ↓
-Update domains/*/services/ if method signatures changed
-```
-
-**Why hybrid?**
-- ✅ Types always in sync with backend (auto-generated)
-- ✅ Services remain customizable per domain
-- ✅ TypeScript acts as "guardian" for API changes
-- ✅ Domain isolation preserved
-
-### Continuous Deployment Workflow
-
-This project uses a **Git-based CI/CD workflow** for deploying to QA/Production:
-
-#### Environment Setup
-
-**Local Development** (your machine):
-- `.env` → Local development configuration (localhost, local DB)
-- Use `docker-compose.override.yml` for local-specific settings
-
-**QA/Production** (Azure VM):
-- `.env` → Production configuration (already set up on server, **DO NOT modify**)
-- No override file used in production
-
-#### Deployment Methods
-
-**Option 1: Automatic Deployment (Recommended)**
-```bash
-# Simply push to main branch
-git add .
-git commit -m "feat: new feature"
-git push origin main
-
-# GitHub Actions will automatically:
-# 1. Run tests (backend + frontend)
-# 2. SSH to Azure VM
-# 3. Pull latest code
-# 4. Rebuild containers
-# 5. Apply migrations automatically
-# ✅ Deploy completes in 2-3 minutes
-```
-
-**Option 2: Manual Deployment**
-```bash
-# Use the deployment script
-./scripts/deploy.sh
-
-# This script will:
-# 1. Check for uncommitted changes
-# 2. Push to git
-# 3. SSH to server and run deploy-azure.sh
-# 4. Show deployment logs
-```
-
-#### How Migrations Work
-
-**In Development:**
-1. Make model changes in `backend/app/modules/*/models.py`
-2. Generate migration: `cd backend && alembic revision --autogenerate -m "description"`
-3. Review migration file in `backend/app/alembic/versions/`
-4. Commit migration file to git
-
-**In Production:**
-1. Migration files are pulled with code (`git pull`)
-2. `prestart.sh` runs automatically before backend starts
-3. `prestart.sh` executes `alembic upgrade head`
-4. Migrations apply automatically ✅
-5. Backend starts with updated schema
-
-#### GitHub Actions Setup
-
-To enable automatic deployments, configure these secrets in GitHub:
-- `AZURE_VM_HOST` - Your Azure VM IP address
-- `AZURE_VM_USER` - SSH username (usually `azureuser`)
-- `AZURE_VM_SSH_KEY` - Private SSH key for authentication
-- `AZURE_VM_PORT` - SSH port (default: 22)
-
-Go to: Repository Settings → Secrets and variables → Actions → New repository secret
-
-### Adding New Features (Domain-Driven Approach)
-
-When adding a new feature to the frontend:
-
-1. **Identify the domain** (auth, users, items, chat, admin)
-2. **Add API hooks** in `domains/[domain]/api/[entity].api.ts`
-3. **Create types** in `domains/[domain]/types/[domain].types.ts`
-4. **Add schemas** (if forms) in `domains/[domain]/schemas/`
-5. **Build components** in `domains/[domain]/components/`
-6. **Export from index** in `domains/[domain]/index.ts` using barrel exports
-7. **Use in routes** from `routes/` using path aliases like `@domains/auth`
-
-**Example:**
-```typescript
-// Import from domain using barrel exports
-import { useAuth, LoginForm, isLoggedIn } from '@domains/auth'
-import { useItems, AddItem } from '@domains/items'
-import { Button } from '@shared/components'
-```
-
-## Production Deployment
-
-### Initial Setup (One-Time Only)
-
-**Prerequisites:**
-- Azure VM (Ubuntu 22.04, 2 vCPUs, 4GB RAM minimum)
-- Domain pointing to VM IP
-- Ports 80, 443, and 22 open
-
-**Use the automated setup script:**
-```bash
-# From your local machine
-./scripts/deploy-qa.sh
-```
-
-This script (run ONLY ONCE for initial setup):
-1. Creates Traefik reverse proxy with automatic HTTPS
-2. Generates secure passwords for admin and database
-3. Transfers all code to the server
-4. Builds and starts all services
-5. Prints access credentials
-
-**After initial setup, NEVER run this script again.** Use the continuous deployment workflow instead.
-
-### Continuous Deployment (Daily Use)
-
-Once the server is set up, use Git-based deployment:
-
-**Automatic (GitHub Actions):**
-```bash
-git push origin main  # Auto-deploys in 2-3 minutes
-```
-
-**Manual:**
-```bash
-./scripts/deploy.sh  # Prompts for commit, pushes, and deploys
-```
-
-### Deployment Architecture
-
-**Deployment Stack:**
-- **Traefik**: Automatic HTTPS with Let's Encrypt
-- **Backend**: FastAPI with automatic migrations
-- **Frontend**: React with Vite
-- **Database**: TimescaleDB (PostgreSQL) with vector operations
-- **Cache**: Redis for Celery task queue
-- **CI/CD**: GitHub Actions with automated testing
-
-**Service URLs:**
+### URLs en Producción
 - Frontend: `https://dashboard.{DOMAIN}`
-- Backend API: `https://api.{DOMAIN}`
-- API Documentation: `https://api.{DOMAIN}/docs`
-- Traefik Dashboard: `https://traefik.{DOMAIN}`
-- Adminer (DB): `https://adminer.{DOMAIN}`
+- API: `https://api.{DOMAIN}`
+- Docs: `https://api.{DOMAIN}/docs`
 
-### Useful Commands (SSH to Server)
-
+### SSH al Servidor
 ```bash
-# SSH to server
 ssh azureuser@<VM_IP>
 cd ~/launch-with-ai
-
-# View logs
-docker compose logs -f                    # All services
-docker compose logs -f backend           # Backend only
-docker compose logs -f celery-worker     # Celery worker
-
-# Service status
-docker compose ps
-
-# Restart services
-docker compose restart backend
-docker compose restart celery-worker
-
-# Manual deployment (if needed)
-git pull origin main
-docker compose -f docker-compose.yml up -d --build
-
-# Database migrations (usually automatic)
-docker compose exec backend alembic upgrade head
-
-# Access database
-docker compose exec db psql -U postgres -d app
+docker compose logs -f backend       # Ver logs
+docker compose restart backend       # Reiniciar
 ```
 
-## Additional Documentation
+Ver [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) para setup inicial.
 
-For more detailed information:
-- **Azure Deployment Guide**: See [DEPLOYMENT-AZURE.md](DEPLOYMENT-AZURE.md) for complete step-by-step deployment instructions
-- **Environment Variables**: Check `.env.azure.example` for Azure deployment configuration
+---
 
-## Claude Code Skills
+## Contexto Actual
 
-This project includes custom skills for Claude Code development assistance:
+| Archivo | Propósito |
+|---------|-----------|
+| `docs/active-plan.md` | Plan de trabajo actual |
+| `docs/bugs-encontrados.md` | Bugs pendientes |
+| `docs/timesheet.csv` | Horas trabajadas vs estimadas |
+| `docs/decisions/` | ADRs (decisiones técnicas) |
 
-### Development Skills
-- **`/launch-frontend`**: Frontend development guide with DDD patterns, React Query hooks, Zod forms, and type generation workflow
-- **`/launch-backend`**: Backend development guide with FastAPI modules, Repository-Service pattern, and Alembic migrations
+---
 
-### Project Management Skills
-- **`/prd`**: PRD Manager - View project status, generate GitHub issues from PRD requirements
-- **`/sprint`**: Sprint Planner - Create and manage sprints with GitHub Projects and Milestones
+## Reglas Aprendidas
 
-Skills are located in `.claude/skills/` and provide quick reference + extended examples for common development tasks.
+<!--
+Agregar reglas aquí cada vez que Claude cometa un error repetido.
+Formato: "- NO hacer X, SIEMPRE hacer Y"
+Ejemplo: "- No usar fetch directo, siempre usar el service del dominio"
+-->
 
-### Custom Subagents
+- No usar Prettier, siempre usar Biome para frontend
+- No modificar .env en producción, solo en local
+- Siempre generar tipos con `./scripts/generate-types.sh` después de cambios en API
+- No commitear archivos .env ni credentials
 
-Specialized agents that Claude can delegate to automatically based on task context:
+---
 
-| Subagent | Role | Model | Skills Used |
-|----------|------|-------|-------------|
-| `backend-architect` | Database modeling, API design, module architecture | Opus | launch-backend |
-| `frontend-developer` | React domains, components, forms, hooks | Sonnet | launch-frontend |
-| `proposal-writer` | PRDs, specs, proposals, decision docs | Opus | prd-manager |
+## Información Adicional
 
-Subagents are defined in `.claude/agents/` and are automatically invoked based on their description.
-
-## AI-Driven Development Workflow
-
-This project uses an AI-assisted development workflow that connects the PRD directly to GitHub Issues and sprints.
-
-### Workflow Overview
-
-```
-PRD Requirements → GitHub Issues → Sprints → Development → Delivery
-```
-
-### Daily Workflow
-
-1. **Planning Phase**
-   ```bash
-   /prd status              # Ver estado actual del proyecto
-   /prd next                # Ver próximo feature recomendado
-   /sprint status           # Ver progreso del sprint actual
-   ```
-
-2. **Issue Generation** (cuando inicias una nueva fase)
-   ```bash
-   /prd issues --phase MVP  # Genera issues para la fase
-   ```
-
-3. **Sprint Management**
-   ```bash
-   /sprint create --name "Sprint 1"  # Crear nuevo sprint
-   /sprint backlog                    # Ver issues disponibles
-   ```
-
-4. **Development**
-   - Seleccionar un issue del sprint
-   - Usar Plan Mode para diseñar la implementación
-   - Usar `/launch-backend` para módulos backend
-   - Usar `/launch-frontend` para dominios frontend
-
-5. **Delivery**
-   ```bash
-   git commit -m "feat: implement RF-001 #123"  # Referencia al issue
-   /sprint status                                 # Verificar progreso
-   ```
-
-6. **Sprint Close**
-   ```bash
-   /sprint close  # Cerrar sprint y generar reporte
-   ```
-
-### PRD to GitHub Mapping
-
-| PRD Element | GitHub Element |
-|-------------|----------------|
-| Fase (MVP, etc.) | Milestone |
-| Requisito (RF-XXX) | Issue |
-| Must/Should/Could | Label (priority) |
-| Backend/Frontend | Label (area) |
-
-### Recommended Labels
-
-```bash
-# Priority labels
-gh label create "must-have" --color "d73a4a" --description "MVP Required"
-gh label create "should-have" --color "fbca04" --description "High priority"
-gh label create "could-have" --color "0e8a16" --description "Nice to have"
-
-# Area labels
-gh label create "backend" --color "1d76db" --description "Backend/API work"
-gh label create "frontend" --color "5319e7" --description "Frontend/UI work"
-gh label create "integration" --color "006b75" --description "External integrations"
-```
+Para documentación detallada de skills del proyecto: `.claude/skills/launch-*.md`
