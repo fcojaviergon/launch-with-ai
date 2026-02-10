@@ -115,3 +115,4 @@ ssl-certs/
 .azure-vm-ip
 .azure-secrets.txt
 .azure-deployment-info.txt
+launch-with-ai.code-workspace
