@@ -52,7 +52,7 @@ This project is based on [tiangolo/full-stack-fastapi-template](https://github.c
 3. **Async AI Pipelines**: Celery workers process long-running AI tasks (embeddings, document processing) without blocking the API
 4. **Domain-Driven Frontend**: React domains mirror backend modules with their own API hooks, types, and components
 
-## Quick Start
+## Getting Started
 
 ### Prerequisites
 
@@ -60,23 +60,57 @@ This project is based on [tiangolo/full-stack-fastapi-template](https://github.c
 - Node.js 18+ (for frontend development)
 - Python 3.10+ (for backend development)
 
-### Local Development
+### Option A: Use as Template (Recommended)
 
-1. **Clone and configure**:
+Best for starting your own project. Creates a clean repo without fork history.
+
+1. Click **"Use this template"** → **"Create a new repository"** on GitHub
+2. Clone your new repository:
 ```bash
-git clone https://github.com/yourusername/launch-with-ai.git
-cd launch-with-ai
-./scripts/generate-env.sh local
-# Edit .env.local with your OPENAI_API_KEY
-cp .env.local .env
+git clone https://github.com/your-username/your-project.git
+cd your-project
 ```
 
-2. **Start all services**:
+### Option B: Fork
+
+Best if you want to track upstream updates or contribute back.
+
+1. Click **"Fork"** on GitHub
+2. Clone your fork:
 ```bash
+git clone https://github.com/your-username/launch-with-ai.git
+cd launch-with-ai
+```
+
+### Option C: Clone Directly
+
+For quick local experimentation.
+
+```bash
+git clone https://github.com/fcojaviergon/launch-with-ai.git
+cd launch-with-ai
+```
+
+### Setup
+
+After getting the code (any option above):
+
+```bash
+# 1. Generate environment files
+./scripts/generate-env.sh local
+
+# 2. Add your OpenAI API key
+#    Edit .env.local → replace OPENAI_API_KEY=sk-your-key-here with your real key
+
+# 3. Activate the environment
+cp .env.local .env
+
+# 4. Start all services
 docker compose watch
 ```
 
-3. **Access the application**:
+### Access the Application
+
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
@@ -86,6 +120,20 @@ docker compose watch
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
+
+## Make It Yours
+
+After setting up, customize the template for your project:
+
+1. **Rename the project** — Update `PROJECT_NAME` in your `.env`
+2. **Remove example modules** — Delete `backend/app/modules/items/` and `frontend/src/domains/items/` (keep `users` as auth reference)
+3. **Add your own modules** — Follow the existing pattern:
+   - Backend: create a new folder in `backend/app/modules/your-module/` with `models.py`, `schemas.py`, `repository.py`, `service.py`
+   - Frontend: create a new folder in `frontend/src/domains/your-domain/` with `api/`, `components/`, `types/`
+4. **Regenerate types** — After any backend API change: `./scripts/generate-types.sh`
+5. **Update branding** — Change the app name and logo in `frontend/src/shared/`
+
+See [CLAUDE.md](./CLAUDE.md) for the full architecture guide.
 
 ## Project Structure
 
@@ -176,6 +224,40 @@ cd backend && ./scripts/test.sh
 # Frontend E2E
 cd frontend && npx playwright test
 ```
+
+## Contributing
+
+Contributions are welcome! Here's how to get involved:
+
+### Reporting Bugs
+
+Open an issue on [GitHub Issues](https://github.com/fcojaviergon/launch-with-ai/issues) with:
+- Steps to reproduce
+- Expected vs actual behavior
+- Environment details (OS, Docker version, etc.)
+
+### Submitting Changes
+
+1. **Fork** the repository
+2. **Create a branch** from `main`: `git checkout -b feat/your-feature`
+3. **Make your changes** following the conventions below
+4. **Run checks** before submitting:
+   ```bash
+   # Backend
+   cd backend && ./scripts/lint.sh && ./scripts/test.sh
+
+   # Frontend
+   cd frontend && npm run lint && npm run build
+   ```
+5. **Submit a PR** to `main` with a clear description of what and why
+
+### Conventions
+
+- **Commits**: Use [Conventional Commits](https://www.conventionalcommits.org/) — `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
+- **PR size**: Keep PRs under 300 lines when possible
+- **Backend linting**: Ruff + MyPy (no Prettier)
+- **Frontend linting**: Biome (no Prettier)
+- **Types**: Regenerate with `./scripts/generate-types.sh` after API changes
 
 ## Documentation
 
