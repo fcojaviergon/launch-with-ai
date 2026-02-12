@@ -1,0 +1,146 @@
+# CLAUDE.md — {{ project_name }}
+
+## Project
+
+**{{ project_name }}** — {{ project_description }}
+
+| Aspect       | Stack                                                  |
+| ------------ | ------------------------------------------------------ |
+| **Backend**  | FastAPI, SQLModel, PostgreSQL, Celery, Redis           |
+| **Frontend** | React 18, TypeScript, Chakra UI, TanStack Router/Query |
+| **Linting**  | Ruff + MyPy (backend), Biome (frontend)                |
+| **Deploy**   | Docker Compose, Traefik, GitHub Actions → Azure        |
+
+Solo founder mode: optimize for shipping speed with minimum viable quality.
+
+## Principles
+
+- **Ship small, ship often.** PRs < 300 lines.
+- **Tests for critical logic.** No 100% coverage.
+- **Conventional commits always** (feat/fix/chore/docs/refactor).
+- **If it can fail in production**, it needs error handling.
+- **Every Claude mistake** becomes a rule below.
+
+---
+
+## Development Workflow
+
+### Quick Commands
+
+**Backend:**
+
+```bash
+cd backend
+fastapi dev app/main.py              # Dev server
+./scripts/test.sh                     # Tests
+./scripts/lint.sh                     # Lint (mypy + ruff)
+alembic revision --autogenerate -m "msg"  # Migration
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+npm run dev                           # Dev server
+npm run build                         # Build + type check
+npm run lint                          # Biome lint
+```
+
+**Full Stack:**
+
+```bash
+docker compose watch                  # Full stack
+./scripts/generate-types.sh          # Regenerate types from backend
+```
+
+---
+
+## Architecture
+
+### Backend (FastAPI)
+
+```
+backend/app/
+├── api/v1/           # Endpoints
+├── core/             # Config, DB, security
+├── modules/          # Domains
+│   └── [module]/
+│       ├── models.py      # SQLModel
+│       ├── schemas.py     # Pydantic
+│       ├── repository.py  # CRUD
+│       └── service.py     # Business logic
+└── services/         # External integrations
+```
+
+### Frontend (React DDD)
+
+```
+frontend/src/
+├── domains/          # Self-contained domains
+│   └── [domain]/
+│       ├── api/           # React Query hooks
+│       ├── services/      # API client manual
+│       ├── components/    # UI
+│       ├── types/         # TypeScript types
+│       └── schemas/       # Zod validation
+├── shared/           # Shared components
+├── routes/           # TanStack Router
+└── client/           # Generated types (OpenAPI)
+```
+
+**Path Aliases:** `@domains/*`, `@shared/*`, `@/*`
+
+---
+
+## Key Patterns
+
+### Database (SQLModel)
+
+```python
+id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+owner_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
+```
+
+### Schemas (Pydantic)
+
+- `Base` → shared properties
+- `Create` → creation
+- `Update` → optional fields
+- `Public` → API response
+
+### API Client (Frontend)
+
+```
+Backend changes → ./scripts/generate-types.sh → TypeScript flags mismatches → Update services/
+```
+
+---
+
+## Deployment
+
+### Git Push = Automatic Deploy
+
+```bash
+git push origin main  # GitHub Actions → Azure VM
+```
+
+### Production URLs
+
+- Frontend: `https://dashboard.{DOMAIN}`
+- API: `https://api.{DOMAIN}`
+- Docs: `https://api.{DOMAIN}/docs`
+
+---
+
+## Learned Rules
+
+- Do not use Prettier, always use Biome for frontend
+- Do not modify .env in production, only locally
+- Always generate types with `./scripts/generate-types.sh` after API changes
+- Do not commit .env files or credentials
+- Review what exists before implementing new functionality
+- Always use GitHub CLI (`gh`) for GitHub operations (PRs, issues, releases, checks). Never use the web UI or raw API calls when `gh` can do it
+
+---
+
+## Additional Information

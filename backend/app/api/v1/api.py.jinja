@@ -1,0 +1,25 @@
+from fastapi import APIRouter
+
+{% if initial_modules == 'full' %}
+from app.api.v1.endpoints import users, items, login, utils, chat, projects, documents
+{% else %}
+from app.api.v1.endpoints import users, login, utils
+{% endif %}
+from app.core.config import settings
+
+api_router = APIRouter()
+api_router.include_router(login.router)
+api_router.include_router(users.router)
+api_router.include_router(utils.router)
+{% if initial_modules == 'full' %}
+api_router.include_router(items.router)
+api_router.include_router(projects.router)
+api_router.include_router(documents.router)
+api_router.include_router(chat.router)
+{% endif %}
+
+
+# Incluir endpoints privados solo en entorno local
+if settings.ENVIRONMENT == "local":
+    from app.api.v1.endpoints import private
+    api_router.include_router(private.router)

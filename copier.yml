@@ -1,0 +1,71 @@
+_min_copier_version: "9.0.0"
+_templates_suffix: ".jinja"
+
+# Do not copy these files/directories
+_exclude:
+  - .git
+  - .env
+  - .env.*
+  - "*.pyc"
+  - __pycache__
+  - node_modules
+  - .venv
+  - backend/.venv
+  - copier.yml
+  # Conditional: exclude example modules in minimal mode
+  - "{% if initial_modules == 'minimal' %}backend/app/modules/items{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/modules/chat{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/modules/projects{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/api/v1/endpoints/items.py{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/api/v1/endpoints/chat.py{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/api/v1/endpoints/projects.py{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/api/v1/endpoints/documents.py{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/tests/unit/modules/items{% endif %}"
+  - "{% if initial_modules == 'minimal' %}backend/app/tests/utils/item.py{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/domains/items{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/domains/chat{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/domains/projects{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/domains/admin{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/routes/_layout/items.tsx{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/routes/_layout/chat.tsx{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/routes/_layout/projects.tsx{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/routes/_layout/projects.*.tsx{% endif %}"
+  - "{% if initial_modules == 'minimal' %}frontend/src/routes/_layout/admin.tsx{% endif %}"
+
+# ─── Questions ───────────────────────────────────────────────────────────────
+
+project_name:
+  type: str
+  help: "What is your project name? (e.g., 'My AI App')"
+  default: "My AI App"
+
+project_slug:
+  type: str
+  help: "Project slug for Docker images and package names"
+  default: "{{ project_name | lower | replace(' ', '-') | replace('_', '-') }}"
+
+project_description:
+  type: str
+  help: "Short project description"
+  default: "AI-powered SaaS application"
+
+author_name:
+  type: str
+  help: "Author name"
+  default: "Your Name"
+
+author_email:
+  type: str
+  help: "Author email"
+  default: "you@example.com"
+
+initial_modules:
+  type: str
+  help: |
+    Which modules to include?
+    - full: All example modules (items, chat, projects, admin)
+    - minimal: Only users/auth (clean start for your own app)
+  choices:
+    Full (all example modules): full
+    Minimal (users/auth only): minimal
+  default: full
