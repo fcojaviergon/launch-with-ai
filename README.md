@@ -60,9 +60,34 @@ This project is based on [tiangolo/full-stack-fastapi-template](https://github.c
 - Node.js 18+ (for frontend development)
 - Python 3.10+ (for backend development)
 
-### Option A: Use as Template (Recommended)
+### Option A: Create with Copier (Recommended)
 
-Best for starting your own project. Creates a clean repo without fork history.
+Best for starting your own project. Customizes project name, removes example modules, and supports future template updates.
+
+```bash
+# Install copier (one-time)
+pipx install copier
+
+# Create your project
+copier copy gh:fcojaviergon/launch-with-ai my-app
+
+# Answer the interactive prompts:
+#   - Project name
+#   - Project slug
+#   - Description
+#   - Full or minimal modules
+```
+
+To pull in template updates later:
+
+```bash
+cd my-app
+copier update
+```
+
+### Option B: Use GitHub Template
+
+Creates a clean repo without fork history. You'll need to customize manually.
 
 1. Click **"Use this template"** → **"Create a new repository"** on GitHub
 2. Clone your new repository:
@@ -71,7 +96,7 @@ git clone https://github.com/your-username/your-project.git
 cd your-project
 ```
 
-### Option B: Fork
+### Option C: Fork
 
 Best if you want to track upstream updates or contribute back.
 
@@ -82,7 +107,7 @@ git clone https://github.com/your-username/launch-with-ai.git
 cd launch-with-ai
 ```
 
-### Option C: Clone Directly
+### Option D: Clone Directly
 
 For quick local experimentation.
 
@@ -123,7 +148,7 @@ python -c "import secrets; print(secrets.token_urlsafe(32))"
 
 ## Make It Yours
 
-After setting up, customize the template for your project:
+If you used **Copier** (Option A), this is already done for you. For other options:
 
 1. **Rename the project** — Update `PROJECT_NAME` in your `.env`
 2. **Remove example modules** — Delete `backend/app/modules/items/` and `frontend/src/domains/items/` (keep `users` as auth reference)
